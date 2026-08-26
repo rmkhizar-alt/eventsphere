@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png">
+<title>Verify OTP — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .field{width:100%;border-radius:.9rem;border:1px solid rgba(37,34,48,.15);background:#fff;padding:.85rem 1rem;font-size:.85rem;outline:none;transition:border-color .3s;}
+  .field:focus{border-color:var(--olive);}
+  .field.err{border-color:#a65b44;background:#fdf6f3;}
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link.nav-active{background:#2d2d2d !important;color:#f5f5f0 !important;}
+  #mobile-menu{display:none;}
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .otp-field{width:3rem;height:3.2rem;text-align:center;font-size:1.25rem;font-weight:700;border-radius:.7rem;border:2px solid rgba(37,34,48,.15);background:#fff;outline:none;transition:border-color .2s;font-family:'IBM Plex Mono',monospace;}
+  .otp-field:focus{border-color:var(--olive);}
+  .otp-field.filled{border-color:var(--olive);background:#f5f3ff;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<header id="navbar" class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4 lg:gap-8">
+      <a href="/" class="flex items-center gap-3 group justify-self-start">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 group-hover:rotate-3 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] leading-none">EventSphere</span>
+            <span class="hidden sm:inline text-[10px] font-mono-custom tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#e8e6dc] text-[#433a86] font-semibold">v1.0</span>
+          </div>
+          <p class="hidden sm:block text-[10px] text-[#6b6b5c] tracking-[.18em] uppercase font-medium mt-0.5">Campus Event System</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center justify-center gap-1.5" aria-label="Primary">
+        <a href="/" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] flex items-center gap-1.5"><i data-lucide="home" class="w-3.5 h-3.5"></i> Overview</a>
+        <a href="/events" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Live Events</a>
+        <a href="/gallery" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gallery</a>
+        <a href="/faq" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i> FAQs</a>
+        <a href="/contact" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5"></i> Contact</a>
+      </nav>
+      <div class="flex items-center gap-2 sm:gap-3 justify-self-end">
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="/login" class="btn-outline px-4 py-2 text-xs">Log In</a>
+          <a href="/register" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+        </div>
+        <button id="menu-toggle" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Open menu">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="mobile-menu" class="fixed inset-0 z-50 flex-col bg-[#f6f4ee]/95 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6">
+    <div class="flex items-center justify-between h-20 border-b border-[#2d2d2d]/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold tracking-tight text-[#2d2d2d]">EventSphere</span>
+      </div>
+      <button id="menu-close" class="p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Close menu">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col justify-center gap-1 px-8 sm:px-12 max-w-7xl mx-auto w-full" aria-label="Mobile">
+    <a href="/" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">01</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Overview</span>
+    </a>
+    <a href="/events" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">02</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Live Events</span>
+    </a>
+  </nav>
+  <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 pb-10">
+    <div class="menu-item flex gap-3">
+      <a href="/login" class="btn-outline flex-1 py-3 text-xs">Log In</a>
+      <a href="/register" class="btn-primary flex-1 py-3 text-xs">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<main>
+<div class="min-h-screen grid lg:grid-cols-2">
+
+  <section class="relative hidden lg:block overflow-hidden" style="background:linear-gradient(140deg,#16132a,#2b2358 55%,#433a86);">
+    <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata"><source src="videos/auth.mp4" type="video/mp4"></video>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(22,19,42,.35),rgba(43,35,88,.7));"></div>
+    <div class="relative h-full flex flex-col justify-between p-12">
+      <a href="/" class="flex items-center gap-3 group w-max">
+        <div class="w-11 h-11 rounded-2xl overflow-hidden border border-white/20 group-hover:scale-105 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold text-[#f5f5f0]">EventSphere</span>
+      </a>
+      <div>
+        <p class="font-serif-custom italic text-4xl text-[#f5f5f0] leading-snug mb-5">"One code away<br />from your dashboard."</p>
+        <div class="flex items-center gap-3 text-xs text-[#b9b3d6]">
+          <span class="w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"><i data-lucide="shield-check" class="w-4 h-4 text-[#d8c9a3]"></i></span>
+          Secure verification · instant access
+        </div>
+      </div>
+      <p class="text-[11px] font-mono-custom tracking-widest uppercase text-[#8f89ad]">TechWiz 6 Project · v1.0</p>
+    </div>
+  </section>
+
+  <section class="flex flex-col justify-center px-6 sm:px-14 lg:px-20 py-12">
+    <a href="/" class="lg:hidden flex items-center gap-3 mb-10 rv">
+      <div class="w-10 h-10 rounded-2xl overflow-hidden"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+      <span class="font-serif-custom text-xl font-bold text-[#2d2d2d]">EventSphere</span>
+    </a>
+    <div class="max-w-md w-full mx-auto lg:mx-0">
+      <span class="badge-tag mb-4 rv">Email verification</span>
+      <h1 class="font-display text-4xl sm:text-5xl font-semibold text-[#2d2d2d] mb-2 rv">Enter your <span class="font-serif-custom italic text-[#433a86]">OTP.</span></h1>
+      <p class="text-sm text-[#66665c] mb-2 rv">We sent a 6-digit code to</p>
+      <p id="otp-email" class="text-sm font-semibold text-[#433a86] mb-8 rv">—</p>
+
+      <form id="otp-form" novalidate class="space-y-6 rv">
+        <div class="flex justify-center gap-3" id="otp-inputs">
+          <input type="text" class="otp-field" maxlength="1" inputmode="numeric" autocomplete="one-time-code" data-idx="0" />
+          <input type="text" class="otp-field" maxlength="1" inputmode="numeric" data-idx="1" />
+          <input type="text" class="otp-field" maxlength="1" inputmode="numeric" data-idx="2" />
+          <input type="text" class="otp-field" maxlength="1" inputmode="numeric" data-idx="3" />
+          <input type="text" class="otp-field" maxlength="1" inputmode="numeric" data-idx="4" />
+          <input type="text" class="otp-field" maxlength="1" inputmode="numeric" data-idx="5" />
+        </div>
+        <p id="otp-error" class="text-xs text-[#a65b44] text-center hidden">Invalid or expired OTP. Try again.</p>
+        <button type="submit" class="btn-primary w-full py-3.5 text-xs uppercase tracking-widest"><i data-lucide="shield-check" class="w-4 h-4"></i> Verify Account</button>
+      </form>
+
+      <div class="flex items-center justify-between mt-6 rv">
+        <p class="text-xs text-[#66665c]">Didn't get the code?</p>
+        <button id="resend-btn" type="button" class="text-xs text-[#433a86] font-bold hover:underline" disabled>Resend OTP <span id="resend-timer" class="text-[#888d75]"></span></button>
+      </div>
+
+      <p class="text-xs text-[#66665c] mt-8 rv">Wrong email? <a href="/register" class="text-[#433a86] font-bold hover:underline">Go back to signup →</a></p>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+lucide.createIcons();
+window.addEventListener('load', () => document.querySelectorAll('.rv').forEach((el, i) => setTimeout(() => el.classList.add('in'), 60 + i * 70)));
+
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => el.remove(), 4000);
+};
+
+const email = localStorage.getItem('es_verify_email') || '';
+document.getElementById('otp-email').textContent = email || 'your email';
+
+const backupOtp = localStorage.getItem('es_otp_backup');
+if (backupOtp) {
+  const notice = document.createElement('div');
+  notice.className = 'mb-6 p-4 rounded-2xl bg-[#f5f3ff] border-2 border-[#433a86] text-center rv';
+  notice.innerHTML = `<p class="text-[11px] font-bold uppercase tracking-widest text-[#433a86] mb-2">Your OTP Code</p><p class="font-mono-custom text-3xl font-bold tracking-[0.3em] text-[#2d2d2d]">${backupOtp}</p><p class="text-[10px] text-[#888d75] mt-1">Enter this code above to verify your account</p>`;
+  document.getElementById('otp-form').before(notice);
+  setTimeout(() => notice.classList.add('in'), 100);
+  localStorage.removeItem('es_otp_backup');
+}
+
+const inputs = document.querySelectorAll('#otp-inputs .otp-field');
+inputs[0].focus();
+
+inputs.forEach((inp, i) => {
+  inp.addEventListener('input', () => {
+    inp.value = inp.value.replace(/[^0-9]/g, '');
+    if (inp.value) {
+      inp.classList.add('filled');
+      if (i < 5) inputs[i + 1].focus();
+    } else {
+      inp.classList.remove('filled');
+    }
+  });
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !inp.value && i > 0) {
+      inputs[i - 1].focus();
+      inputs[i - 1].value = '';
+      inputs[i - 1].classList.remove('filled');
+    }
+  });
+  inp.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+    text.split('').forEach((ch, j) => {
+      if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add('filled'); }
+    });
+    if (text.length > 0) inputs[Math.min(text.length, 5)].focus();
+  });
+});
+
+document.getElementById('otp-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const otp = Array.from(inputs).map(i => i.value).join('');
+  if (otp.length !== 6) { showToast('Please enter all 6 digits', 'alert-circle'); return; }
+
+  document.getElementById('otp-error').classList.add('hidden');
+  const btn = e.target.querySelector('button[type="submit"]');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity=".3"/><path d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z" fill="currentColor"/></svg> Verifying...';
+
+  try {
+    const res = await fetch('/api/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ email, otp }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      document.getElementById('otp-error').textContent = data.message || 'Invalid OTP';
+      document.getElementById('otp-error').classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      return;
+    }
+
+    if (data.data && data.data.token) {
+      localStorage.setItem('es_token', data.data.token);
+      localStorage.setItem('es_user', JSON.stringify(data.data.user));
+    }
+    localStorage.removeItem('es_verify_email');
+
+    showToast('Account verified! Redirecting...', 'party-popper');
+    setTimeout(() => { location.href = '/dashboard'; }, 1500);
+  } catch (err) {
+    showToast('Something went wrong. Try again.', 'alert-circle');
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
+});
+
+let resendInterval;
+const resendBtn = document.getElementById('resend-btn');
+let cooldown = 60;
+const startCooldown = () => {
+  resendBtn.disabled = true;
+  cooldown = 60;
+  document.getElementById('resend-timer').textContent = `(${cooldown}s)`;
+  resendInterval = setInterval(() => {
+    cooldown--;
+    document.getElementById('resend-timer').textContent = cooldown > 0 ? `(${cooldown}s)` : '';
+    if (cooldown <= 0) { clearInterval(resendInterval); resendBtn.disabled = false; }
+  }, 1000);
+};
+startCooldown();
+
+resendBtn.addEventListener('click', async () => {
+  try {
+    const res = await fetch('/api/resend-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    showToast(data.message || 'OTP resent!', 'mail-check');
+    startCooldown();
+  } catch (err) {
+    showToast('Failed to resend OTP', 'alert-circle');
+  }
+});
+
+const menuToggle = document.getElementById('menu-toggle');
+const menuClose = document.getElementById('menu-close');
+const mobileMenu = document.getElementById('mobile-menu');
+if (menuToggle && mobileMenu) { menuToggle.addEventListener('click', () => { mobileMenu.style.display = 'flex'; document.body.style.overflow = 'hidden'; }); }
+if (menuClose && mobileMenu) { menuClose.addEventListener('click', () => { mobileMenu.style.display = 'none'; document.body.style.overflow = ''; }); }
+if (mobileMenu) { mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { mobileMenu.style.display = 'none'; document.body.style.overflow = ''; })); }
+</script>
+</body>
+</html>

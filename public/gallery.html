@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png">
+<title>Media Gallery — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,450;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="notifications-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--text-slate:#252230;--olive:#433a86;--olive-dark:#2b2358;--olive-light:#7d75b8;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;--muted:#a39e8d;--gold:#d8c9a3;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg-sand);color:var(--text-slate);font-family:'Satoshi',sans-serif;letter-spacing:-.005em;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--sand2);border-radius:99px;}::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);box-shadow:0 1px 2px rgba(37,34,48,.08);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{background:var(--bg-sand);border-color:var(--olive);transform:translateY(-2px);}
+  .card-natural{background:#fff;border-radius:1.5rem;border:1px solid rgba(37,34,48,.06);box-shadow:0 2px 10px -4px rgba(37,34,48,.06);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link:hover{color:#2d2d2d;background:var(--sand2);}
+  .nav-active{background:#2d2d2d!important;color:#f5f5f0!important;}
+  .filter-pill{position:relative;}
+  .filter-pill[data-active="true"]{background:#2d2d2d;color:#fff;border-color:#2d2d2d;}
+  .section-video-wrap{position:relative;overflow:hidden;isolation:isolate;}
+  .section-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .section-video-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .section-video-wrap>.relative{position:relative;z-index:2;}
+  #mobile-menu{display:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);box-shadow:0 24px 50px -14px rgba(43,35,88,.55);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .empty-illustration{width:64px;height:64px;}
+
+  /* ---------- Hero ---------- */
+  .hero-wrap{background:radial-gradient(120% 140% at 15% 0%,#3a3170 0%,#241d47 42%,#16132a 100%);}
+  .hero-noise{position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1px);background-size:3px 3px;}
+  .hero-orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;will-change:transform;}
+  .hero-orb-1{width:420px;height:420px;background:radial-gradient(circle,#7d75b8,transparent 70%);top:-120px;right:-80px;}
+  .hero-orb-2{width:340px;height:340px;background:radial-gradient(circle,#d8c9a3,transparent 70%);bottom:-140px;left:8%;opacity:.28;}
+  .hero-grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.9),transparent 78%);mask-image:linear-gradient(180deg,rgba(0,0,0,.9),transparent 78%);}
+  .stat-chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);border-radius:1.1rem;padding:.9rem 1.1rem;}
+  .stat-num{font-family:'Clash Display','Satoshi',sans-serif;font-weight:600;font-size:1.5rem;line-height:1;color:#f6f4ee;letter-spacing:-.02em;}
+  .hero-search{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(14px);border-radius:9999px;transition:border-color .3s ease,background .3s ease;}
+  .hero-search:focus-within{border-color:#d8c9a3;background:rgba(255,255,255,.12);}
+  .hero-chip-cat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#e7e4f4;font-weight:600;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .hero-chip-cat:hover{background:rgba(255,255,255,.16);border-color:#d8c9a3;color:#fff;transform:translateY(-2px);}
+  .scroll-cue{writing-mode:vertical-rl;letter-spacing:.25em;}
+  .scroll-cue-line{width:1px;background:linear-gradient(180deg,rgba(255,255,255,.6),transparent);}
+
+  /* ---------- Filmstrip (signature element) ---------- */
+  .filmstrip-rail{position:relative;background:#1c1830;border-radius:1.75rem;padding:1.4rem 0;overflow:hidden;}
+  .sprockets{position:absolute;left:0;right:0;height:14px;display:flex;gap:14px;padding:0 18px;align-items:center;}
+  .sprockets-top{top:8px;} .sprockets-bottom{bottom:8px;}
+  .sprocket-hole{width:9px;height:9px;border-radius:2px;background:#100d1f;flex-shrink:0;}
+  .filmstrip-track{display:flex;gap:1rem;overflow-x:auto;padding:2rem 1.5rem 1rem;scroll-snap-type:x proximity;scrollbar-width:none;}
+  .filmstrip-track::-webkit-scrollbar{display:none;}
+  .film-frame{scroll-snap-align:start;flex:0 0 auto;width:230px;border:5px solid #100d1f;border-radius:.6rem;position:relative;overflow:hidden;cursor:pointer;transition:transform .35s cubic-bezier(.16,1,.3,1);}
+  .film-frame:hover{transform:translateY(-6px) rotate(-.6deg);}
+  .film-frame img{width:100%;height:150px;object-fit:cover;display:block;}
+  .film-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55));}
+  .film-play-btn{width:38px;height:38px;border-radius:9999px;background:rgba(246,244,238,.92);color:#241d47;display:flex;align-items:center;justify-content:center;}
+  .film-frame .film-label{position:absolute;bottom:0;left:0;right:0;padding:.5rem .6rem;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent);color:#f6f4ee;font-size:10.5px;font-weight:700;line-height:1.25;}
+
+  /* ---------- Masonry gallery ---------- */
+  .masonry{column-gap:1.1rem;}
+  .masonry-col-1{columns:1;} .masonry-col-2{columns:2;} .masonry-col-3{columns:3;} .masonry-col-4{columns:4;}
+  .media-card{break-inside:avoid;margin-bottom:1.1rem;border-radius:1.35rem;overflow:hidden;position:relative;isolation:isolate;background:#e8e6dc;box-shadow:0 2px 10px -4px rgba(37,34,48,.08);cursor:pointer;}
+  .media-card img{width:100%;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1);}
+  .media-card:hover img{transform:scale(1.06);}
+  .media-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,17,38,.86) 0%,rgba(20,17,38,.15) 45%,transparent 65%);opacity:0;transition:opacity .35s ease;display:flex;flex-direction:column;justify-content:flex-end;padding:1rem;}
+  .media-card:hover .media-overlay,.media-card:focus-within .media-overlay{opacity:1;}
+  .media-play-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  .media-play-circle{width:52px;height:52px;border-radius:9999px;background:rgba(246,244,238,.9);color:#241d47;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px -8px rgba(0,0,0,.4);}
+  .media-dur{position:absolute;top:.65rem;right:.65rem;background:rgba(20,17,38,.75);color:#f6f4ee;font-size:10px;font-weight:700;padding:.2rem .5rem;border-radius:9999px;font-family:'IBM Plex Mono',monospace;}
+  .media-save{position:absolute;top:.65rem;left:.65rem;width:2rem;height:2rem;border-radius:9999px;background:rgba(20,17,38,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:#fff;opacity:0;transform:translateY(-6px);transition:all .3s ease;}
+  .media-card:hover .media-save{opacity:1;transform:translateY(0);}
+  .media-save.is-saved svg{fill:#d8c9a3;color:#a6842f;}
+  .media-tag{display:inline-flex;align-items:center;gap:.3rem;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#f6f4ee;}
+
+  /* ---------- Lightbox ---------- */
+  #lightbox{position:fixed;inset:0;z-index:100;background:rgba(15,12,28,.94);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:1.25rem;}
+  #lightbox.open{display:flex;}
+  .lb-nav{width:2.75rem;height:2.75rem;border-radius:9999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#f6f4ee;display:flex;align-items:center;justify-content:center;transition:all .25s ease;flex-shrink:0;}
+  .lb-nav:hover{background:rgba(255,255,255,.18);}
+  .lb-media-wrap{max-width:min(880px,88vw);max-height:78vh;border-radius:1.25rem;overflow:hidden;background:#100d1f;}
+  .lb-media-wrap img{width:100%;height:100%;max-height:78vh;object-fit:contain;display:block;}
+
+  /* ---------- Notification bell dropdown ---------- */
+  #notif-dropdown{
+    opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(-6px);
+    transition:opacity .3s cubic-bezier(.16,1,.3,1), transform .3s cubic-bezier(.16,1,.3,1), visibility .3s;
+  }
+  #notif-dropdown.notif-open{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);}
+  .notif-item{position:relative;}
+  .notif-item.is-unread .notif-title{color:#2d2d2d;}
+  .notif-item:not(.is-unread) .notif-title{color:#6b6b5c; font-weight:600;}
+  #notif-badge{display:none;}
+  #notif-badge.show{display:flex;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<header id="navbar" class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4 lg:gap-8">
+      <a href="index.html" class="flex items-center gap-3 group justify-self-start">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 group-hover:rotate-3 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] leading-none">EventSphere</span>
+            <span class="hidden sm:inline text-[10px] font-mono-custom tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#e8e6dc] text-[#433a86] font-semibold">v1.0</span>
+          </div>
+          <p class="hidden sm:block text-[10px] text-[#6b6b5c] tracking-[.18em] uppercase font-medium mt-0.5">Campus Event System</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center justify-center gap-1.5" aria-label="Primary">
+        <a href="index.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] flex items-center gap-1.5"><i data-lucide="home" class="w-3.5 h-3.5"></i> Overview</a>
+        <a href="events.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Live Events</a>
+        <a href="gallery.html" class="nav-link nav-active px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gallery</a>
+        <a href="faq.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i> FAQs</a>
+        <a href="contact.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5"></i> Contact</a>
+      </nav>
+      <div class="flex items-center gap-2 sm:gap-3 justify-self-end">
+        <div class="relative hidden xl:block w-48 2xl:w-56">
+          <input id="event-search" type="text" placeholder="Search events..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-full bg-[#e8e6dc] border border-transparent focus:border-[#433a86] focus:bg-white focus:outline-none transition-all placeholder:text-[#888d75]" />
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c]"></i>
+        </div>
+        <div class="relative">
+          <button id="notif-toggle" class="relative p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notif-dropdown">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span id="notif-badge" class="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-[#a65b44] text-white text-[9px] font-bold rounded-full items-center justify-center">0</span>
+          </button>
+          <div id="notif-dropdown" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl p-4 border border-[#2d2d2d]/12 z-50" style="min-width:210px;" role="menu">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display text-xs font-semibold text-[#433a86] uppercase tracking-wider">Notifications</h3>
+              <span id="notif-count-pill" class="font-mono-custom text-[10px] text-[#6b6b5c]">0 new</span>
+            </div>
+            <div id="notif-list" class="space-y-1 max-h-80 overflow-y-auto"><!-- rendered by JS from notifications-data.js --></div>
+            <p id="notif-empty" class="hidden text-xs text-[#888d75] text-center py-6">
+              <i data-lucide="bell-off" class="w-5 h-5 mx-auto mb-2 text-[#a39e8d]"></i>
+              You're all caught up
+            </p>
+            <div class="mt-3 pt-2 border-t border-[#2d2d2d]/10 flex items-center justify-between text-xs">
+              <button id="notif-mark-all" type="button" class="text-[#6b6b5c] hover:text-[#433a86] transition-colors font-semibold">Mark all as read</button>
+              <a href="notifications.html" class="text-[#433a86] font-bold hover:underline">View all →</a>
+            </div>
+          </div>
+        </div>
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="login.html" class="btn-outline px-4 py-2 text-xs">Log In</a>
+          <a href="register.html" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+        </div>
+        <button id="menu-toggle" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="scroll-progress" aria-hidden="true"></div>
+</header>
+
+<div id="mobile-menu" class="fixed inset-0 z-50 flex-col bg-[#f6f4ee]/95 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6">
+    <div class="flex items-center justify-between h-20 border-b border-[#2d2d2d]/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold tracking-tight text-[#2d2d2d]">EventSphere</span>
+      </div>
+      <button id="menu-close" class="p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Close menu">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col justify-center gap-1 px-8 sm:px-12 max-w-7xl mx-auto w-full" aria-label="Mobile">
+    <a href="index.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">01</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Overview</span>
+    </a>
+    <a href="events.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">02</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Live Events</span>
+    </a>
+    <a href="gallery.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">03</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#433a86] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Gallery</span>
+    </a>
+    <a href="faq.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">04</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">FAQs</span>
+    </a>
+    <a href="contact.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">05</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Contact</span>
+    </a>
+  </nav>
+  <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 pb-10">
+    <div class="menu-item flex gap-3">
+      <a href="login.html" class="btn-outline flex-1 py-3 text-xs">Log In</a>
+      <a href="register.html" class="btn-primary flex-1 py-3 text-xs">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+
+<section class="hero-wrap relative overflow-hidden">
+  <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+    <source src="videos/gallery-hero-memory.mp4" type="video/mp4">
+  </video>
+  <div class="absolute inset-0 z-[1]" style="background:linear-gradient(180deg,rgba(22,19,42,.75) 0%,rgba(36,29,71,.65) 50%,rgba(246,244,238,1) 100%);"></div>
+  <div class="hero-grid-lines z-[2]"></div>
+  <div class="hero-orb hero-orb-1 z-[2]" id="orb1"></div>
+  <div class="hero-orb hero-orb-2 z-[2]" id="orb2"></div>
+  <div class="hero-noise z-[2]"></div>
+  <div class="absolute inset-x-0 bottom-0 h-40 z-[3]" style="background:linear-gradient(180deg,transparent,#f6f4ee);"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 z-[4]">
+    <nav class="flex items-center gap-2 text-[11px] font-mono-custom tracking-widest uppercase text-[#b9b3d6] mb-8" id="hero-crumb">
+      <a href="index.html" class="hover:text-white transition-colors">Home</a><span>/</span><span class="text-[#d8c9a3]">Gallery</span>
+    </nav>
+
+    <div class="grid lg:grid-cols-[1.15fr_.85fr] gap-14 items-end mb-16">
+      <div>
+        <span class="badge-tag !bg-white/10 !text-[#d8c9a3] !border !border-white/15 mb-6" id="hero-eyebrow"><i data-lucide="camera" class="w-3 h-3"></i> The Campus Memory Wall</span>
+        <h1 class="font-display text-[2.6rem] leading-[1.04] sm:text-6xl lg:text-[3.7rem] font-semibold text-[#f5f5f0]" id="hero-h1">
+          <span class="hero-word inline-block">Every</span> <span class="hero-word inline-block">frame,</span> <span class="hero-word inline-block">every</span>
+          <span class="hero-word inline-block">cheer,</span> <span class="hero-word inline-block font-serif-custom italic text-[#d8c9a3] font-normal">kept in one place.</span>
+        </h1>
+        <p class="text-sm sm:text-base text-[#c9c4de] max-w-xl mt-6 leading-relaxed" id="hero-p">
+          Photos and highlight reels from every technical fest, cultural show, sports meet, workshop and intercollegiate showdown on campus — organized by department, event and year. Browse freely without an account, then sign in to save your favorites to your profile.
+        </p>
+
+        <form id="hero-search-form" class="hero-search flex items-center gap-2 mt-8 pl-5 pr-1.5 py-1.5 max-w-lg">
+          <i data-lucide="search" class="w-4 h-4 text-[#c9c4de] shrink-0"></i>
+          <input id="hero-search-input" type="text" placeholder="Search “Basanti Mela”, “Robotics”, “Cricket”…" class="bg-transparent flex-1 text-sm text-white placeholder:text-[#9891bf] focus:outline-none py-2" />
+          <button type="submit" class="btn-primary !bg-[#d8c9a3] !text-[#241d47] px-4 py-2 text-xs shrink-0 hover:!bg-[#e9dcb8]">Search<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
+        </form>
+
+        <div class="flex flex-wrap gap-2 mt-5" id="hero-cats">
+          <a href="#gallery-grid" data-jump="Technical Fests" class="hero-chip-cat text-xs px-3.5 py-1.5 rounded-full">Technical Fests</a>
+          <a href="#gallery-grid" data-jump="Cultural Events" class="hero-chip-cat text-xs px-3.5 py-1.5 rounded-full">Cultural Events</a>
+          <a href="#gallery-grid" data-jump="Sports Meets" class="hero-chip-cat text-xs px-3.5 py-1.5 rounded-full">Sports Meets</a>
+          <a href="#gallery-grid" data-jump="Workshops &amp; Seminars" class="hero-chip-cat text-xs px-3.5 py-1.5 rounded-full">Workshops &amp; Seminars</a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3" id="hero-stats">
+        <div class="stat-chip col-span-2 flex items-center justify-between">
+          <div>
+            <div class="stat-num" data-count="1284">0</div>
+            <p class="text-[11px] uppercase tracking-wider text-[#b9b3d6] font-semibold mt-1">Photos archived</p>
+          </div>
+          <div class="w-11 h-11 rounded-full bg-[#d8c9a3]/15 text-[#d8c9a3] flex items-center justify-center"><i data-lucide="images" class="w-5 h-5"></i></div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-num" data-count="96">0</div>
+          <p class="text-[11px] uppercase tracking-wider text-[#b9b3d6] font-semibold mt-1">Video reels</p>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-num" data-count="42">0</div>
+          <p class="text-[11px] uppercase tracking-wider text-[#b9b3d6] font-semibold mt-1">Events covered</p>
+        </div>
+        <div class="stat-chip col-span-2 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-[#2f6b6e]/25 text-[#8fd9db] flex items-center justify-center shrink-0"><i data-lucide="bookmark-plus" class="w-4 h-4"></i></div>
+          <p class="text-xs text-[#e2ddf1] leading-snug"><span class="font-semibold text-white">Save favorites</span> — sign in to pin photos and videos to your dashboard for later.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signature element: filmstrip of highlight reels -->
+    <div id="reel-heading" class="flex items-center justify-between mb-4">
+      <p class="font-mono-custom text-[11px] uppercase tracking-[.2em] text-[#b9b3d6] flex items-center gap-2"><i data-lucide="film" class="w-3.5 h-3.5 text-[#d8c9a3]"></i> Now playing — highlight reels</p>
+      <p class="text-[11px] text-[#8f89b8] hidden sm:block">Scroll to browse →</p>
+    </div>
+    <div class="filmstrip-rail relative overflow-hidden" id="filmstrip">
+      <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover" style="opacity:0.5; filter:saturate(1.2) brightness(0.9);"><source src="videos/gallery-filmstrip.mp4" type="video/mp4"></video>
+      <div class="relative z-10">
+      <div class="sprockets sprockets-top"></div>
+      <div class="filmstrip-track" id="filmstrip-track"></div>
+      <div class="sprockets sprockets-bottom"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="relative py-16 md:py-20 overflow-hidden" id="gallery-grid">
+  <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover" style="filter:saturate(1.2) brightness(0.9);"><source src="videos/gallery-archive.mp4" type="video/mp4"></video>
+  <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(246,244,238,.85) 0%,rgba(246,244,238,.4) 20%,rgba(246,244,238,.08) 45%,rgba(246,244,238,.08) 55%,rgba(246,244,238,.4) 80%,rgba(246,244,238,.85) 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8 pb-8 border-b border-[#2d2d2d12]" id="dir-heading">
+      <div>
+        <span class="badge-tag mb-3">Browse the archive</span>
+        <h2 class="font-display text-4xl sm:text-5xl text-[#2d2d2d]">The Full Gallery</h2>
+        <p class="text-sm text-[#66665c] mt-2 max-w-xl">Filter by category, department or year — or search by event name. Click any tile for a closer look.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] font-mono-custom uppercase tracking-wider text-[#888d75] mr-1">Show</span>
+        <button class="type-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2d2d2d] text-white" data-type="all">All</button>
+        <button class="type-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-type="image">Photos</button>
+        <button class="type-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-type="video">Videos</button>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 mb-8" id="cat-pills">
+      <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2d2d2d] text-white" data-filter="all">All Categories</button>
+      <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Technical Fests">Technical Fests</button>
+      <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Cultural Events">Cultural Events</button>
+      <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Sports Meets">Sports Meets</button>
+      <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Annual Day Functions">Annual Day Functions</button>
+      <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Workshops &amp; Seminars">Workshops &amp; Seminars</button>
+      <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Intercollegiate Competitions">Intercollegiate Competitions</button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 mb-10">
+      <div class="relative">
+        <select id="dept-select" class="appearance-none pl-8 pr-8 py-2 text-xs rounded-full bg-white border border-[#2d2d2d]/15 focus:border-[#433a86] focus:outline-none text-[#2d2d2d] font-semibold">
+          <option value="all">All Departments</option>
+        </select>
+        <i data-lucide="building-2" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c] pointer-events-none"></i>
+        <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-3 top-2.5 text-[#6b6b5c] pointer-events-none"></i>
+      </div>
+      <div class="relative">
+        <select id="year-select" class="appearance-none pl-8 pr-8 py-2 text-xs rounded-full bg-white border border-[#2d2d2d]/15 focus:border-[#433a86] focus:outline-none text-[#2d2d2d] font-semibold">
+          <option value="all">All Years</option>
+        </select>
+        <i data-lucide="calendar-days" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c] pointer-events-none"></i>
+        <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-3 top-2.5 text-[#6b6b5c] pointer-events-none"></i>
+      </div>
+      <div class="relative ml-auto">
+        <input id="grid-search" type="text" placeholder="Search this gallery..." class="w-56 pl-8 pr-3 py-2 text-xs rounded-full bg-white border border-[#2d2d2d]/15 focus:border-[#433a86] focus:outline-none transition-all placeholder:text-[#888d75]" />
+        <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c]"></i>
+      </div>
+    </div>
+
+    <div class="masonry masonry-col-2 sm:masonry-col-3 lg:masonry-col-4" id="media-grid"></div>
+
+    <div id="grid-empty" class="text-center py-16 hidden">
+      <svg class="empty-illustration mx-auto mb-4 text-[#c7c2b0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+      <p class="font-display font-semibold text-2xl text-[#2d2d2d] mb-2">No media found</p>
+      <p class="text-sm text-[#66665c]">Try a different category, department or search term.</p>
+    </div>
+  </div>
+</section>
+
+<section class="relative pb-24 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="card-natural border border-[#2d2d2d12] p-8 sm:p-10 flex flex-col sm:flex-row items-center gap-6 justify-between relative overflow-hidden" style="background:linear-gradient(135deg,#fff,#f5f5f0);">
+      <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover" style="opacity:0.4; filter:saturate(1.2) brightness(0.9);"><source src="videos/gallery-upload-cta.mp4" type="video/mp4"></video>
+      <div class="flex items-center gap-4 relative z-10">
+        <div class="w-14 h-14 rounded-2xl bg-[#433a86] text-[#f6f4ee] flex items-center justify-center shrink-0"><i data-lucide="upload-cloud" class="w-6 h-6"></i></div>
+        <div>
+          <h3 class="font-display text-xl text-[#2d2d2d]">Organizing an event?</h3>
+          <p class="text-sm text-[#66665c] mt-1 max-w-md">Organizers can upload photos and video reels straight from the Organizer Dashboard once an event wraps up.</p>
+        </div>
+      </div>
+      <a href="login.html" class="btn-primary px-5 py-3 text-xs shrink-0">Go to Dashboard <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="relative section-video-wrap bg-[#e8e6dc] text-[#2d2d2d] pt-16 pb-10">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/footer.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.72) 20%,rgba(232,230,220,.8) 80%,rgba(232,230,220,.92) 100%);"></div>
+
+  <div class="section-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#2d2d2d15]">
+
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <div>
+            <span class="font-display text-2xl font-bold tracking-tight block leading-none">EventSphere</span>
+            <span class="text-[10px] text-[#6b6b5c] uppercase tracking-widest font-mono-custom">Campus Events Portal</span>
+          </div>
+        </div>
+        <p class="text-xs text-[#555] leading-relaxed max-w-sm">
+          Unified Campus Event Management &amp; Ticketing System. Real-time seating capacity, verified e-certificates, and automated waitlists — all in one place.
+        </p>
+        <div class="flex items-center gap-2 pt-2">
+          <span class="badge-tag !bg-white">TechWiz 6 Project</span>
+          <span class="badge-tag !bg-white">ISO 27001 Accredited</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Navigation</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="index.html" class="hover:text-[#433a86] transition-colors">Home &amp; Schedule</a></li>
+          <li><a href="events.html" class="hover:text-[#433a86] transition-colors">Live Events Directory</a></li>
+          <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors">Moments Archive</a></li>
+          <li><a href="faq.html" class="hover:text-[#433a86] transition-colors">FAQs &amp; Support</a></li>
+          <li><a href="contact.html" class="hover:text-[#433a86] transition-colors">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Event Categories</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li>Technical &amp; Hackathons</li>
+          <li>Cultural &amp; Music Galas</li>
+          <li>Sports Meets &amp; Track</li>
+          <li>Workshops &amp; Seminars</li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Dashboards</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors">Student Dashboard</a></li>
+          <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors">Organizer Dashboard</a></li>
+          <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors">Admin Control Center</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6b6b5c]">
+      <p>© 2026 EventSphere · Centralized Campus Event Information &amp; Registration System.</p>
+      <div class="flex items-center gap-4 text-[11px] font-mono-custom">
+        <span>Natural Tones Theme</span><span>·</span><span>Version 2.4.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Media viewer">
+  <button id="lb-close" class="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-white/20 transition-colors" aria-label="Close viewer"><i data-lucide="x" class="w-5 h-5"></i></button>
+  <div class="flex items-center gap-4 sm:gap-6 max-w-full">
+    <button id="lb-prev" class="lb-nav" aria-label="Previous"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+    <div>
+      <div class="lb-media-wrap"><img id="lb-img" src="" alt="" /></div>
+      <div class="mt-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <span id="lb-cat" class="badge-tag !bg-white/10 !text-[#d8c9a3] !border !border-white/15 mb-2"></span>
+          <h3 id="lb-title" class="font-display text-xl text-white"></h3>
+          <p id="lb-meta" class="text-xs text-[#c9c4de] mt-1 font-mono-custom"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="lb-save" class="btn-outline !bg-white/10 !border-white/20 !text-white px-4 py-2 text-xs"><i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Save</button>
+          <button id="lb-share" class="btn-outline !bg-white/10 !border-white/20 !text-white px-4 py-2 text-xs"><i data-lucide="share-2" class="w-3.5 h-3.5"></i> Share</button>
+        </div>
+      </div>
+    </div>
+    <button id="lb-next" class="lb-nav" aria-label="Next"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+  </div>
+</div>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+/* ---------- Data (Media Gallery — SRS §1.6) ---------- */
+const CAT_STYLES = {
+  "Technical Fests":{dot:"#433a86", icon:"cpu", chip:"bg-[#e8e6dc] text-[#433a86]"},
+  "Cultural Events":{dot:"#8c6a38", icon:"music-4", chip:"bg-[#ede6d6] text-[#8c6a38]"},
+  "Sports Meets":{dot:"#2f6b6e", icon:"trophy", chip:"bg-[#dcebec] text-[#2f6b6e]"},
+  "Workshops & Seminars":{dot:"#3e5668", icon:"graduation-cap", chip:"bg-[#e5e9ec] text-[#3e5668]"},
+  "Annual Day Functions":{dot:"#a65b44", icon:"party-popper", chip:"bg-[#f0e7e1] text-[#a65b44]"},
+  "Intercollegiate Competitions":{dot:"#8c462e", icon:"medal", chip:"bg-[#ebdcd5] text-[#8c462e]"}
+};
+
+const MEDIA = [
+  {id:1, type:"image", title:"CodeForge 2026: Hackathon Finale", category:"Technical Fests", dept:"Dept. of Computer Science", year:"2026", h:340, img:"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=700&auto=format&fit=crop&q=75"},
+  {id:2, type:"video", title:"CodeForge 2026 — Highlight Reel", category:"Technical Fests", dept:"Dept. of Computer Science", year:"2026", h:260, dur:"2:14", img:"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=700&auto=format&fit=crop&q=75"},
+  {id:3, type:"image", title:"Robotics Showcase, Lab 4", category:"Technical Fests", dept:"Dept. of Electronics", year:"2025", h:420, img:"https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=700&auto=format&fit=crop&q=75"},
+  {id:4, type:"image", title:"Rhythm Nation: Dance Battle", category:"Cultural Events", dept:"Cultural Affairs Committee", year:"2026", h:400, img:"https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=700&auto=format&fit=crop&q=75"},
+  {id:5, type:"image", title:"Basanti Mela — Main Stage", category:"Cultural Events", dept:"Cultural Affairs Committee", year:"2025", h:300, img:"https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=700&auto=format&fit=crop&q=75"},
+  {id:6, type:"video", title:"Rhythm Nation — Aftermovie", category:"Cultural Events", dept:"Cultural Affairs Committee", year:"2026", h:280, dur:"3:02", img:"https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=700&auto=format&fit=crop&q=75"},
+  {id:7, type:"image", title:"Fashion Runway Closing Walk", category:"Cultural Events", dept:"Cultural Affairs Committee", year:"2025", h:360, img:"https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&auto=format&fit=crop&q=75"},
+  {id:8, type:"image", title:"Apex Arena: Basketball Final", category:"Sports Meets", dept:"Sports Board", year:"2026", h:320, img:"https://images.unsplash.com/photo-1546519638-68e109498ffc?w=700&auto=format&fit=crop&q=75"},
+  {id:9, type:"video", title:"Inter-College Cricket Cup — Recap", category:"Sports Meets", dept:"Sports Board", year:"2026", h:260, dur:"1:48", img:"https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=700&auto=format&fit=crop&q=75"},
+  {id:10, type:"image", title:"Track & Field, Day 2", category:"Sports Meets", dept:"Sports Board", year:"2025", h:380, img:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=700&auto=format&fit=crop&q=75"},
+  {id:11, type:"image", title:"Generative AI Masterclass", category:"Workshops & Seminars", dept:"AI & Robotics Society", year:"2026", h:300, img:"https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=700&auto=format&fit=crop&q=75"},
+  {id:12, type:"image", title:"Resume Clinic: Placement Week", category:"Workshops & Seminars", dept:"Placement Cell", year:"2025", h:340, img:"https://images.unsplash.com/photo-1531482615713-2afd69097998?w=700&auto=format&fit=crop&q=75"},
+  {id:13, type:"video", title:"AI Masterclass — Session Highlights", category:"Workshops & Seminars", dept:"AI & Robotics Society", year:"2026", h:240, dur:"4:20", img:"https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=700&auto=format&fit=crop&q=75"},
+  {id:14, type:"image", title:"Founders Day & Alumni Gala", category:"Annual Day Functions", dept:"Alumni Relations Office", year:"2025", h:400, img:"https://images.unsplash.com/photo-1511578314322-379afb476865?w=700&auto=format&fit=crop&q=75"},
+  {id:15, type:"video", title:"Founders Day 2025 — Aftermovie", category:"Annual Day Functions", dept:"Alumni Relations Office", year:"2025", h:260, dur:"5:11", img:"https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=700&auto=format&fit=crop&q=75"},
+  {id:16, type:"image", title:"Convocation Hall, Lights On", category:"Annual Day Functions", dept:"Alumni Relations Office", year:"2026", h:320, img:"https://images.unsplash.com/photo-1560523159-4a9692d222f9?w=700&auto=format&fit=crop&q=75"},
+  {id:17, type:"image", title:"InnoQuiz: Grand Finale Buzzer Round", category:"Intercollegiate Competitions", dept:"Academic Council", year:"2026", h:360, img:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=700&auto=format&fit=crop&q=75"},
+  {id:18, type:"image", title:"Debate Championship, Round 3", category:"Intercollegiate Competitions", dept:"Academic Council", year:"2025", h:300, img:"https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=700&auto=format&fit=crop&q=75"},
+  {id:19, type:"video", title:"InnoQuiz 2026 — Winning Moment", category:"Intercollegiate Competitions", dept:"Academic Council", year:"2026", h:240, dur:"1:05", img:"https://images.unsplash.com/photo-1509228468518-180dd4864904?w=700&auto=format&fit=crop&q=75"},
+  {id:20, type:"image", title:"Robotics Arena Build Night", category:"Technical Fests", dept:"AI & Robotics Society", year:"2025", h:380, img:"https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=700&auto=format&fit=crop&q=75"},
+];
+
+/* ---------- Toast (matches SRS login-gated actions pattern) ---------- */
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  gsap.fromTo(el, {opacity:0, y:16, scale:.95}, {opacity:1, y:0, scale:1, duration:.45, ease:"back.out(1.6)"});
+  setTimeout(() => { gsap.to(el, {opacity:0, x:24, duration:.35, ease:"power2.in", onComplete:()=>el.remove()}); }, 3600);
+};
+
+/* ---------- Populate department / year filters ---------- */
+const deptSelect = document.getElementById('dept-select');
+const yearSelect = document.getElementById('year-select');
+[...new Set(MEDIA.map(m => m.dept))].sort().forEach(d => deptSelect.insertAdjacentHTML('beforeend', `<option value="${d}">${d}</option>`));
+[...new Set(MEDIA.map(m => m.year))].sort().reverse().forEach(y => yearSelect.insertAdjacentHTML('beforeend', `<option value="${y}">${y}</option>`));
+
+/* ---------- Render masonry grid ---------- */
+const grid = document.getElementById('media-grid');
+MEDIA.forEach((m) => {
+  const style = CAT_STYLES[m.category];
+  const card = document.createElement('div');
+  card.className = "media-card group";
+  card.dataset.id = m.id;
+  card.dataset.category = m.category;
+  card.dataset.type = m.type;
+  card.dataset.dept = m.dept;
+  card.dataset.year = m.year;
+  card.dataset.search = `${m.title} ${m.dept} ${m.category}`.toLowerCase();
+  card.innerHTML = `
+    <img src="${m.img}" alt="${m.title}" style="height:${m.h}px;object-fit:cover;" loading="lazy" />
+    ${m.type === 'video' ? `<div class="media-play-badge"><div class="media-play-circle"><i data-lucide="play" class="w-5 h-5" style="margin-left:2px"></i></div></div><span class="media-dur">${m.dur}</span>` : ''}
+    <button class="media-save" title="Save to profile" aria-label="Save to profile"><i data-lucide="bookmark" class="w-4 h-4"></i></button>
+    <div class="media-overlay">
+      <span class="media-tag mb-1"><i data-lucide="${style.icon}" class="w-3 h-3" style="color:${style.dot === '#433a86' ? '#b9b3d6' : '#d8c9a3'}"></i>${m.category}</span>
+      <p class="text-white text-sm font-semibold leading-snug line-clamp-2">${m.title}</p>
+      <p class="text-[#cfcbe4] text-[11px] mt-0.5 font-mono-custom">${m.dept} · ${m.year}</p>
+    </div>`;
+  grid.appendChild(card);
+});
+
+/* ---------- Filmstrip (videos only) ---------- */
+const track = document.getElementById('filmstrip-track');
+MEDIA.filter(m => m.type === 'video').forEach((m) => {
+  const frame = document.createElement('div');
+  frame.className = "film-frame";
+  frame.dataset.id = m.id;
+  frame.innerHTML = `<img src="${m.img}" alt="${m.title}" /><div class="film-play"><div class="film-play-btn"><i data-lucide="play" class="w-4 h-4" style="margin-left:2px"></i></div></div><span class="media-dur" style="top:.4rem;right:.4rem;">${m.dur}</span><div class="film-label">${m.title}</div>`;
+  track.appendChild(frame);
+});
+for (let i = 0; i < 20; i++) { const h = document.createElement('div'); h.className = "sprocket-hole"; document.querySelectorAll('.sprockets').forEach(s => s.appendChild(h.cloneNode())); }
+
+/* ---------- Filters ---------- */
+let activeCat = 'all', activeType = 'all';
+const applyFilters = () => {
+  const q = (document.getElementById('grid-search').value || '').trim().toLowerCase();
+  const dept = deptSelect.value, year = yearSelect.value;
+  let any = false, vi = 0;
+  [...grid.children].forEach((c) => {
+    const ok = (activeCat === 'all' || c.dataset.category === activeCat)
+      && (activeType === 'all' || c.dataset.type === activeType)
+      && (dept === 'all' || c.dataset.dept === dept)
+      && (year === 'all' || c.dataset.year === year)
+      && (!q || c.dataset.search.includes(q));
+    if (ok) { any = true; c.style.display = ''; gsap.fromTo(c, {opacity:0, y:14}, {opacity:1, y:0, duration:.4, delay:vi * .03, ease:"power2.out"}); vi++; }
+    else c.style.display = 'none';
+  });
+  document.getElementById('grid-empty').classList.toggle('hidden', any);
+};
+document.querySelectorAll('#cat-pills .filter-pill').forEach((p) => p.addEventListener('click', () => {
+  activeCat = p.dataset.filter;
+  document.querySelectorAll('#cat-pills .filter-pill').forEach((x) => x.setAttribute('data-active', String(x === p)));
+  applyFilters();
+}));
+document.querySelectorAll('.type-pill').forEach((p) => p.addEventListener('click', () => {
+  activeType = p.dataset.type;
+  document.querySelectorAll('.type-pill').forEach((x) => { const on = x === p; x.classList.toggle('bg-[#2d2d2d]', on); x.classList.toggle('text-white', on); x.classList.toggle('bg-white', !on); x.classList.toggle('text-[#2d2d2d]', !on); });
+  applyFilters();
+}));
+['grid-search'].forEach(id => document.getElementById(id).addEventListener('input', applyFilters));
+[deptSelect, yearSelect].forEach(el => el.addEventListener('change', applyFilters));
+
+document.getElementById('hero-search-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  document.getElementById('grid-search').value = document.getElementById('hero-search-input').value;
+  applyFilters();
+  document.getElementById('gallery-grid').scrollIntoView({behavior:'smooth'});
+});
+document.querySelectorAll('#hero-cats a[data-jump]').forEach((a) => a.addEventListener('click', (e) => {
+  const cat = a.dataset.jump;
+  const pill = [...document.querySelectorAll('#cat-pills .filter-pill')].find(p => p.dataset.filter === cat);
+  if (pill) { e.preventDefault(); pill.click(); document.getElementById('gallery-grid').scrollIntoView({behavior:'smooth'}); }
+}));
+
+/* ---------- Save-to-profile (login gated, per SRS visitor rules) ---------- */
+document.addEventListener('click', (e) => {
+  const saveBtn = e.target.closest('.media-save, #lb-save');
+  if (saveBtn) {
+    const wasSaved = saveBtn.classList.contains('is-saved');
+    saveBtn.classList.toggle('is-saved');
+    gsap.fromTo(saveBtn, {scale:.7}, {scale:1, duration:.4, ease:"back.out(3)"});
+    showToast(wasSaved ? 'Removed from saved media' : 'Saved — sign in to keep it in your profile', 'bookmark');
+  }
+  const shareBtn = e.target.closest('#lb-share');
+  if (shareBtn) showToast('Link copied to clipboard', 'copy');
+});
+
+/* ---------- Lightbox ---------- */
+const lb = document.getElementById('lightbox');
+let lbList = [], lbIndex = 0;
+const openLightbox = (id) => {
+  lbList = [...grid.children].filter(c => c.style.display !== 'none').map(c => +c.dataset.id);
+  lbIndex = lbList.indexOf(id);
+  if (lbIndex === -1) { lbList = MEDIA.map(m => m.id); lbIndex = lbList.indexOf(id); }
+  renderLightbox();
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+const renderLightbox = () => {
+  const m = MEDIA.find(x => x.id === lbList[lbIndex]);
+  const style = CAT_STYLES[m.category];
+  document.getElementById('lb-img').src = m.img.replace('w=700', 'w=1400');
+  document.getElementById('lb-img').alt = m.title;
+  document.getElementById('lb-cat').innerHTML = `<i data-lucide="${style.icon}" class="w-3 h-3"></i>${m.category}`;
+  document.getElementById('lb-title').textContent = m.title;
+  document.getElementById('lb-meta').textContent = `${m.dept} · ${m.year}${m.type === 'video' ? ' · ' + m.dur : ''}`;
+  document.getElementById('lb-save').classList.remove('is-saved');
+  lucide.createIcons();
+};
+document.getElementById('lb-close').addEventListener('click', () => { lb.classList.remove('open'); document.body.style.overflow = ''; });
+lb.addEventListener('click', (e) => { if (e.target === lb) { lb.classList.remove('open'); document.body.style.overflow = ''; } });
+document.getElementById('lb-prev').addEventListener('click', () => { lbIndex = (lbIndex - 1 + lbList.length) % lbList.length; renderLightbox(); });
+document.getElementById('lb-next').addEventListener('click', () => { lbIndex = (lbIndex + 1) % lbList.length; renderLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') { lb.classList.remove('open'); document.body.style.overflow = ''; }
+  if (e.key === 'ArrowLeft') document.getElementById('lb-prev').click();
+  if (e.key === 'ArrowRight') document.getElementById('lb-next').click();
+});
+grid.addEventListener('click', (e) => {
+  if (e.target.closest('.media-save')) return;
+  const card = e.target.closest('.media-card');
+  if (card) openLightbox(+card.dataset.id);
+});
+track.addEventListener('click', (e) => {
+  const frame = e.target.closest('.film-frame');
+  if (frame) openLightbox(+frame.dataset.id);
+});
+
+/* ---------- Icons ---------- */
+lucide.createIcons();
+
+/* ================= GSAP ANIMATIONS ================= */
+gsap.registerPlugin(ScrollTrigger);
+
+const heroTl = gsap.timeline({defaults:{ease:"power3.out"}});
+heroTl
+  .from("#hero-crumb", {opacity:0, y:-10, duration:.5})
+  .from("#hero-eyebrow", {opacity:0, y:12, duration:.55}, "-=.2")
+  .from(".hero-word", {opacity:0, y:34, rotateX:35, stagger:.06, duration:.75}, "-=.25")
+  .from("#hero-p", {opacity:0, y:16, duration:.6}, "-=.35")
+  .from("#hero-search-form", {opacity:0, y:16, duration:.55}, "-=.3")
+  .from("#hero-cats a", {opacity:0, y:10, stagger:.05, duration:.45}, "-=.3")
+  .from("#hero-stats .stat-chip", {opacity:0, y:20, scale:.94, stagger:.08, duration:.55}, "-=.5")
+  .from("#reel-heading", {opacity:0, y:14, duration:.5}, "-=.2")
+  .from(".film-frame", {opacity:0, x:30, stagger:.06, duration:.55}, "-=.25");
+
+gsap.to("#orb1", {x:40, y:30, duration:9, repeat:-1, yoyo:true, ease:"sine.inOut"});
+gsap.to("#orb2", {x:-30, y:-25, duration:11, repeat:-1, yoyo:true, ease:"sine.inOut"});
+
+document.querySelectorAll('.stat-num').forEach((el) => {
+  const target = +el.dataset.count;
+  const counter = {val:0};
+  gsap.to(counter, { val: target, duration: 1.8, delay: .9, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(counter.val).toLocaleString(); } });
+});
+
+gsap.from("#dir-heading", { scrollTrigger:{trigger:"#dir-heading", start:"top 85%"}, opacity:0, y:26, duration:.7, ease:"power2.out" });
+ScrollTrigger.batch(".media-card", {
+  start:"top 92%",
+  onEnter: (batch) => gsap.fromTo(batch, {opacity:0, y:32, scale:.97}, {opacity:1, y:0, scale:1, duration:.6, stagger:.06, ease:"power3.out"})
+});
+
+/* ---------- Mobile menu ---------- */
+const mm = document.getElementById('mobile-menu'), mt = document.getElementById('menu-toggle');
+const setMenu = (o) => { mt.setAttribute('aria-expanded', String(o)); document.body.style.overflow = o ? 'hidden' : ''; mm.style.display = o ? 'flex' : 'none'; };
+mt.addEventListener('click', () => setMenu(mm.style.display !== 'flex'));
+document.getElementById('menu-close').addEventListener('click', () => setMenu(false));
+mm.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+/* ---------- Navbar shadow ---------- */
+window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('shadow-lg', window.scrollY > 60), { passive: true });
+
+/* ---------- Notification bell: real data + persisted read-state ----------
+   SRS ref: 1.6 Functional Requirements > User Dashboard > Notifications.
+   Backed by notifications-data.js so the unread count and read state stay
+   in sync between this navbar dropdown and the full notifications.html page. */
+(() => {
+  const store = window.EventSphereNotifications;
+  const toggleBtn = document.getElementById('notif-toggle');
+  const dropdown = document.getElementById('notif-dropdown');
+  const list = document.getElementById('notif-list');
+  const emptyState = document.getElementById('notif-empty');
+  const badge = document.getElementById('notif-badge');
+  const countPill = document.getElementById('notif-count-pill');
+  const markAllBtn = document.getElementById('notif-mark-all');
+  if (!store || !toggleBtn || !dropdown) return;
+
+  const PREVIEW_COUNT = 5;
+
+  const renderNotifs = () => {
+    const items = store.NOTIFICATIONS.slice(0, PREVIEW_COUNT);
+    list.innerHTML = items.map((n) => {
+      const unread = !store.isRead(n.id);
+      return `
+        <a href="${n.href}" data-id="${n.id}" class="notif-item ${unread ? 'is-unread' : ''} flex items-start gap-3 py-2 px-3 rounded-xl hover:bg-[#f5f5f0] transition-colors">
+          <div class="w-8 h-8 rounded-xl bg-[#e8e6dc] flex items-center justify-center shrink-0">
+            <i data-lucide="${n.icon}" class="w-3.5 h-3.5 text-[#433a86]"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="notif-title text-xs leading-snug">${n.title}</p>
+            <p class="text-[11px] text-[#6b6b5c] leading-snug line-clamp-2">${n.body}</p>
+            <p class="text-[10px] text-[#a39e8d] mt-0.5 font-mono-custom">${n.time}</p>
+          </div>
+          ${unread ? '<span class="w-2 h-2 rounded-full bg-[#a65b44] mt-1.5 shrink-0" aria-hidden="true"></span>' : ''}
+        </a>`;
+    }).join('');
+    if (window.lucide) lucide.createIcons();
+
+    emptyState.classList.toggle('hidden', items.length > 0);
+
+    const unread = store.unreadCount();
+    badge.classList.toggle('show', unread > 0);
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+    countPill.textContent = `${unread} new`;
+  };
+  renderNotifs();
+
+  let isOpen = false;
+  const openDropdown = () => {
+    isOpen = true;
+    dropdown.classList.add('notif-open');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+  };
+  const closeDropdown = () => {
+    isOpen = false;
+    dropdown.classList.remove('notif-open');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  };
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isOpen ? closeDropdown() : openDropdown();
+  });
+  document.addEventListener('click', (e) => {
+    if (isOpen && !dropdown.contains(e.target) && !toggleBtn.contains(e.target)) closeDropdown();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) { closeDropdown(); toggleBtn.focus(); }
+  });
+
+  list.addEventListener('click', (e) => {
+    const item = e.target.closest('.notif-item');
+    if (!item) return;
+    store.markRead(item.dataset.id);
+    renderNotifs();
+    // let the anchor's default navigation proceed
+  });
+
+  markAllBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    store.markAllRead();
+    renderNotifs();
+    if (typeof showToast === 'function') showToast('All notifications marked as read', 'check-check');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png">
+<title>Contact Us — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="notifications-data.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;letter-spacing:-.005em;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--sand2);border-radius:99px;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);transform:translateY(-2px);}
+  .card-natural{background:#fff;border-radius:1.5rem;border:1px solid rgba(37,34,48,.06);box-shadow:0 2px 10px -4px rgba(37,34,48,.06);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link:hover{color:#2d2d2d;background:var(--sand2);}
+  .nav-active{background:#2d2d2d!important;color:#f5f5f0!important;}
+  #mobile-menu{display:none;}
+  .rv{opacity:0;transform:translateY(26px);filter:blur(4px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1),filter .9s ease;}
+  .rv.in{opacity:1;transform:none;filter:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);box-shadow:0 24px 50px -14px rgba(43,35,88,.55);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .field{width:100%;border-radius:.9rem;border:1px solid rgba(37,34,48,.15);background:#fff;padding:.85rem 1rem;font-size:.85rem;outline:none;transition:border-color .3s;}
+  .field:focus{border-color:var(--olive);}
+  .field.err{border-color:#a65b44;background:#fdf6f3;}
+  .section-video-wrap{position:relative;overflow:hidden;isolation:isolate;}
+  .section-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .section-video-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .section-video-wrap>.relative{position:relative;z-index:2;}
+
+  /* ---------- Notification bell dropdown ---------- */
+  #notif-dropdown{
+    opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(-6px);
+    transition:opacity .3s cubic-bezier(.16,1,.3,1), transform .3s cubic-bezier(.16,1,.3,1), visibility .3s;
+  }
+  #notif-dropdown.notif-open{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);}
+  .notif-item{position:relative;}
+  .notif-item.is-unread .notif-title{color:#2d2d2d;}
+  .notif-item:not(.is-unread) .notif-title{color:#6b6b5c; font-weight:600;}
+  #notif-badge{display:none;}
+  #notif-badge.show{display:flex;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<header id="navbar" class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4 lg:gap-8">
+      <a href="index.html" class="flex items-center gap-3 group justify-self-start">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 group-hover:rotate-3 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] leading-none">EventSphere</span>
+            <span class="hidden sm:inline text-[10px] font-mono-custom tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#e8e6dc] text-[#433a86] font-semibold">v1.0</span>
+          </div>
+          <p class="hidden sm:block text-[10px] text-[#6b6b5c] tracking-[.18em] uppercase font-medium mt-0.5">Campus Event System</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center justify-center gap-1.5" aria-label="Primary">
+        <a href="index.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] flex items-center gap-1.5"><i data-lucide="home" class="w-3.5 h-3.5"></i> Overview</a>
+        <a href="events.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Live Events</a>
+        <a href="gallery.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gallery</a>
+        <a href="faq.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i> FAQs</a>
+        <a href="contact.html" class="nav-link nav-active px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5"></i> Contact</a>
+      </nav>
+      <div class="flex items-center gap-2 sm:gap-3 justify-self-end">
+        <div class="relative hidden xl:block w-48 2xl:w-56">
+          <input id="event-search" type="text" placeholder="Search events..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-full bg-[#e8e6dc] border border-transparent focus:border-[#433a86] focus:bg-white focus:outline-none transition-all placeholder:text-[#888d75]" />
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c]"></i>
+        </div>
+        <div class="relative">
+          <button id="notif-toggle" class="relative p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notif-dropdown">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span id="notif-badge" class="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-[#a65b44] text-white text-[9px] font-bold rounded-full items-center justify-center">0</span>
+          </button>
+          <div id="notif-dropdown" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl p-4 border border-[#2d2d2d]/12 z-50" style="min-width:210px;" role="menu">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display text-xs font-semibold text-[#433a86] uppercase tracking-wider">Notifications</h3>
+              <span id="notif-count-pill" class="font-mono-custom text-[10px] text-[#6b6b5c]">0 new</span>
+            </div>
+            <div id="notif-list" class="space-y-1 max-h-80 overflow-y-auto"><!-- rendered by JS from notifications-data.js --></div>
+            <p id="notif-empty" class="hidden text-xs text-[#888d75] text-center py-6">
+              <i data-lucide="bell-off" class="w-5 h-5 mx-auto mb-2 text-[#a39e8d]"></i>
+              You're all caught up
+            </p>
+            <div class="mt-3 pt-2 border-t border-[#2d2d2d]/10 flex items-center justify-between text-xs">
+              <button id="notif-mark-all" type="button" class="text-[#6b6b5c] hover:text-[#433a86] transition-colors font-semibold">Mark all as read</button>
+              <a href="notifications.html" class="text-[#433a86] font-bold hover:underline">View all →</a>
+            </div>
+          </div>
+        </div>
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="login.html" class="btn-outline px-4 py-2 text-xs">Log In</a>
+          <a href="register.html" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+        </div>
+        <button id="menu-toggle" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="scroll-progress" aria-hidden="true"></div>
+</header>
+
+<div id="mobile-menu" class="fixed inset-0 z-50 flex-col bg-[#f6f4ee]/95 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6">
+    <div class="flex items-center justify-between h-20 border-b border-[#2d2d2d]/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold tracking-tight text-[#2d2d2d]">EventSphere</span>
+      </div>
+      <button id="menu-close" class="p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Close menu">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col justify-center gap-1 px-8 sm:px-12 max-w-7xl mx-auto w-full" aria-label="Mobile">
+    <a href="index.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">01</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Overview</span>
+    </a>
+    <a href="events.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">02</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Live Events</span>
+    </a>
+    <a href="gallery.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">03</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Gallery</span>
+    </a>
+    <a href="faq.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">04</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">FAQs</span>
+    </a>
+    <a href="contact.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">05</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#433a86] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Contact</span>
+    </a>
+  </nav>
+  <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 pb-10">
+    <div class="menu-item flex gap-3">
+      <a href="login.html" class="btn-outline flex-1 py-3 text-xs">Log In</a>
+      <a href="register.html" class="btn-primary flex-1 py-3 text-xs">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<section class="relative overflow-hidden" style="background:linear-gradient(120deg,#16132a,#2b2358 55%,#433a86);">
+  <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata"><source src="videos/support.mp4" type="video/mp4"></video>
+  <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(22,19,42,.5),rgba(43,35,88,.65) 70%,rgba(246,244,238,1) 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24">
+    <nav class="flex items-center gap-2 text-[11px] font-mono-custom tracking-widest uppercase text-[#b9b3d6] mb-6 rv">
+      <a href="index.html" class="hover:text-white transition-colors">Home</a><span>/</span><span class="text-[#d8c9a3]">Contact Us</span>
+    </nav>
+    <h1 class="font-display text-5xl sm:text-6xl font-semibold text-[#f5f5f0] leading-[1.05] rv">We Reply <span class="font-serif-custom italic text-[#d8c9a3]">Fast.</span></h1>
+    <p class="text-sm sm:text-base text-[#c9c4de] max-w-xl mt-5 leading-relaxed rv">Questions about an event, registration, or certificates? The student affairs desk answers within one working day.</p>
+  </div>
+</section>
+
+<section class="relative section-video-wrap py-14 md:py-20 pb-24">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/contact-helpdesk.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.74) 15%,rgba(246,244,238,.7) 85%,#f6f4ee 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-5 gap-8">
+    <div class="lg:col-span-3 card-natural border border-[#2d2d2d12] p-7 sm:p-9 rv">
+      <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-1.5">Send a message</h2>
+      <p class="text-xs text-[#66665c] mb-7">All fields marked * are required.</p>
+      <form id="contact-form" novalidate class="space-y-5">
+        <div class="grid sm:grid-cols-2 gap-5">
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Full Name *</span><input id="cf-name" type="text" class="field mt-2" placeholder="Aisha Patel" /></label>
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Email *</span><input id="cf-email" type="email" class="field mt-2" placeholder="you@campus.edu" /></label>
+        </div>
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Subject *</span>
+          <select id="cf-subject" class="field mt-2"><option value="">Choose a topic…</option><option>Event registration help</option><option>Certificate issue</option><option>Organizer / staff query</option><option>Feedback or suggestion</option><option>Other</option></select>
+        </label>
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Message *</span><textarea id="cf-msg" rows="5" class="field mt-2 resize-none" placeholder="Tell us what you need help with…"></textarea></label>
+        <button type="submit" class="btn-primary px-8 py-3.5 text-xs uppercase tracking-widest w-full sm:w-auto"><i data-lucide="send" class="w-3.5 h-3.5"></i> Send Message</button>
+      </form>
+    </div>
+
+    <aside class="space-y-5 lg:col-span-2">
+      <div class="card-natural border border-[#2d2d2d12] p-7 rv">
+        <h3 class="font-display text-xl font-semibold text-[#2d2d2d] mb-5">Student Affairs Desk</h3>
+        <ul class="space-y-4 text-sm text-[#444]">
+          <li class="flex items-center gap-3"><span class="w-9 h-9 rounded-full bg-[#f0ede2] flex items-center justify-center shrink-0"><i data-lucide="mail" class="w-4 h-4 text-[#433a86]"></i></span>events@campus.edu</li>
+          <li class="flex items-center gap-3"><span class="w-9 h-9 rounded-full bg-[#f0ede2] flex items-center justify-center shrink-0"><i data-lucide="phone" class="w-4 h-4 text-[#433a86]"></i></span>+91 98765 43210</li>
+          <li class="flex items-start gap-3"><span class="w-9 h-9 rounded-full bg-[#f0ede2] flex items-center justify-center shrink-0"><i data-lucide="map-pin" class="w-4 h-4 text-[#433a86]"></i></span>Student Affairs Wing, Ground Floor,<br />University Road Campus, Block C</li>
+          <li class="flex items-center gap-3"><span class="w-9 h-9 rounded-full bg-[#f0ede2] flex items-center justify-center shrink-0"><i data-lucide="clock" class="w-4 h-4 text-[#433a86]"></i></span>Mon–Sat · 9 AM – 5 PM</li>
+        </ul>
+        <div class="flex items-center gap-2 mt-6 pt-5 border-t border-[#2d2d2d0c]">
+          <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full border border-[#2d2d2d15] hover:bg-[#433a86] hover:text-white hover:border-[#433a86] transition-all flex items-center justify-center"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full border border-[#2d2d2d15] hover:bg-[#433a86] hover:text-white hover:border-[#433a86] transition-all flex items-center justify-center"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          <a href="#" aria-label="LinkedIn" class="w-9 h-9 rounded-full border border-[#2d2d2d15] hover:bg-[#433a86] hover:text-white hover:border-[#433a86] transition-all flex items-center justify-center"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+      <div class="rounded-[1.5rem] p-6 rv text-white relative overflow-hidden" style="background:linear-gradient(135deg,#2b2358,#433a86);">
+        <i data-lucide="life-buoy" class="w-6 h-6 mb-3 text-[#d8c9a3]"></i>
+        <p class="font-display font-semibold text-lg mb-1.5">Urgent event-day issue?</p>
+        <p class="text-xs text-[#c9c4de] leading-relaxed mb-4">Call the helpline — it's staffed from 8 AM on every registered event day.</p>
+        <p class="font-mono-custom text-lg text-[#d8c9a3]">1800-CAMPUS-1</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+</main>
+
+<footer class="relative section-video-wrap bg-[#e8e6dc] text-[#2d2d2d] pt-16 pb-10">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/footer.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.72) 20%,rgba(232,230,220,.8) 80%,rgba(232,230,220,.92) 100%);"></div>
+
+  <div class="section-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#2d2d2d15]">
+
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <div>
+            <span class="font-display text-2xl font-bold tracking-tight block leading-none">EventSphere</span>
+            <span class="text-[10px] text-[#6b6b5c] uppercase tracking-widest font-mono-custom">Campus Events Portal</span>
+          </div>
+        </div>
+        <p class="text-xs text-[#555] leading-relaxed max-w-sm">
+          Unified Campus Event Management &amp; Ticketing System. Real-time seating capacity, verified e-certificates, and automated waitlists — all in one place.
+        </p>
+        <div class="flex items-center gap-2 pt-2">
+          <span class="badge-tag !bg-white">TechWiz 6 Project</span>
+          <span class="badge-tag !bg-white">ISO 27001 Accredited</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Navigation</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="index.html" class="hover:text-[#433a86] transition-colors">Home &amp; Schedule</a></li>
+          <li><a href="events.html" class="hover:text-[#433a86] transition-colors">Live Events Directory</a></li>
+          <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors">Moments Archive</a></li>
+          <li><a href="faq.html" class="hover:text-[#433a86] transition-colors">FAQs &amp; Support</a></li>
+          <li><a href="contact.html" class="hover:text-[#433a86] transition-colors">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Event Categories</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li>Technical &amp; Hackathons</li>
+          <li>Cultural &amp; Music Galas</li>
+          <li>Sports Meets &amp; Track</li>
+          <li>Workshops &amp; Seminars</li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Dashboards</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors">Student Dashboard</a></li>
+          <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors">Organizer Dashboard</a></li>
+          <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors">Admin Control Center</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6b6b5c]">
+      <p>© 2026 EventSphere · Centralized Campus Event Information &amp; Registration System.</p>
+      <div class="flex items-center gap-4 text-[11px] font-mono-custom">
+        <span>Natural Tones Theme</span><span>·</span><span>Version 2.4.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+lucide.createIcons();
+const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12 });
+document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => el.remove(), 3800);
+};
+
+/* Client-side validation (SRS requirement) */
+document.getElementById('contact-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  let ok = true;
+  const check = (id, test) => {
+    const el = document.getElementById(id);
+    const bad = !test(el.value.trim());
+    el.classList.toggle('err', bad);
+    if (bad) ok = false;
+  };
+  check('cf-name', (v) => v.length >= 2);
+  check('cf-email', (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v));
+  check('cf-subject', (v) => v !== '');
+  check('cf-msg', (v) => v.length >= 10);
+  if (!ok) { showToast('Please fix the highlighted fields', 'alert-circle'); return; }
+  showToast('Message sent — we will reply within 1 working day', 'mail-check');
+  e.target.reset();
+});
+
+/* ---------- Mobile menu ---------- */
+const mm = document.getElementById('mobile-menu'), mt = document.getElementById('menu-toggle');
+const setMenu = (o) => { mt.setAttribute('aria-expanded', String(o)); document.body.style.overflow = o ? 'hidden' : ''; mm.style.display = o ? 'flex' : 'none'; };
+mt.addEventListener('click', () => setMenu(mm.style.display !== 'flex'));
+document.getElementById('menu-close').addEventListener('click', () => setMenu(false));
+mm.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+/* ---------- Navbar shadow ---------- */
+window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('shadow-lg', window.scrollY > 60), { passive: true });
+
+/* ---------- Notification bell: real data + persisted read-state ----------
+   SRS ref: 1.6 Functional Requirements > User Dashboard > Notifications.
+   Backed by notifications-data.js so the unread count and read state stay
+   in sync between this navbar dropdown and the full notifications.html page. */
+(() => {
+  const store = window.EventSphereNotifications;
+  const toggleBtn = document.getElementById('notif-toggle');
+  const dropdown = document.getElementById('notif-dropdown');
+  const list = document.getElementById('notif-list');
+  const emptyState = document.getElementById('notif-empty');
+  const badge = document.getElementById('notif-badge');
+  const countPill = document.getElementById('notif-count-pill');
+  const markAllBtn = document.getElementById('notif-mark-all');
+  if (!store || !toggleBtn || !dropdown) return;
+
+  const PREVIEW_COUNT = 5;
+
+  const renderNotifs = () => {
+    const items = store.NOTIFICATIONS.slice(0, PREVIEW_COUNT);
+    list.innerHTML = items.map((n) => {
+      const unread = !store.isRead(n.id);
+      return `
+        <a href="${n.href}" data-id="${n.id}" class="notif-item ${unread ? 'is-unread' : ''} flex items-start gap-3 py-2 px-3 rounded-xl hover:bg-[#f5f5f0] transition-colors">
+          <div class="w-8 h-8 rounded-xl bg-[#e8e6dc] flex items-center justify-center shrink-0">
+            <i data-lucide="${n.icon}" class="w-3.5 h-3.5 text-[#433a86]"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="notif-title text-xs leading-snug">${n.title}</p>
+            <p class="text-[11px] text-[#6b6b5c] leading-snug line-clamp-2">${n.body}</p>
+            <p class="text-[10px] text-[#a39e8d] mt-0.5 font-mono-custom">${n.time}</p>
+          </div>
+          ${unread ? '<span class="w-2 h-2 rounded-full bg-[#a65b44] mt-1.5 shrink-0" aria-hidden="true"></span>' : ''}
+        </a>`;
+    }).join('');
+    if (window.lucide) lucide.createIcons();
+
+    emptyState.classList.toggle('hidden', items.length > 0);
+
+    const unread = store.unreadCount();
+    badge.classList.toggle('show', unread > 0);
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+    countPill.textContent = `${unread} new`;
+  };
+  renderNotifs();
+
+  let isOpen = false;
+  const openDropdown = () => {
+    isOpen = true;
+    dropdown.classList.add('notif-open');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+  };
+  const closeDropdown = () => {
+    isOpen = false;
+    dropdown.classList.remove('notif-open');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  };
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isOpen ? closeDropdown() : openDropdown();
+  });
+  document.addEventListener('click', (e) => {
+    if (isOpen && !dropdown.contains(e.target) && !toggleBtn.contains(e.target)) closeDropdown();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) { closeDropdown(); toggleBtn.focus(); }
+  });
+
+  list.addEventListener('click', (e) => {
+    const item = e.target.closest('.notif-item');
+    if (!item) return;
+    store.markRead(item.dataset.id);
+    renderNotifs();
+    // let the anchor's default navigation proceed
+  });
+
+  markAllBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    store.markAllRead();
+    renderNotifs();
+    if (typeof showToast === 'function') showToast('All notifications marked as read', 'check-check');
+  });
+})();
+</script>
+</body>
+</html>

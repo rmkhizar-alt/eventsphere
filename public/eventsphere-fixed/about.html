@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23433a86'/><text x='32' y='45' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='36' fill='%23f6f4ee' text-anchor='middle'>E</text></svg>">
+<title>About Us — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tailwind-local.css">
+<script src="lucide-local.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;letter-spacing:-.005em;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--sand2);border-radius:99px;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);transform:translateY(-2px);}
+  .card-natural{background:#fff;border-radius:1.5rem;border:1px solid rgba(37,34,48,.06);box-shadow:0 2px 10px -4px rgba(37,34,48,.06);transition:box-shadow .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1);}
+  .card-natural:hover{box-shadow:0 30px 60px -20px var(--glow);transform:translateY(-6px);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link:hover{color:#2d2d2d;background:var(--sand2);}
+  #mobile-menu{display:none;}
+  .rv{opacity:0;transform:translateY(26px);filter:blur(4px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1),filter .9s ease;}
+  .rv.in{opacity:1;transform:none;filter:none;}
+  .section-video-wrap{position:relative;overflow:hidden;isolation:isolate;}
+  .section-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .section-video-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .section-video-wrap>.relative{position:relative;z-index:2;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<header class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20 gap-4">
+    <a href="index.html" class="flex items-center gap-3 group">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#433a86] to-[#2b2358] text-[#f5f5f0] flex items-center justify-center font-serif-custom text-2xl font-bold italic group-hover:scale-105 transition-transform">E</div>
+      <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] hidden sm:block">EventSphere</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1.5">
+      <a href="index.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555]">Overview</a>
+      <a href="events.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555]">Live Events</a>
+      <a href="gallery.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555]">Gallery</a>
+      <a href="about.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] bg-[#2d2d2d] !text-[#f5f5f0]">About</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="login.html" class="btn-outline px-4 py-2 text-xs">Log In</a>
+      <a href="register.html" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="relative overflow-hidden" style="background:linear-gradient(120deg,#16132a,#2b2358 55%,#433a86);">
+  <video class="absolute inset-0 w-full h-full object-cover opacity-40" autoplay muted loop playsinline preload="metadata"><source src="videos/about.mp4" type="video/mp4"></video>
+  <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(22,19,42,.5),rgba(43,35,88,.65) 70%,rgba(246,244,238,1) 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24">
+    <nav class="flex items-center gap-2 text-[11px] font-mono-custom tracking-widest uppercase text-[#b9b3d6] mb-6 rv">
+      <a href="index.html" class="hover:text-white transition-colors">Home</a><span>/</span><span class="text-[#d8c9a3]">About Us</span>
+    </nav>
+    <h1 class="font-display text-5xl sm:text-6xl font-semibold text-[#f5f5f0] leading-[1.05] rv">Built So No Campus Moment<br /><span class="font-serif-custom italic text-[#d8c9a3]">Gets Missed.</span></h1>
+    <p class="text-sm sm:text-base text-[#c9c4de] max-w-xl mt-5 leading-relaxed rv">EventSphere replaces noticeboards and scattered group chats with one centralized platform for discovering, managing, and remembering every campus event.</p>
+  </div>
+</section>
+
+<section class="relative section-video-wrap py-14 md:py-20">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/about-mission.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.74) 15%,rgba(246,244,238,.7) 85%,#f6f4ee 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+    <div class="rv">
+      <span class="badge-tag mb-4">Why we exist</span>
+      <h2 class="font-display text-4xl sm:text-5xl text-[#2d2d2d] leading-tight mb-6">From missed posters to a <span class="font-serif-custom italic text-[#433a86]">living calendar.</span></h2>
+      <p class="text-sm text-[#555] leading-relaxed mb-4">Colleges run dozens of events every semester — hackathons, cultural nights, sports meets, workshops. Yet details traditionally travel by noticeboard and word-of-mouth, so students miss updates, organizers juggle spreadsheets, and participation stays lower than it should be.</p>
+      <p class="text-sm text-[#555] leading-relaxed mb-8">EventSphere centralizes everything: real-time event discovery with live seat counts, online registration with QR check-in, automated waitlists, e-certificates, media galleries, and role-based dashboards for participants, organizers, and admins.</p>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="text-center p-4 rounded-2xl bg-white border border-[#2d2d2d]/8"><p class="font-display text-3xl font-bold text-[#433a86]" data-count="14000">0</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Students</p></div>
+        <div class="text-center p-4 rounded-2xl bg-white border border-[#2d2d2d]/8"><p class="font-display text-3xl font-bold text-[#2d2d2d]" data-count="320">0</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Events / yr</p></div>
+        <div class="text-center p-4 rounded-2xl bg-white border border-[#2d2d2d]/8"><p class="font-display text-3xl font-bold text-[#7d75b8]" data-count="96">0</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">% Satisfaction</p></div>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-5">
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><i data-lucide="radar" class="w-6 h-6 text-[#433a86] mb-4"></i><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mb-2">Real-Time Discovery</h3><p class="text-xs text-[#66665c] leading-relaxed">Live slot counts, instant updates on schedule or venue changes, and smart filters by department, type, and date.</p></div>
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><i data-lucide="ticket-check" class="w-6 h-6 text-[#433a86] mb-4"></i><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mb-2">Paperless Entry</h3><p class="text-xs text-[#66665c] leading-relaxed">Register online in seconds, get a QR pass instantly, and walk in — no queues, no paper lists at the gate.</p></div>
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><i data-lucide="award" class="w-6 h-6 text-[#433a86] mb-4"></i><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mb-2">Verified Certificates</h3><p class="text-xs text-[#66665c] leading-relaxed">Attendance is validated by QR scan, so issued e-certificates carry real weight on your resume.</p></div>
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><i data-lucide="shield-check" class="w-6 h-6 text-[#433a86] mb-4"></i><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mb-2">Role-Based Control</h3><p class="text-xs text-[#66665c] leading-relaxed">Participants register, organizers manage, admins approve — every action scoped to the right role.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="relative section-video-wrap pb-20">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/about-flow.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.74) 15%,rgba(246,244,238,.7) 85%,#f6f4ee 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="font-display text-3xl sm:text-4xl text-[#2d2d2d] mb-3 rv">How EventSphere Works</h2>
+    <p class="text-sm text-[#66665c] mb-10 max-w-xl rv">One flow, four roles — from proposal to certificate.</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><span class="font-mono-custom text-xs text-[#a39e8d]">STEP 01</span><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mt-2 mb-2">Organizer Proposes</h3><p class="text-xs text-[#66665c] leading-relaxed">Staff create the event with venue, capacity, and rulebook — it enters a pending approval queue.</p></div>
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><span class="font-mono-custom text-xs text-[#a39e8d]">STEP 02</span><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mt-2 mb-2">Admin Approves</h3><p class="text-xs text-[#66665c] leading-relaxed">Admins review proposals for quality and clashes, then publish them live to the whole campus.</p></div>
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><span class="font-mono-custom text-xs text-[#a39e8d]">STEP 03</span><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mt-2 mb-2">Students Register</h3><p class="text-xs text-[#66665c] leading-relaxed">Participants grab seats in real time (or join the waitlist) and receive QR passes for entry.</p></div>
+      <div class="card-natural border border-[#2d2d2d12] p-6 rv"><span class="font-mono-custom text-xs text-[#a39e8d]">STEP 04</span><h3 class="font-display font-semibold text-lg text-[#2d2d2d] mt-2 mb-2">Certificates Issue</h3><p class="text-xs text-[#66665c] leading-relaxed">QR attendance feeds certificates and feedback — closing the loop for everyone involved.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="relative section-video-wrap pb-24">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/about-cta.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.74) 15%,rgba(246,244,238,.7) 85%,#f6f4ee 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="relative overflow-hidden rounded-[2rem] p-10 sm:p-14 text-center rv" style="background:linear-gradient(120deg,#16132a,#2b2358 55%,#433a86);">
+      <video class="absolute inset-0 w-full h-full object-cover opacity-25" autoplay muted loop playsinline preload="metadata"><source src="videos/about-cta.mp4" type="video/mp4"></video>
+      <div class="relative">
+        <h2 class="font-display text-3xl sm:text-5xl text-[#f5f5f0] mb-4">Ready to jump in?</h2>
+        <p class="text-sm text-[#c9c4de] max-w-md mx-auto mb-8">Create your student account and never miss another campus moment.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a href="register.html" class="btn-primary px-7 py-3.5 text-xs uppercase tracking-widest !bg-[#f5f5f0] !text-[#2b2358] hover:!bg-white">Create Free Account</a>
+          <a href="contact.html" class="btn-outline px-7 py-3.5 text-xs uppercase tracking-widest !bg-transparent !text-[#f5f5f0] !border-white/30 hover:!bg-white/10">Talk to Us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="bg-[#e8e6dc] text-[#2d2d2d] pt-14 pb-8 -mt-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#2d2d2d15] text-xs text-[#6b6b5c]">
+      <p>© 2026 EventSphere · Centralized Campus Event Information &amp; Registration System.</p>
+      <div class="flex items-center gap-4 text-[11px] font-mono-custom"><a href="index.html#sitemap" class="hover:text-[#433a86]">Sitemap</a><span>·</span><span>Natural Tones Theme</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) {
+  en.target.classList.add('in'); io.unobserve(en.target);
+  en.target.querySelectorAll('[data-count]').forEach((el) => {
+    const target = +el.dataset.count; const t0 = performance.now();
+    const step = (t) => { const p = Math.min(1, (t - t0) / 1600); el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString(); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+} }), { threshold: .15 });
+document.querySelectorAll('[data-count]').forEach((el) => io.observe(el.closest('[data-rv]') || el));
+document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+</script>
+</body>
+</html>

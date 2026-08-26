@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png">
+<title>Sign Up — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .field{width:100%;border-radius:.9rem;border:1px solid rgba(37,34,48,.15);background:#fff;padding:.85rem 1rem;font-size:.85rem;outline:none;transition:border-color .3s;}
+  .field:focus{border-color:var(--olive);}
+  .field.err{border-color:#a65b44;background:#fdf6f3;}
+  select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888d75' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link.nav-active{background:#2d2d2d !important;color:#f5f5f0 !important;}
+  #mobile-menu{display:none;}
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .hint{font-size:10px;color:#888d75;margin-top:.35rem;display:none;}
+  .hint.show{display:block;color:#a65b44;}
+  .section-video-wrap{position:relative;overflow:hidden;}
+  .section-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .section-video-overlay{position:absolute;inset:0;}
+  .section-content{position:relative;z-index:1;}
+  #scroll-progress{position:absolute;bottom:0;left:0;height:2px;background:var(--olive);transition:width .15s;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<header id="navbar" class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4 lg:gap-8">
+      <a href="index.html" class="flex items-center gap-3 group justify-self-start">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 group-hover:rotate-3 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] leading-none">EventSphere</span>
+            <span class="hidden sm:inline text-[10px] font-mono-custom tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#e8e6dc] text-[#433a86] font-semibold">v1.0</span>
+          </div>
+          <p class="hidden sm:block text-[10px] text-[#6b6b5c] tracking-[.18em] uppercase font-medium mt-0.5">Campus Event System</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center justify-center gap-1.5" aria-label="Primary">
+        <a href="index.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] flex items-center gap-1.5"><i data-lucide="home" class="w-3.5 h-3.5"></i> Overview</a>
+        <a href="events.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Live Events</a>
+        <a href="gallery.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gallery</a>
+        <a href="faq.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i> FAQs</a>
+        <a href="contact.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5"></i> Contact</a>
+      </nav>
+      <div class="flex items-center gap-2 sm:gap-3 justify-self-end">
+        <div class="relative hidden xl:block w-48 2xl:w-56">
+          <input id="event-search" type="text" placeholder="Search events..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-full bg-[#e8e6dc] border border-transparent focus:border-[#433a86] focus:bg-white focus:outline-none transition-all placeholder:text-[#888d75]" />
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c]"></i>
+        </div>
+        <button class="relative p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Notifications">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute top-1 right-1 w-4 h-4 bg-[#a65b44] text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
+        </button>
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="login.html" class="btn-outline px-4 py-2 text-xs">Log In</a>
+          <a href="register.html" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+        </div>
+        <button id="menu-toggle" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="scroll-progress" aria-hidden="true"></div>
+</header>
+
+<div id="mobile-menu" class="fixed inset-0 z-50 flex-col bg-[#f6f4ee]/95 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6">
+    <div class="flex items-center justify-between h-20 border-b border-[#2d2d2d]/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold tracking-tight text-[#2d2d2d]">EventSphere</span>
+      </div>
+      <button id="menu-close" class="p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Close menu">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col justify-center gap-1 px-8 sm:px-12 max-w-7xl mx-auto w-full" aria-label="Mobile">
+    <a href="index.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">01</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Overview</span>
+    </a>
+    <a href="events.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">02</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Live Events</span>
+    </a>
+    <a href="gallery.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">03</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Gallery</span>
+    </a>
+    <a href="faq.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">04</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">FAQs</span>
+    </a>
+    <a href="contact.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">05</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Contact</span>
+    </a>
+  </nav>
+  <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 pb-10">
+    <div class="menu-item flex gap-3">
+      <a href="login.html" class="btn-outline flex-1 py-3 text-xs">Log In</a>
+      <a href="register.html" class="btn-primary flex-1 py-3 text-xs">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<main>
+<div class="min-h-screen grid lg:grid-cols-2">
+
+  <section class="order-first lg:order-none flex flex-col justify-center px-6 sm:px-14 lg:px-20 py-12">
+    <a href="index.html" class="lg:hidden flex items-center gap-3 mb-10 rv">
+      <div class="w-10 h-10 rounded-2xl overflow-hidden"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+      <span class="font-serif-custom text-xl font-bold text-[#2d2d2d]">EventSphere</span>
+    </a>
+    <div class="max-w-md w-full mx-auto lg:mx-0">
+      <span class="badge-tag mb-4 rv">Free student account</span>
+      <h1 class="font-display text-4xl sm:text-5xl font-semibold text-[#2d2d2d] mb-2 rv">Join <span class="font-serif-custom italic text-[#433a86]">EventSphere.</span></h1>
+      <p class="text-sm text-[#66665c] mb-8 rv">Register once — every fest, workshop and certificate in one dashboard.</p>
+
+      <form id="reg-form" novalidate class="space-y-4 rv">
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Full Name *</span><input id="rg-name" type="text" class="field mt-1.5" placeholder="Aisha Patel" autocomplete="name" /><p class="hint" id="h-name">Please enter your full name (min 3 letters).</p></label>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Campus Email *</span><input id="rg-email" type="email" class="field mt-1.5" placeholder="you@student.edu" autocomplete="email" /><p class="hint" id="h-email">Enter a valid email address.</p></label>
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Contact Number *</span><input id="rg-phone" type="tel" class="field mt-1.5" placeholder="03XX-XXXXXXX" autocomplete="tel" /><p class="hint" id="h-phone">Enter a valid phone number.</p></label>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Department *</span>
+            <select id="rg-dept" class="field mt-1.5"><option value="">Select department…</option><option>Computer Science &amp; AI</option><option>Electronics &amp; Robotics</option><option>Business Administration</option><option>Civil Engineering</option><option>Mechanical Engineering</option><option>Arts &amp; Humanities</option></select>
+            <p class="hint" id="h-dept">Please choose your department.</p>
+          </label>
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Enrolment No. *</span><input id="rg-enroll" type="text" class="field mt-1.5" placeholder="CS-2026-047" /><p class="hint" id="h-enroll">Format looks wrong — e.g. CS-2026-047.</p></label>
+        </div>
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Password *</span><input id="rg-pass" type="password" class="field mt-1.5" placeholder="Min 8 characters" autocomplete="new-password" /><p class="hint" id="h-pass">Use at least 8 characters with a number.</p></label>
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Confirm Password *</span><input id="rg-pass2" type="password" class="field mt-1.5" placeholder="Repeat password" autocomplete="new-password" /><p class="hint" id="h-pass2">Passwords do not match.</p></label>
+
+        <label class="flex items-start gap-2 text-xs text-[#555] cursor-pointer pt-1"><input type="checkbox" id="rg-terms" class="accent-[#433a86] mt-0.5" /> I agree to the Terms of Use and the campus events code of conduct.</label>
+        <button type="submit" class="btn-primary w-full py-3.5 text-xs uppercase tracking-widest"><i data-lucide="user-plus" class="w-4 h-4"></i> Create Account</button>
+      </form>
+
+      <p class="text-xs text-[#66665c] mt-7 rv">Already registered? <a href="login.html" class="text-[#433a86] font-bold hover:underline">Log in instead →</a></p>
+    </div>
+  </section>
+
+  <section class="relative hidden lg:block overflow-hidden order-none" style="background:linear-gradient(140deg,#16132a,#2b2358 55%,#433a86);">
+    <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata"><source src="videos/auth.mp4" type="video/mp4"></video>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(22,19,42,.35),rgba(43,35,88,.7));"></div>
+    <div class="relative h-full flex flex-col justify-between p-12">
+      <a href="index.html" class="flex items-center gap-3 group w-max">
+        <div class="w-11 h-11 rounded-2xl overflow-hidden border border-white/20 group-hover:scale-105 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold text-[#f5f5f0]">EventSphere</span>
+      </a>
+      <div>
+        <p class="font-serif-custom italic text-4xl text-[#f5f5f0] leading-snug mb-6">"14,000 students.<br />320 events a year.<br />Zero missed posters."</p>
+        <ul class="space-y-2.5 text-xs text-[#b9b3d6]">
+          <li class="flex items-center gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#d8c9a3]"></i>Instant QR passes for every registration</li>
+          <li class="flex items-center gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#d8c9a3]"></i>Automatic waitlist promotion</li>
+          <li class="flex items-center gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#d8c9a3]"></i>Verified e-certificates after attendance</li>
+        </ul>
+      </div>
+      <p class="text-[11px] font-mono-custom tracking-widest uppercase text-[#8f89ad]">TechWiz 6 Project · v1.0</p>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer class="relative section-video-wrap bg-[#e8e6dc] text-[#2d2d2d] pt-16 pb-10">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/footer.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.72) 20%,rgba(232,230,220,.8) 80%,rgba(232,230,220,.92) 100%);"></div>
+  <div class="section-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#2d2d2d15]">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <div>
+            <span class="font-display text-2xl font-bold tracking-tight block leading-none">EventSphere</span>
+            <span class="text-[10px] text-[#6b6b5c] uppercase tracking-widest font-mono-custom">Campus Events Portal</span>
+          </div>
+        </div>
+        <p class="text-xs text-[#555] leading-relaxed max-w-sm">Unified Campus Event Management &amp; Ticketing System. Real-time seating capacity, verified e-certificates, and automated waitlists — all in one place.</p>
+        <div class="flex items-center gap-2 pt-2">
+          <span class="badge-tag !bg-white">TechWiz 6 Project</span>
+          <span class="badge-tag !bg-white">ISO 27001 Accredited</span>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Navigation</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="index.html" class="hover:text-[#433a86] transition-colors">Home &amp; Schedule</a></li>
+          <li><a href="events.html" class="hover:text-[#433a86] transition-colors">Live Events Directory</a></li>
+          <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors">Moments Archive</a></li>
+          <li><a href="faq.html" class="hover:text-[#433a86] transition-colors">FAQs &amp; Support</a></li>
+          <li><a href="contact.html" class="hover:text-[#433a86] transition-colors">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Event Categories</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li>Technical &amp; Hackathons</li>
+          <li>Cultural &amp; Music Galas</li>
+          <li>Sports Meets &amp; Track</li>
+          <li>Workshops &amp; Seminars</li>
+        </ul>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Dashboards</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors">Student Dashboard</a></li>
+          <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors">Organizer Dashboard</a></li>
+          <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors">Admin Control Center</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6b6b5c]">
+      <p>© 2026 EventSphere · Centralized Campus Event Information &amp; Registration System.</p>
+      <div class="flex items-center gap-4 text-[11px] font-mono-custom">
+        <span>Natural Tones Theme</span><span>·</span><span>Version 2.4.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+lucide.createIcons();
+window.addEventListener('load', () => document.querySelectorAll('.rv').forEach((el, i) => setTimeout(() => el.classList.add('in'), 60 + i * 70)));
+
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => el.remove(), 4000);
+};
+
+const mark = (id, hintId, ok) => {
+  document.getElementById(id).classList.toggle('err', !ok);
+  document.getElementById(hintId).classList.toggle('show', !ok);
+  return ok;
+};
+
+document.getElementById('reg-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const v = (id) => document.getElementById(id).value.trim();
+  let ok = true;
+  ok &= mark('rg-name', 'h-name', v('rg-name').length >= 3);
+  ok &= mark('rg-email', 'h-email', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('rg-email')));
+  ok &= mark('rg-phone', 'h-phone', /^[+\d][\d\s\-]{7,14}$/.test(v('rg-phone')));
+  ok &= mark('rg-dept', 'h-dept', v('rg-dept') !== '');
+  ok &= mark('rg-enroll', 'h-enroll', /^[A-Za-z]{2,4}-\d{4}-\d{2,4}$/.test(v('rg-enroll')));
+  ok &= mark('rg-pass', 'h-pass', v('rg-pass').length >= 8 && /\d/.test(v('rg-pass')));
+  ok &= mark('rg-pass2', 'h-pass2', v('rg-pass2') !== '' && v('rg-pass2') === v('rg-pass'));
+  if (!document.getElementById('rg-terms').checked) { showToast('Please accept the terms to continue', 'file-warning'); return; }
+  if (!ok) { showToast('Please fix the highlighted fields', 'alert-circle'); return; }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity=".3"/><path d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z" fill="currentColor"/></svg> Creating...';
+
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        name: v('rg-name'),
+        email: v('rg-email'),
+        username: v('rg-email').split('@')[0],
+        contact_number: v('rg-phone'),
+        department: v('rg-dept'),
+        enrolment_no: v('rg-enroll'),
+        password: v('rg-pass'),
+        password_confirmation: v('rg-pass2'),
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      const msg = data.message || Object.values(data.errors || {}).flat().join(', ');
+      showToast(msg, 'alert-circle');
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      return;
+    }
+
+    if (data.data && data.data.token) {
+      localStorage.setItem('es_token', data.data.token);
+      localStorage.setItem('es_user', JSON.stringify(data.data.user));
+    }
+    localStorage.setItem('es_verify_email', v('rg-email'));
+    if (data.otp) localStorage.setItem('es_otp_backup', data.otp);
+
+    const otpMsg = data.email_sent
+      ? 'Account created! Check your email for OTP.'
+      : 'Account created! Your OTP: <strong>' + data.otp + '</strong>';
+    showToast(otpMsg.replace(/<[^>]+>/g, ''), 'party-popper');
+    setTimeout(() => location.href = '/verify-otp', 1500);
+  } catch (err) {
+    showToast('Something went wrong. Try again.', 'alert-circle');
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
+});
+
+const menuToggle = document.getElementById('menu-toggle');
+const menuClose = document.getElementById('menu-close');
+const mobileMenu = document.getElementById('mobile-menu');
+if (menuToggle && mobileMenu) {
+  menuToggle.addEventListener('click', () => { mobileMenu.style.display = 'flex'; document.body.style.overflow = 'hidden'; });
+}
+if (menuClose && mobileMenu) {
+  menuClose.addEventListener('click', () => { mobileMenu.style.display = 'none'; document.body.style.overflow = ''; });
+}
+if (mobileMenu) {
+  mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { mobileMenu.style.display = 'none'; document.body.style.overflow = ''; }));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23433a86'/><text x='32' y='45' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='36' fill='%23f6f4ee' text-anchor='middle'>E</text></svg>">
+<title>Organizer Dashboard — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tailwind-local.css">
+<script src="lucide-local.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--sand2);border-radius:99px;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);transform:translateY(-2px);}
+  .card-natural{background:#fff;border-radius:1.5rem;border:1px solid rgba(37,34,48,.06);box-shadow:0 2px 10px -4px rgba(37,34,48,.06);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .side-link{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-radius:1rem;font-size:.8rem;font-weight:600;color:#555;transition:all .3s ease;}
+  .side-link:hover{background:var(--sand2);color:#2d2d2d;}
+  .side-link.active{background:var(--olive);color:#f5f5f0;}
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:50;width:260px;background:#fff;border-right:1px solid rgba(37,34,48,.06);transform:translateX(-100%);transition:transform .45s cubic-bezier(.16,1,.3,1);}
+  #sidebar.open{transform:none;}
+  @media(min-width:1024px){#sidebar{transform:none;}main{margin-left:260px;}}
+  .field{width:100%;border-radius:.9rem;border:1px solid rgba(37,34,48,.15);background:#fff;padding:.85rem 1rem;font-size:.85rem;outline:none;transition:border-color .3s;}
+  .field:focus{border-color:var(--olive);}
+  select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888d75' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .scan-line{width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--olive),transparent);animation:scan 2s ease-in-out infinite;}
+  @keyframes scan{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+  .section-video-wrap{position:relative;overflow:hidden;isolation:isolate;}
+  .section-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .section-video-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .section-video-wrap>.relative{position:relative;z-index:2;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<aside id="sidebar">
+  <div class="h-20 flex items-center gap-3 px-6 border-b border-[#2d2d2d08]">
+    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#8c6a38] to-[#6b5220] text-white flex items-center justify-center font-serif-custom text-xl font-bold italic">E</div>
+    <span class="font-serif-custom text-lg font-bold text-[#2d2d2d]">EventSphere</span>
+    <button id="side-close" class="lg:hidden ml-auto p-1.5 rounded-full hover:bg-[#e8e6dc]" aria-label="Close menu"><i data-lucide="x" class="w-4 h-4"></i></button>
+  </div>
+  <nav class="p-4 space-y-1">
+    <p class="text-[10px] font-mono-custom tracking-widest uppercase text-[#888d75] px-3 pb-2">Organizer</p>
+    <a href="#overview" class="side-link active"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview</a>
+    <a href="#my-events" class="side-link"><i data-lucide="calendar" class="w-4 h-4"></i> My Events</a>
+    <a href="#create" class="side-link"><i data-lucide="plus-circle" class="w-4 h-4"></i> Create Event</a>
+    <a href="#scan" class="side-link"><i data-lucide="scan-qr-code" class="w-4 h-4"></i> Attendance Scanner</a>
+    <a href="#media" class="side-link"><i data-lucide="image" class="w-4 h-4"></i> Upload Media</a>
+    <hr class="border-[#2d2d2d08] my-3" />
+    <a href="index.html" class="side-link"><i data-lucide="home" class="w-4 h-4"></i> Home Page</a>
+    <a href="login.html" class="side-link !text-[#a65b44]"><i data-lucide="log-out" class="w-4 h-4"></i> Log Out</a>
+  </nav>
+</aside>
+
+<main class="min-h-screen">
+  <header class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8 flex items-center justify-between h-20 gap-4">
+      <div class="flex items-center gap-3">
+        <button id="side-open" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc]" aria-label="Open menu"><i data-lucide="menu" class="w-6 h-6"></i></button>
+        <div>
+          <p class="font-display text-lg font-semibold text-[#2d2d2d] leading-none">Organizer: Raza Khan</p>
+          <p class="text-[11px] text-[#888d75] mt-1">roza@campus.edu · Software Engineering Club</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button class="relative p-2 rounded-full hover:bg-[#e8e6dc]" aria-label="Notifications"><i data-lucide="bell" class="w-5 h-5"></i><span class="absolute top-1 right-1 w-4 h-4 bg-[#8c6a38] text-white text-[9px] font-bold rounded-full flex items-center justify-center">5</span></button>
+        <div class="w-9 h-9 rounded-full bg-[#8c6a38] text-white flex items-center justify-center font-display font-bold text-sm">R</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-8 py-8 space-y-10">
+
+    <section id="overview" class="relative section-video-wrap grid grid-cols-2 lg:grid-cols-4 gap-4 rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/organizer-stats.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.8) 20%,rgba(246,244,238,.8) 80%,#f6f4ee 100%);"></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="calendar" class="w-5 h-5 text-[#8c6a38] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">6</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Events Created</p></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="users" class="w-5 h-5 text-[#433a86] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">287</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Total Registrants</p></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="user-check" class="w-5 h-5 text-[#2f6b6e] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">198</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Attended</p></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="message-square" class="w-5 h-5 text-[#a65b44] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">4.3</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Avg. Feedback</p></div>
+    </section>
+
+    <section id="my-events" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/organizer-myevents.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <div class="flex items-center justify-between mb-5"><h2 class="font-display text-2xl font-semibold text-[#2d2d2d] flex items-center gap-2.5"><i data-lucide="calendar" class="w-5 h-5 text-[#8c6a38]"></i> My Events</h2><a href="#create" class="btn-primary px-5 py-2.5 text-[11px]"><i data-lucide="plus" class="w-3.5 h-3.5"></i> New Event</a></div>
+        <div class="card-natural border border-[#2d2d2d08] p-6 overflow-x-auto">
+          <table class="w-full text-left text-sm min-w-[600px]">
+            <thead class="text-[11px] uppercase tracking-wider text-[#66665c] font-bold"><tr><th class="pb-3">Event</th><th class="pb-3">Date</th><th class="pb-3">Registered</th><th class="pb-3">Status</th><th class="pb-3 text-right">Action</th></tr></thead>
+            <tbody class="divide-y divide-[#2d2d2d0a] text-[#444]">
+              <tr><td class="py-3.5 font-semibold">CodeForge 2026 Hackathon</td><td class="py-3.5 text-xs">Sep 15, 2026</td><td class="py-3.5 font-bold">94 / 120</td><td class="py-3.5"><span class="badge-tag !bg-[#e2efe9] !text-[#2f6b6e]">Live</span></td><td class="py-3.5 text-right"><button class="manage-btn btn-outline px-3.5 py-1.5 text-[11px]">Manage</button></td></tr>
+              <tr><td class="py-3.5 font-semibold">InnoQuiz Championship</td><td class="py-3.5 text-xs">Oct 18, 2026</td><td class="py-3.5 font-bold">32 / 80</td><td class="py-3.5"><span class="badge-tag">Upcoming</span></td><td class="py-3.5 text-right"><button class="manage-btn btn-outline px-3.5 py-1.5 text-[11px]">Manage</button></td></tr>
+              <tr><td class="py-3.5 font-semibold">Tech Symposium</td><td class="py-3.5 text-xs">Aug 10, 2026</td><td class="py-3.5 font-bold">150 / 150</td><td class="py-3.5"><span class="badge-tag !bg-[#e2efe9] !text-[#2f6b6e]">Completed</span></td><td class="py-3.5 text-right"><button class="manage-btn btn-outline px-3.5 py-1.5 text-[11px]">Report</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="create" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/organizer-create.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-5 flex items-center gap-2.5"><i data-lucide="plus-circle" class="w-5 h-5 text-[#8c6a38]"></i> Create New Event</h2>
+        <form id="create-form" novalidate class="card-natural border border-[#2d2d2d08] p-6 space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Event Name *</span><input type="text" id="ev-name" class="field mt-1.5" placeholder="e.g. AI Hackathon 2026" required /></label>
+            <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Category *</span>
+              <select id="ev-cat" class="field mt-1.5" required><option value="">Select…</option><option>Hackathon</option><option>Workshop</option><option>Cultural</option><option>Sports</option><option>Seminar</option><option>Festival</option></select>
+            </label>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-4">
+            <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Date *</span><input type="date" id="ev-date" class="field mt-1.5" required /></label>
+            <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Capacity *</span><input type="number" id="ev-cap" class="field mt-1.5" placeholder="120" min="1" required /></label>
+            <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Venue</span><input type="text" id="ev-venue" class="field mt-1.5" placeholder="Convocation Hall" /></label>
+          </div>
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Description *</span><textarea id="ev-desc" class="field mt-1.5 min-h-[120px] resize-y" placeholder="Write a compelling event description…"></textarea></label>
+          <div class="flex items-center gap-3"><button type="submit" class="btn-primary px-7 py-3 text-xs uppercase tracking-widest"><i data-lucide="send" class="w-4 h-4"></i> Submit for Approval</button><span class="text-[11px] text-[#888d75]">Admin approval required before going live.</span></div>
+        </form>
+      </div>
+    </section>
+
+    <section id="scan" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/organizer-scanner.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-5 flex items-center gap-2.5"><i data-lucide="scan-qr-code" class="w-5 h-5 text-[#8c6a38]"></i> Attendance Scanner</h2>
+        <div class="card-natural border border-[#2d2d2d08] p-6 flex flex-col items-center text-center max-w-sm mx-auto">
+          <div class="w-56 h-56 rounded-2xl bg-[#16132a] border-2 border-dashed border-[#433a86]/40 flex items-center justify-center overflow-hidden relative">
+            <i data-lucide="scan-qr-code" class="w-12 h-12 text-[#433a86]/60"></i>
+            <div class="scan-line absolute inset-0"></div>
+          </div>
+          <p class="font-display font-semibold text-sm text-[#2d2d2d] mt-5">Ready to scan</p>
+          <p class="text-[11px] text-[#888d75] mt-1 max-w-[220px]">Point camera at participant's QR pass. Auto-promotes waitlisted on success.</p>
+          <div class="grid grid-cols-3 gap-3 mt-5 w-full max-w-[260px]">
+            <div class="bg-[#f0ede2] rounded-xl py-2 text-center"><p class="font-display text-xl font-bold text-[#2f6b6e]">76</p><p class="text-[9px] uppercase tracking-wider text-[#888d75]">Scanned</p></div>
+            <div class="bg-[#f0ede2] rounded-xl py-2 text-center"><p class="font-display text-xl font-bold text-[#a65b44]">18</p><p class="text-[9px] uppercase tracking-wider text-[#888d75]">Pending</p></div>
+            <div class="bg-[#f0ede2] rounded-xl py-2 text-center"><p class="font-display text-xl font-bold text-[#8c6a38]">6</p><p class="text-[9px] uppercase tracking-wider text-[#888d75]">Rejected</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="media" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/organizer-upload.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-5 flex items-center gap-2.5"><i data-lucide="image" class="w-5 h-5 text-[#8c6a38]"></i> Upload Media &amp; Certificates</h2>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="card-natural border border-[#2d2d2d08] p-6">
+            <p class="font-display font-semibold text-sm text-[#2d2d2d] mb-3">Event Photos / Videos</p>
+            <div class="border-2 border-dashed border-[#2d2d2d]/15 rounded-xl py-8 text-center hover:border-[#433a86]/40 transition-colors cursor-pointer" id="drop-media">
+              <i data-lucide="upload-cloud" class="w-8 h-8 text-[#888d75] mx-auto mb-2"></i>
+              <p class="text-xs text-[#66665c]">Drop files or click to upload</p>
+              <p class="text-[10px] text-[#888d75] mt-1">JPG, PNG, MP4 · Max 50 MB</p>
+            </div>
+          </div>
+          <div class="card-natural border border-[#2d2d2d08] p-6">
+            <p class="font-display font-semibold text-sm text-[#2d2d2d] mb-3">Bulk Certificate Upload</p>
+            <div class="border-2 border-dashed border-[#2d2d2d]/15 rounded-xl py-8 text-center hover:border-[#433a86]/40 transition-colors cursor-pointer" id="drop-cert">
+              <i data-lucide="file-badge" class="w-8 h-8 text-[#888d75] mx-auto mb-2"></i>
+              <p class="text-xs text-[#66665c]">Drop PDFs or CSVs here</p>
+              <p class="text-[10px] text-[#888d75] mt-1">Auto-matches by enrolment number</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+lucide.createIcons();
+const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .1 });
+document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => el.remove(), 3800);
+};
+
+const sb = document.getElementById('sidebar');
+document.getElementById('side-open').addEventListener('click', () => { sb.classList.add('open'); document.body.style.overflow = 'hidden'; });
+const closeSb = () => { sb.classList.remove('open'); document.body.style.overflow = ''; };
+document.getElementById('side-close').addEventListener('click', closeSb);
+sb.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', () => { closeSb(); document.querySelectorAll('.side-link').forEach((l) => l.classList.remove('active')); a.classList.add('active'); }));
+
+document.querySelectorAll('.manage-btn').forEach((b) => b.addEventListener('click', () => showToast('Opening event management panel… (demo)', 'settings')));
+document.getElementById('create-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const n = document.getElementById('ev-name').value.trim(), c = document.getElementById('ev-cat').value, d = document.getElementById('ev-date').value, cap = document.getElementById('ev-cap').value;
+  if (!n || !c || !d || !cap) { showToast('Please fill in all required fields', 'alert-circle'); return; }
+  showToast(`"${n}" submitted for admin approval!`, 'send');
+  e.target.reset();
+});
+['drop-media', 'drop-cert'].forEach((id) => document.getElementById(id).addEventListener('click', () => showToast('File picker opened (demo)', 'upload')));
+</script>
+</body>
+</html>

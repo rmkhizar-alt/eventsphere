@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png">
+<title>EventSphere — Welcome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  :root{
+    --bg-sand:#f6f4ee;
+    --olive:#433a86;
+    --olive-dark:#2b2358;
+    --gold-accent:#d8c9a3;
+    --glow:rgba(67,58,134,.22);
+    --muted:#a39e8d;
+  }
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;letter-spacing:-.005em;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--sand2);border-radius:99px;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);box-shadow:0 1px 2px rgba(37,34,48,.08);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999x;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);transform:translateY(-2px);}
+  .card-natural{background:#fff;border-radius:1.5rem;border:1px solid rgba(37,34,48,.06);box-shadow:0 2px 10px -4px rgba(37,34,48,.06);transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s ease;}
+  .card-natural:hover{transform:translateY(-4px);box-shadow:0 20px 40px -10px var(--glow);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link:hover{color:#2d2d2d;background:var(--sand2);}
+  .nav-active{background:#2d2d2d!important;color:#f5f5f0!important;}
+  #mobile-menu{display:none;}
+  .rv{opacity:0;transform:translateY(26px);filter:blur(4px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1),filter .9s ease;}
+  .rv.in{opacity:1;transform:none;filter:none;}
+  .section-video-wrap{position:relative;overflow:hidden;isolation:isolate;}
+  .section-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .section-video-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .section-video-wrap>.relative{position:relative;z-index:2;}
+  .focus-ring{position:absolute;inset:0;opacity:.3;pointer-events:none;}
+  .video-play-button{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:80px;height:80px;border-radius:50%;background:var(--olive);
+    display:flex;align-items:center;justify-content:center;z-index:10;
+    color:#fff;font-size:3rem;cursor:pointer;transition:transform .2s,background .2s;
+    border:4px solid var(--bg-sand);
+  }
+  .video-play-button:hover{background:var(--olive-dark);transform:translate(-50%,-50%) scale(1.1);}
+  .video-overlay{
+    position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,19,42,.8),rgba(43,35,88,.9) 70%,rgba(246,244,238,1) 100%);
+    z-index:1;
+  }
+  .intro-content{position:relative;z-index:2;min-height:400px;display:flex;align-items:center;justify-content:center;}
+  .intro-text{text-align:center;color:#fff;padding:2rem;}
+  .intro-text h1{font-size:clamp(2rem,6vw,4rem);font-weight:600; margin-bottom:1rem;}
+  .intro-text p{font-size:clamp(.875rem,2vw,1rem); opacity:.8; max-width:600px; margin:0 auto;}
+  .intro-skip{
+    position:absolute;right:2rem;bottom:2rem;color:#6f6990;font-size:9px;
+    letter-spacing:.3em;text-transform:uppercase;pointer-events:none;
+  }
+  .intro-sound-toggle{
+    position:absolute;left:2rem;bottom:2rem;display:inline-flex;align-items:center;gap:.5rem;
+    padding:.55rem 1rem;border-radius:9999px;font-size:9px;letter-spacing:.32em;
+    text-transform:uppercase;font-weight:700;color:#8f89ad;border:1px solid rgba(246,244,238,.16);
+    background:rgba(11,9,22,.4);backdrop-filter:blur(8px);
+  }
+  .intro-sound-toggle:hover{border-color:rgba(246,244,238,.35);color:#d8c9a3;}
+  .intro-sound-toggle.on{color:#d8c9a3;border-color:rgba(216,201,163,.55);box-shadow:0 0 18px rgba(216,201,163,.18);}
+  @media (prefers-reduced-motion: reduce){
+    .video-play-button{transition:none;}
+  }
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<!-- Intro Video Section -->
+<section class="min-h-screen relative overflow-hidden">
+  <!-- Background Video -->
+  <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full section-video-bg"
+    src="videos/kling-hero-v2.mp4" type="video/mp4"></video>
+  
+  <!-- Video Overlay Gradient -->
+  <div class="section-video-overlay"></div>
+  
+  <!-- Video Play Button (for mobile/tap) -->
+  <div class="video-play-button" id="playButton" aria-label="Play intro video">
+    <i data-lucide="play" class="w-8 h-8"></i>
+  </div>
+  
+  <!-- Intro Content Overlay -->
+  <div class="intro-content">
+    <div class="intro-text">
+      <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold text-[#f6f4ee] leading-[1.05]">
+        EventSphere<br />
+        <span class="font-serif-custom italic text-[#d8c9a3]">Centralized Campus Event Experience.</span>
+      </h1>
+      <p class="text-base sm:text-lg text-[#c9c4de] max-w-2xl mx-auto mt-4">
+        The premier platform for discovering, managing, and remembering every campus event.
+        From hackathons to cultural galas, sports meets to workshops — never miss another moment.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 pt-6">
+        <a href="index.html" class="btn-primary px-7 py-3.5 text-xs uppercase tracking-widest">Get Started</a>
+        <a href="events.html" class="btn-outline px-7 py-3.5 text-xs uppercase tracking-widest hover:bg-[#f5f5f0] hover:text-[#2b2358]">Browse Events</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Skip Link -->
+  <p class="intro-skip">Click to skip</p>
+  
+  <!-- Sound Toggle -->
+  <button class="intro-sound-toggle font-mono-custom" aria-label="Toggle sound" id="soundToggle">
+    <i data-lucide="volume-off" class="w-3.5 h-3.5"></i>
+    Sound
+  </button>
+</section>
+
+<!-- Main Content -->
+<main class="pt-6">
+  <!-- Announcements -->
+  <div id="announce-bar" class="relative z-40 bg-[#2b2358] text-[#f5f5f0] overflow-hidden">
+    <div class="max-w-7xl mx-auto px-12 sm:px-14 lg:px-8 py-2 flex items-center justify-center gap-3">
+      <span class="hidden md:inline-flex items-center gap-1.5 font-mono-custom text-[10px] tracking-widest uppercase text-[#d8c9a3] shrink-0">
+        <i data-lucide="megaphone" class="w-3.5 h-3.5"></i> Announcements
+      </span>
+      <p class="text-[11px] sm:text-xs font-medium truncate text-center">
+        TechWiz 6 finals registration closes Sep 30 &nbsp;·&nbsp; Rhythm Nation passes now live &nbsp;·&nbsp; Founders Day volunteer sign-ups open
+      </p>
+      <button id="announce-close" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/10 transition-colors opacity-70 hover:opacity-100" aria-label="Dismiss announcements">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header id="navbar" class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4 lg:gap-8">
+        <a href="#top" class="flex items-center gap-3 group justify-self-start">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 group-hover:rotate-3 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] leading-none">EventSphere</span>
+              <span class="hidden sm:inline text-[10px] font-mono-custom tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#e8e6dc] text-[#433a86] font-semibold">v1.0</span>
+            </div>
+            <p class="hidden sm:block text-[10px] text-[#6b6b5c] tracking-[.18em] uppercase font-medium mt-0.5">Campus Event System</p>
+          </div>
+        </a>
+        <nav class="hidden lg:flex items-center justify-center gap-1.5" aria-label="Primary">
+          <a href="#top" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] flex items-center gap-1.5"><i data-lucide="home" class="w-3.5 h-3.5"></i> Overview</a>
+          <a href="events.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Live Events</a>
+          <a href="gallery.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gallery</a>
+          <a href="#reviews" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="star" class="w-3.5 h-3.5"></i> Reviews</a>
+        </nav>
+        <div class="flex items-center gap-2 sm:gap-3 justify-self-end">
+          <div class="relative hidden xl:block w-48 2xl:w-56">
+            <input id="event-search" type="text" placeholder="Search events..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-full bg-[#e8e6dc] border border-transparent focus:border-[#433a86] focus:bg-white focus:outline-none transition-all placeholder:text-[#888d75]" />
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c]"></i>
+          </div>
+          <button class="relative p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Notifications">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span class="absolute top-1 right-1 w-4 h-4 bg-[#a65b44] text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
+          </button>
+          <div class="hidden sm:flex items-center gap-2">
+            <a href="login.html" class="btn-outline px-4 py-2 text-xs">Log In</a>
+            <a href="register.html" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+          </div>
+          <button id="menu-toggle" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="fixed inset-0 z-50 flex-col bg-[#f6f4ee]/95 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-label="Site menu">
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6">
+      <div class="flex items-center justify-between h-20 border-b border-[#2d2d2d]/10">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <span class="font-serif-custom text-2xl font-bold tracking-tight text-[#2d2d2d]">EventSphere</span>
+        </div>
+        <button id="menu-close" class="p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Close menu">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+    <nav class="flex-1 flex flex-col justify-center gap-1 px-8 sm:px-12 max-w-7xl mx-auto w-full" aria-label="Mobile">
+      <a href="#top" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+        <span class="font-mono-custom text-xs text-[#a39e8d]">01</span>
+        <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Overview</span>
+      </a>
+      <a href="events.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+        <span class="font-mono-custom text-xs text-[#a39e8d]">02</span>
+        <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Live Events</span>
+      </a>
+      <a href="gallery.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+        <span class="font-mono-custom text-xs text-[#a39e8d]">03</span>
+        <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Gallery</span>
+      </a>
+      <a href="#reviews" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+        <span class="font-mono-custom text-xs text-[#a39e8d]">04</span>
+        <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Reviews</span>
+      </a>
+    </nav>
+    <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 pb-10">
+      <div class="menu-item flex gap-3">
+        <a href="login.html" class="btn-outline flex-1 py-3 text-xs">Log In</a>
+        <a href="register.html" class="btn-primary flex-1 py-3 text-xs">Sign Up</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden section-video-wrap pt-12 pb-16 lg:pb-24">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/kling-hero-v2.mp4" type="video/mp4">
+    </div>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.55) 20%,rgba(246,244,238,.58) 80%,#f6f4ee 100%);"></div>
+
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center gap-3 mb-8" data-reveal data-reveal-y="14">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#433a86]/10 border border-[#433a86]/20 text-[#433a86] text-xs font-semibold uppercase tracking-widest">
+          <span class="w-2 h-2 rounded-full bg-[#433a86] animate-pulse"></span>
+          Official TechWiz 6 Application · SRS v1.0
+        </div>
+        <div class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#2d2d2d]/10 text-xs text-[#66665c]">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#433a86]"></i>
+          Real-Time Slot Engine & QR Validation
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+        <!-- Left -->
+        <div class="lg:col-span-7 space-y-6">
+          <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-tight text-[#2d2d2d]" data-reveal data-reveal-y="24">
+            Centralized Campus <br />
+            <span class="font-serif-custom italic text-[#433a86]">Event Experience.</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-[#66665c] leading-relaxed max-w-xl" data-reveal data-reveal-y="18">
+            EventSphere replaces noticeboards and scattered group messages, leading to missed updates and low participation. Additionally, when staff has to manage these events manually, it often leads to miscommunication, resource mismanagement, scheduling conflicts, and poor student engagement. Our platform solves these problems with real-time event discovery, automated waitlists, and role-based access control.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4 pt-2" data-reveal data-reveal-y="18">
+            <a href="#events" class="flex items-center gap-2 px-7 py-4 rounded-full bg-[#433a86] text-[#f5f5f0] font-semibold text-xs uppercase tracking-widest hover:bg-[#2b2358] shadow-md transition-all">
+              <span>Browse Live Events</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+            <a href="#reviews" class="flex items-center gap-2 px-6 py-4 rounded-full bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] font-semibold text-xs uppercase tracking-widest hover:bg-[#f5f5f0] transition-all">
+              <span>See Reviews</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+
+          <div class="pt-6 border-t border-[#2d2d2d]/10" data-reveal data-reveal-y="14">
+            <p class="text-[11px] uppercase tracking-widest font-bold text-[#66665c] mb-3">Built for every role on campus:</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-[#2d2d2d] text-white border-[#2d2d2d]">1. Visitor</span>
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-white text-[#2d2d2d] border-[#2d2d2d]/15">2. Registered Student</span>
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-white text-[#2d2d2d] border-[#2d2d2d]/15">3. Organizer</span>
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-white text-[#2d2d2d] border-[#2d2d2d]/15">4. Administrator</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="lg:col-span-5 space-y-5" data-reveal data-reveal-y="28" data-reveal-delay=".15">
+          <div class="bg-[#433a86] text-[#f5f5f0] rounded-3xl p-7 shadow-lg relative overflow-hidden">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] uppercase font-bold tracking-widest text-[#d8d4c9] flex items-center gap-1.5">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-[#f5f5f0]"></i> Live Seating Engine
+              </span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#f5f5f0]/15 text-[#f5f5f0] font-mono-custom" id="pct-badge">0% Booked</span>
+            </div>
+
+            <p class="font-serif-custom text-3xl italic mb-2">Dynamic Capacity Control</p>
+            <p class="text-xs text-[#d8d4c9] leading-relaxed mb-6">
+              Automated slot enforcement and intelligent waitlist auto-adjustment. When participants cancel, waitlisted students gain instant confirmed passes.
+            </p>
+
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs font-mono-custom text-[#d8d4c9]">
+                <span><span id="stat-booked">0</span> Confirmed Seats</span>
+                <span><span id="stat-remaining">0</span> Remaining</span>
+              </div>
+              <div class="h-2.5 bg-[#f5f5f0]/20 rounded-full overflow-hidden">
+                <div id="seat-bar" class="h-full bg-[#f5f5f0] rounded-full" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 border border-[#2d2d2d]/10 shadow-sm grid grid-cols-3 gap-4 text-center">
+            <div class="p-3 border-r border-[#2d2d2d]/10">
+              <p class="font-display text-3xl font-bold text-[#433a86]"><span data-count-to="14">0</span></p>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Live Events</p>
+            </div>
+            <div class="p-3 border-r border-[#2d2d2d]/10">
+              <p class="font-display text-3xl font-bold text-[#2d2d2d]"><span data-count-to="1284">0</span></p>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Bookings</p>
+            </div>
+            <div class="p-3">
+              <p class="font-display text-3xl font-bold text-[#7d75b8]"><span data-count-to="612">0</span></p>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Certificates</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Marquee -->
+  <div class="relative bg-[#e8e6dc] py-3 overflow-hidden section-video-wrap">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/marquee.mp4" type="video/mp4">
+    </div>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.5) 30%,rgba(232,230,220,.5) 70%,#f6f4ee 100%);"></div>
+
+    <div class="marquee-track section-content">
+      <div class="flex items-center gap-8 pr-8 text-xs font-semibold uppercase tracking-widest text-[#433a86]">
+        <span>Technical</span><span class="text-[#a39e8d]">·</span>
+        <span>Cultural</span><span class="text-[#a39e8d]">·</span>
+        <span>Sports</span><span class="text-[#a39e8d]">·</span>
+        <span>Workshops</span><span class="text-[#a39e8d]">·</span>
+        <span>Annual Day</span><span class="text-[#a39e8d]">·</span>
+        <span>Competitions</span><span class="text-[#a39e8d]">·</span>
+      </div>
+      <div class="flex items-center gap-8 pr-8 text-xs font-semibold uppercase tracking-widest text-[#433a86]" aria-hidden="true">
+        <span>Technical</span><span class="text-[#a39e8d]">·</span>
+        <span>Cultural</span><span class="text-[#a39e8d]">·</span>
+        <span>Sports</span><span class="text-[#a39e8d]">·</span>
+        <span>Workshops</span><span class="text-[#a39e8d]">·</span>
+        <span>Annual Day</span><span class="text-[#a39e8d]">·</span>
+        <span>Competitions</span><span class="text-[#a39e8d]">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Events Section -->
+  <section id="events" class="relative section-video-wrap">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/events.mp4" type="video/mp4">
+    </div>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.66) 18%,rgba(246,244,238,.6) 82%,#f6f4ee 100%);"></div>
+
+    <div class="section-content py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-8 border-b border-[#2d2d2d12]" data-reveal data-reveal-y="14">
+        <div>
+          <span class="badge-tag mb-3">Happening on campus</span>
+          <h2 class="font-display text-4xl sm:text-5xl text-[#2d2d2d]">Live & Upcoming Events</h2>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2d2d2d] text-white" data-filter="all">All</button>
+          <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Technical">Technical</button>
+          <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Cultural">Cultural</button>
+          <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Sports">Sports</button>
+        </div>
+      </div>
+
+      <div id="events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+        <!-- Cards injected by JS -->
+      </div>
+      <div id="events-empty" class="text-center py-16" style="display:none;">
+        <p class="font-display font-semibold text-2xl text-[#2d2d2d] mb-2">No events found</p>
+        <p class="text-sm text-[#66665c]">Try a different category or search term.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="relative section-video-wrap py-16 md:py-20">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/gallery.mp4" type="video/mp4">
+    </div>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.55) 25%,rgba(232,230,220,.55) 75%,#f6f4ee 100%);"></div>
+
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between mb-8" data-reveal data-reveal-y="14">
+        <div>
+          <span class="badge-tag mb-3">Moments archive</span>
+          <h2 class="font-display text-3xl sm:text-4xl text-[#2d2d2d]">Recent Highlights</h2>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-reveal data-reveal-y="20">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=70" alt="Campus hackathon">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&auto=format&fit=crop&q=70" alt="Cultural gala">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&auto=format&fit=crop&q=70" alt="Sports championship">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=600&auto=format&fit=crop&q=70" alt="Workshop session">
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section id="reviews" class="relative section-video-wrap">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/reviews.mp4" type="video/mp4">
+    </div>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.7) 18%,rgba(246,244,238,.64) 82%,#f6f4ee 100%);"></div>
+
+    <div class="section-content py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10" data-reveal data-reveal-y="14">
+        <span class="badge-tag mb-3">Participant reviews</span>
+        <h2 class="font-display text-4xl sm:text-5xl text-[#2d2d2d]">What Students Say</h2>
+      </div>
+
+      <form id="feedback-form" class="mb-12 card-natural border border-[#2d2d2d12] p-6 sm:p-7 max-w-2xl space-y-5" autocomplete="off" novalidate data-reveal data-reveal-y="16">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h3 class="font-display text-xl font-semibold text-[#2d2d2d]">Rate Your Experience</h3>
+          <span class="badge-tag !bg-white"><i data-lucide="lock" class="w-3 h-3"></i> Sign-in required</span>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <label class="block">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">User Type</span>
+            <select id="fb-type" class="mt-2 w-full rounded-xl border border-[#2d2d2d]/15 bg-white px-3 py-2.5 text-sm text-[#2d2d2d] focus:border-[#433a86] focus:outline-none transition-colors">
+              <option value="Participant">Participant</option>
+              <option value="Visitor">Visitor</option>
+              <option value="Organizer">Organizer</option>
+              <option value="Admin">Administrator</option>
+            </select>
+          </label>
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Overall Rating</span>
+            <div id="fb-stars" class="mt-2 flex items-center gap-1.5" data-value="0" role="radiogroup" aria-label="Overall rating">
+              <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="1 star"><i data-lucide="star" class="w-5 h-5"></i></button>
+              <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="2 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+              <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="3 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+              <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="4 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+              <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="5 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Rate Components</span>
+          <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+              <p class="text-[11px] font-bold text-[#555] mb-1.5">Venue</p>
+              <div class="flex items-center gap-0.5">
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+            <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+              <p class="text-[11px] font-bold text-[#555] mb-1.5">Coordination</p>
+              <div class="flex items-center gap-0.5">
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+            <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+              <p class="text-[11px] font-bold text-[#555] mb-1.5">Technical</p>
+              <div class="flex items-center gap-0.5">
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+            <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+              <p class="text-[11px] font-bold text-[#555] mb-1.5">Hospitality</p>
+              <div class="flex items-center gap-0.5">
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <textarea id="fb-comment" rows="3" placeholder="Comments or suggestions for the organizers (optional)..." class="w-full rounded-xl border border-[#2d2d2d]/15 bg-white px-3.5 py-3 text-sm placeholder:text-[#888d75] focus:border-[#433a86] focus:outline-none transition-colors resize-none"></textarea>
+        <button type="submit" class="btn-primary px-7 py-3 text-xs w-full sm:w-auto">Submit Feedback</button>
+      </form>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="reviews-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Sitemap Section -->
+  <section id="sitemap" class="relative section-video-wrap py-16 md:py-20">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/sitemap.mp4" type="video/mp4">
+    </div>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.62) 22%,rgba(232,230,220,.58) 78%,#f6f4ee 100%);"></div>
+
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10" data-reveal data-reveal-y="14">
+        <span class="badge-tag mb-3">Site structure</span>
+        <h2 class="font-display text-3xl sm:text-4xl text-[#2d2d2d]">Sitemap</h2>
+        <p class="text-sm text-[#66665c] mt-2 max-w-xl">Every corner of EventSphere at a glance — how students, organizers, and admins move through the platform.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" data-reveal data-reveal-y="20">
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="globe" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Public Pages</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li><a href="#top" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Home Overview</a></li>
+            <li><a href="events.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Live Events Directory</a></li>
+            <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Moments Gallery</a></li>
+            <li><a href="#reviews" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Participant Reviews</a></li>
+          </ul>
+        </div>
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="info" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Information</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li><a href="faq.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>FAQs</a></li>
+            <li><a href="contact.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Contact Us</a></li>
+            <li><a href="#sitemap" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Sitemap</a></li>
+            <li><a href="about.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>About EventSphere</a></li>
+          </ul>
+        </div>
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Participant Area</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li><a href="login.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Login</a></li>
+            <li><a href="register.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Create Account</a></li>
+            <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Student Dashboard</a></li>
+            <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Organizer Dashboard</a></li>
+            <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Admin Dashboard</a></li>
+          </ul>
+        </div>
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="shield-check" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Staff & Admin</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Organizer Dashboard</li>
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Event Approval Queue</li>
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Attendance Scanner</li>
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Reports & Analytics</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="relative section-video-wrap py-16 md:py-24">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/faq.mp4" type="video/mp4">
+    </div>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.74) 15%,rgba(246,244,238,.7) 85%,#f6f4ee 100%);"></div>
+
+    <div class="section-content max-w-3xl" data-reveal data-reveal-y="14">
+      <span class="badge-tag mb-3">Support</span>
+      <h2 class="font-display text-3xl sm:text-4xl text-[#2d2d2d] mb-7">Questions, Answered.</h2>
+      <details class="faq">
+        <summary class="flex items-center justify-between gap-4 cursor-pointer list-none py-4 text-sm font-bold text-[#2d2d2d]">
+          How do I register for an event?
+        </summary>
+        <p class="text-sm text-[#66665c] leading-relaxed">Registration is quick and easy! Simply browse our live events directory, click on any event that interests you, and hit the "Register" button. You'll receive a QR pass instantly for check-in at the venue.</p>
+      </details>
+      <details class="faq">
+        <summary class="flex items-center justify-between gap-4 cursor-pointer list-none py-4 text-sm font-bold text-[#2d2d2d]">
+          What if an event is full?
+        </summary>
+        <p class="text-sm text-[#66665c] leading-relaxed">If an event reaches capacity, you'll automatically be added to the waitlist. When a spot opens up, the system will notify you and promote you to confirmed status. You can also view upcoming events and set reminders.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer class="relative section-video-wrap bg-[#e8e6dc] text-[#2d2d2d] pt-16 pb-10">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/footer.mp4" type="video/mp4">
+  </div>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.72) 20%,rgba(232,230,220,.8) 80%,rgba(232,230,220,.92) 100%);"></div>
+
+  <div class="section-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#2d2d2d15]">
+
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <div>
+            <span class="font-display text-2xl font-bold tracking-tight block leading-none">EventSphere</span>
+            <span class="text-[10px] text-[#6b6b5c] uppercase tracking-widest font-mono-custom">Campus Events Portal</span>
+          </div>
+        </div>
+        <p class="text-xs text-[#555] leading-relaxed max-w-sm">
+          Unified Campus Event Management & Ticketing System. Real-time seating capacity, verified e-certificates, and automated waitlists — all in one place.
+        </p>
+        <div class="flex items-center gap-2 pt-2">
+          <span class="badge-tag !bg-white">TechWiz 6 Project</span>
+          <span class="badge-tag !bg-white">ISO 27001 Accredited</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Navigation</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="index.html" class="hover:text-[#433a86] transition-colors">Home & Schedule</a></li>
+          <li><a href="events.html" class="hover:text-[#433a86] transition-colors">Live Events Directory</a></li>
+          <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors">Moments Archive</a></li>
+          <li><a href="faq.html" class="hover:text-[#433a86] transition-colors">FAQs & Support</a></li>
+          <li><a href="contact.html" class="hover:text-[#433a86] transition-colors">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Event Categories</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li>Technical & Hackathons</li>
+          <li>Cultural & Music Galas</li>
+          <li>Sports Meets & Track</li>
+          <li>Workshops & Seminars</li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Dashboards</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors">Student Dashboard</a></li>
+          <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors">Organizer Dashboard</a></li>
+          <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors">Admin Control Center</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6b6b5c]">
+      <p>© 2026 EventSphere · Centralized Campus Event Information & Registration System.</p>
+      <div class="flex items-center gap-4 text-[11px] font-mono-custom">
+        <span>Natural Tones Theme</span><span>·</span><span>Version 2.4.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .15 });
+document.querySelectorAll('[data-count]').forEach((el) => io.observe(el.closest('[data-rv]') || el));
+document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+
+/* Intro video play/pause */
+document.addEventListener('DOMContentLoaded', () => {
+  const video = document.querySelector('.section-video-bg');
+  const playButton = document.getElementById('playButton');
+  const introContent = document.querySelector('.intro-content');
+  
+  if (video && playButton) {
+    // Mute video on load (browser requirement for autoplay)
+    video.muted = true;
+    
+    // Play on button click
+    playButton.addEventListener('click', () => {
+      video.muted = false;
+      video.play().catch(() => {
+        // Auto-play may be blocked, button stays as pause indicator
+        playButton.innerHTML = '<i data-lucide="pause" class="w-8 h-8"></i>';
+      });
+    });
+    
+    // Pause on second click
+    playButton.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        playButton.innerHTML = '<i data-lucide="pause" class="w-8 h-8"></i>';
+      } else {
+        video.pause();
+        playButton.innerHTML = '<i data-lucide="play" class="w-8 h-8"></i>';
+      }
+    });
+  }
+});
+
+/* Sound toggle for intro */
+document.addEventListener('DOMContentLoaded', () => {
+  const soundToggle = document.querySelector('.intro-sound-toggle');
+  if (soundToggle) {
+    soundToggle.addEventListener('click', () => {
+      soundToggle.classList.toggle('on');
+      const icon = soundToggle.querySelector('i');
+      if (soundToggle.classList.contains('on')) {
+        icon.setAttribute('data-lucide', 'volume-2');
+      } else {
+        icon.setAttribute('data-lucide', 'volume-off');
+      }
+      lucide.createIcons();
+    });
+  }
+});
+
+/* Navbar shadow on scroll */
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  if (navbar) {
+    navbar.classList.toggle('shadow-lg', window.scrollY > 60);
+  }
+});
+</script>
+
+</body>
+</html>

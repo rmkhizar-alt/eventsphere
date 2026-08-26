@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23433a86'/><text x='32' y='45' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='36' fill='%23f6f4ee' text-anchor='middle'>E</text></svg>">
+<title>Log In — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tailwind-local.css">
+<script src="lucide-local.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .field{width:100%;border-radius:.9rem;border:1px solid rgba(37,34,48,.15);background:#fff;padding:.85rem 1rem .85rem 2.6rem;font-size:.85rem;outline:none;transition:border-color .3s;}
+  .field:focus{border-color:var(--olive);}
+  .field.err{border-color:#a65b44;background:#fdf6f3;}
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<div class="min-h-screen grid lg:grid-cols-2">
+
+  <section class="relative hidden lg:block overflow-hidden" style="background:linear-gradient(140deg,#16132a,#2b2358 55%,#433a86);">
+    <video class="absolute inset-0 w-full h-full object-cover opacity-40" autoplay muted loop playsinline preload="metadata"><source src="videos/auth.mp4" type="video/mp4"></video>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(22,19,42,.35),rgba(43,35,88,.7));"></div>
+    <div class="relative h-full flex flex-col justify-between p-12">
+      <a href="index.html" class="flex items-center gap-3 group w-max">
+        <div class="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-[#f5f5f0] flex items-center justify-center font-serif-custom text-2xl font-bold italic group-hover:scale-105 transition-transform">E</div>
+        <span class="font-serif-custom text-2xl font-bold text-[#f5f5f0]">EventSphere</span>
+      </a>
+      <div>
+        <p class="font-serif-custom italic text-4xl text-[#f5f5f0] leading-snug mb-5">"Your campus, every event,<br />one pass away."</p>
+        <div class="flex items-center gap-3 text-xs text-[#b9b3d6]">
+          <span class="w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"><i data-lucide="qr-code" class="w-4 h-4 text-[#d8c9a3]"></i></span>
+          QR entry · live seats · e-certificates
+        </div>
+      </div>
+      <p class="text-[11px] font-mono-custom tracking-widest uppercase text-[#8f89ad]">TechWiz 6 Project · v1.0</p>
+    </div>
+  </section>
+
+  <section class="flex flex-col justify-center px-6 sm:px-14 lg:px-20 py-12">
+    <a href="index.html" class="lg:hidden flex items-center gap-3 mb-10 rv">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#433a86] to-[#2b2358] text-[#f5f5f0] flex items-center justify-center font-serif-custom text-2xl font-bold italic">E</div>
+      <span class="font-serif-custom text-xl font-bold text-[#2d2d2d]">EventSphere</span>
+    </a>
+    <div class="max-w-md w-full mx-auto lg:mx-0">
+      <span class="badge-tag mb-4 rv">Welcome back</span>
+      <h1 class="font-display text-4xl sm:text-5xl font-semibold text-[#2d2d2d] mb-2 rv">Log in to <span class="font-serif-custom italic text-[#433a86]">EventSphere.</span></h1>
+      <p class="text-sm text-[#66665c] mb-8 rv">Students, organizers and admins all sign in here.</p>
+
+      <form id="login-form" novalidate class="space-y-4 rv">
+        <label class="block relative">
+          <i data-lucide="mail" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#888d75] pointer-events-none"></i>
+          <input id="li-email" type="email" placeholder="Campus email" class="field" autocomplete="email" />
+        </label>
+        <label class="block relative">
+          <i data-lucide="lock" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#888d75] pointer-events-none"></i>
+          <input id="li-pass" type="password" placeholder="Password" class="field pr-16" autocomplete="current-password" />
+          <button type="button" id="toggle-pass" class="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-bold uppercase tracking-wider text-[#433a86]" aria-label="Show password">Show</button>
+        </label>
+        <div class="flex items-center justify-between text-xs pt-1">
+          <label class="flex items-center gap-2 text-[#555] cursor-pointer"><input type="checkbox" id="remember" class="accent-[#433a86]" /> Remember me</label>
+          <button type="button" id="forgot" class="text-[#433a86] font-semibold hover:underline">Forgot password?</button>
+        </div>
+        <button type="submit" class="btn-primary w-full py-3.5 text-xs uppercase tracking-widest mt-2"><i data-lucide="log-in" class="w-4 h-4"></i> Log In</button>
+      </form>
+
+      <p class="text-xs text-[#66665c] mt-7 rv">New here? <a href="register.html" class="text-[#433a86] font-bold hover:underline">Create a student account →</a></p>
+
+      <div class="mt-10 p-4 rounded-2xl bg-[#efece2] border border-[#2d2d2d08] rv">
+        <p class="text-[11px] font-mono-custom tracking-widest uppercase text-[#888d75] mb-2">Demo credentials</p>
+        <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-semibold">
+          <div class="bg-white rounded-xl py-2 border border-[#2d2d2d06]"><p class="text-[#433a86]">Student</p><p class="font-mono-custom text-[#888d75] mt-0.5">aisha@student.edu</p></div>
+          <div class="bg-white rounded-xl py-2 border border-[#2d2d2d06]"><p class="text-[#8c6a38]">Organizer</p><p class="font-mono-custom text-[#888d75] mt-0.5">raza@campus.edu</p></div>
+          <div class="bg-white rounded-xl py-2 border border-[#2d2d2d06]"><p class="text-[#a65b44]">Admin</p><p class="font-mono-custom text-[#888d75] mt-0.5">admin@campus.edu</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+lucide.createIcons();
+window.addEventListener('load', () => document.querySelectorAll('.rv').forEach((el, i) => setTimeout(() => el.classList.add('in'), 60 + i * 70)));
+
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => el.remove(), 3800);
+};
+
+document.getElementById('toggle-pass').addEventListener('click', function () {
+  const p = document.getElementById('li-pass');
+  p.type = p.type === 'password' ? 'text' : 'password';
+  this.textContent = p.type === 'password' ? 'Show' : 'Hide';
+});
+document.getElementById('forgot').addEventListener('click', () => showToast('Password reset link sent to your email (demo)', 'key-round'));
+
+/* Client-side validation */
+document.getElementById('login-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const email = document.getElementById('li-email'), pass = document.getElementById('li-pass');
+  const okE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim());
+  const okP = pass.value.length >= 6;
+  email.classList.toggle('err', !okE);
+  pass.classList.toggle('err', !okP);
+  if (!okE || !okP) { showToast(okE ? 'Password must be at least 6 characters' : 'Please enter a valid email address', 'alert-circle'); return; }
+  const role = /admin@/.test(email.value) ? 'admin' : /(campus\.edu$)/.test(email.value.trim()) && !/@student\./.test(email.value) ? 'organizer' : 'student';
+  showToast(`Welcome back! Redirecting to your ${role} dashboard…`, 'sparkles');
+  setTimeout(() => { location.href = role === 'admin' ? 'dashboard-admin.html' : role === 'organizer' ? 'dashboard-organizer.html' : 'dashboard-student.html'; }, 1200);
+});
+</script>
+</body>
+</html>

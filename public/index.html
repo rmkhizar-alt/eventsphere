@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png">
+<title>EventSphere — Centralized Campus Event Experience</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Tailwind (utility engine) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<!-- Sound system -->
+<script src="audio-context.js"></script>
+<script>localStorage.setItem('eventSphereSounds', 'false');</script>
+
+<!-- Shared notifications store (used by the navbar bell + notifications.html) -->
+<script src="notifications-data.js"></script>
+
+<style>
+  :root{
+    --bg-sand:#f6f4ee;
+    --text-slate:#252230;
+    --olive-primary:#433a86;
+    --olive-dark:#2b2358;
+    --olive-light:#7d75b8;
+    --accent-glow:rgba(67,58,134,.22);
+    --earth-sand:#dfdacb;
+    --earth-muted:#a39e8d;
+    --earth-border:rgba(37,34,48,.12);
+  }
+  html{scroll-behavior:smooth;}
+  body{
+    background-color:var(--bg-sand);
+    color:var(--text-slate);
+    font-family:'Satoshi',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    letter-spacing:-.005em;
+  }
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif; font-optical-sizing:auto;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif; letter-spacing:-.015em;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--earth-sand);border-radius:9999px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--earth-muted);}
+
+  .btn-primary{
+    background:var(--olive-primary);color:var(--bg-sand);
+    border-radius:9999px;font-weight:700;transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s cubic-bezier(.16,1,.3,1), background .3s ease;
+    box-shadow:0 1px 2px rgba(37,34,48,.08);
+    position:relative; overflow:hidden;
+  }
+  .btn-primary::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,.22), transparent);
+    transform:translateX(-120%); transition:transform .6s ease;
+  }
+  .btn-primary:hover::before{transform:translateX(120%);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);box-shadow:0 14px 28px -10px var(--accent-glow);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-outline{
+    background:#fff;border:1px solid var(--earth-border);border-radius:9999px;
+    font-weight:700;transition:all .3s cubic-bezier(.16,1,.3,1);
+  }
+  .btn-outline:hover{background:var(--bg-sand);border-color:var(--olive-primary);transform:translateY(-2px);}
+
+  .card-natural{
+    background:#fff;border-radius:1.5rem;
+    border:1px solid rgba(37,34,48,.06);
+    box-shadow:0 2px 10px -4px rgba(37,34,48,.06);
+    transition:box-shadow .5s cubic-bezier(.16,1,.3,1), border-color .5s ease, transform .5s cubic-bezier(.16,1,.3,1);
+    will-change:transform;
+    position:relative;
+  }
+  .card-natural::after{
+    content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    padding:1px;background:linear-gradient(150deg, var(--olive-light), transparent 45%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:0; transition:opacity .5s ease;
+  }
+  .card-natural:hover{
+    box-shadow:0 30px 60px -20px var(--accent-glow);
+    transform:translateY(-8px);
+    border-color:transparent;
+  }
+  .card-natural:hover::after{opacity:1;}
+
+  .badge-tag{
+    display:inline-flex;align-items:center;gap:.35rem;
+    background:var(--earth-sand);color:var(--olive-primary);
+    padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+
+  .marquee-track{
+    display:flex;width:max-content;
+    animation:marquee 28s linear infinite;
+  }
+  @keyframes marquee{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  [data-reveal]{opacity:0;}
+  .no-js [data-reveal]{opacity:1;}
+
+  .link-underline{position:relative;}
+  .link-underline::after{
+    content:'';position:absolute;left:0;right:100%;bottom:-2px;height:1px;
+    background:currentColor;transition:right .3s cubic-bezier(.16,1,.3,1);
+  }
+  .link-underline:hover::after{right:0;}
+
+  /* ---------- Navbar polish ---------- */
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link.nav-active{background:#2d2d2d !important;color:#f5f5f0 !important;}
+  #events,#gallery,#reviews,#sitemap,#faq,#contact{scroll-margin-top:96px;}
+
+  /* ---------- Notification bell dropdown ---------- */
+  #notif-dropdown{
+    opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(-6px);
+    transition:opacity .3s cubic-bezier(.16,1,.3,1), transform .3s cubic-bezier(.16,1,.3,1), visibility .3s;
+  }
+  #notif-dropdown.notif-open{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);}
+  .notif-item{position:relative;}
+  .notif-item.is-unread .notif-title{color:#2d2d2d;}
+  .notif-item:not(.is-unread) .notif-title{color:#6b6b5c; font-weight:600;}
+  #notif-badge{display:none;}
+  #notif-badge.show{display:flex;}
+
+  /* ---------- FAQ accordions ---------- */
+  details.faq{border-bottom:1px solid rgba(45,45,45,.09);}
+  details.faq summary::-webkit-details-marker{display:none;}
+  .faq-chev{transition:transform .35s cubic-bezier(.16,1,.3,1);}
+  details.faq[open] .faq-chev{transform:rotate(180deg);}
+
+  /* ---------- Feedback star widgets ---------- */
+  .fb-star.on svg,.fb-star-mini.on svg{fill:#433a86;color:#433a86;}
+
+  /* Scroll progress bar */
+  #scroll-progress{
+    position:absolute;left:0;right:0;bottom:-1px;height:2px;
+    transform-origin:left;transform:scaleX(0);
+    background:linear-gradient(90deg,var(--olive-dark),var(--olive-primary),var(--olive-light));
+  }
+
+  /* Heading word masks */
+  .word-mask{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.08em;margin-bottom:-.08em;}
+  .word-mask>span{display:inline-block;will-change:transform;}
+
+  /* Mobile menu (opened via GSAP) */
+  #mobile-menu{display:none;}
+
+  /* ---------- Video intro ---------- */
+  #intro-overlay{
+    position:fixed;inset:0;z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    background:#0b0916;
+    opacity:1;visibility:visible;
+  }
+  #intro-video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;
+  }
+  .intro-video-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(11,9,22,.15) 0%,transparent 30%,transparent 65%,rgba(11,9,22,.55) 100%);
+    pointer-events:none;
+  }
+  .intro-skip{
+    position:absolute;right:20px;bottom:20px;z-index:3;
+    display:inline-flex;align-items:center;gap:.4rem;
+    padding:.6rem 1.1rem;border-radius:9999px;cursor:pointer;
+    color:#f6f4ee;font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;
+    border:1px solid rgba(246,244,238,.32);
+    background:rgba(11,9,22,.4);backdrop-filter:blur(8px);
+    transition:all .3s cubic-bezier(.16,1,.3,1);
+  }
+  .intro-skip:hover{border-color:rgba(246,244,238,.6);background:rgba(11,9,22,.6);}
+  .intro-sound{
+    position:absolute;left:20px;bottom:20px;z-index:3;
+    display:inline-flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:9999px;cursor:pointer;
+    color:#f6f4ee;border:1px solid rgba(246,244,238,.32);
+    background:rgba(11,9,22,.4);backdrop-filter:blur(8px);
+    transition:all .3s cubic-bezier(.16,1,.3,1);
+  }
+  .intro-sound:hover{border-color:rgba(246,244,238,.6);background:rgba(11,9,22,.6);}
+  .intro-progress{
+    position:absolute;left:0;right:0;bottom:0;height:3px;z-index:3;
+    background:rgba(246,244,238,.16);
+  }
+  #intro-progress-fill{display:block;height:100%;width:0%;background:#d8c9a3;transition:width .1s linear;}
+
+  /* ---------- Filter pill active state ---------- */
+  .filter-pill[data-active="true"]{background:#2d2d2d;color:#fff;border-color:#2d2d2d;}
+
+  /* ---------- Bookmarked card button ---------- */
+  .event-card .bookmarked svg{fill:#d8c9a3;color:#a6842f;}
+
+  /* ---------- Toast notifications ---------- */
+  .toast{
+    pointer-events:auto;display:flex;align-items:center;gap:.7rem;
+    background:rgba(20,17,38,.94);color:#f6f4ee;
+    padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);
+    box-shadow:0 24px 50px -14px rgba(43,35,88,.55);
+    font-size:.78rem;font-weight:600;max-width:340px;backdrop-filter:blur(12px);
+  }
+  .toast-dot{width:8px;height:8px;border-radius:50%;background:#d8c9a3;
+    box-shadow:0 0 10px rgba(216,201,163,.85);flex-shrink:0;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+
+  /* ---------- Custom cursor halo (desktop only) ---------- */
+  @media (pointer:fine){
+    #cursor-dot,#cursor-ring{position:fixed;top:0;left:0;z-index:120;pointer-events:none;border-radius:50%;}
+    #cursor-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:#433a86;}
+    #cursor-ring{width:36px;height:36px;margin:-18px 0 0 -18px;border:1.5px solid rgba(67,58,134,.5);}
+  }
+  @media (pointer:coarse){#cursor-dot,#cursor-ring{display:none;}}
+
+  @media (prefers-reduced-motion: reduce){
+    .marquee-track{animation:none;}
+  }
+
+  /* ---------- Section background video ---------- */
+  .section-video-wrap{position:relative; overflow:hidden;}
+  .section-video-bg{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; z-index:0; pointer-events:none;
+    filter:saturate(1.05);
+    will-change:transform,opacity;
+  }
+  .section-video-overlay{position:absolute; inset:0; z-index:1; pointer-events:none;}
+  .section-content{position:relative; z-index:2;}
+
+
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<!-- ============ INTRO VIDEO ============ -->
+<div id="intro-overlay" aria-label="Intro video">
+  <video id="intro-video" autoplay muted playsinline preload="auto" src="videos/intro.mp4"></video>
+  <div class="intro-video-overlay"></div>
+  <button id="intro-sound" class="intro-sound" aria-label="Toggle sound">
+    <i data-lucide="volume-x" class="w-4 h-4"></i>
+  </button>
+  <button id="intro-skip" class="intro-skip">Skip Intro</button>
+  <div class="intro-progress"><span id="intro-progress-fill"></span></div>
+</div>
+
+<script>
+(() => {
+  const overlay = document.getElementById('intro-overlay');
+  const video = document.getElementById('intro-video');
+  const skipBtn = document.getElementById('intro-skip');
+  const soundBtn = document.getElementById('intro-sound');
+  const progressFill = document.getElementById('intro-progress-fill');
+  const reduceMotionPref = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const endIntro = () => {
+    if (overlay.dataset.done) return;
+    overlay.dataset.done = '1';
+    overlay.style.transition = 'opacity .7s ease, visibility .7s ease';
+    overlay.style.opacity = '0';
+    overlay.style.visibility = 'hidden';
+    document.body.style.overflow = '';
+    setTimeout(() => overlay.remove(), 700);
+    // Hand off to the page's hero entrance animation
+    if (typeof heroTl !== 'undefined') heroTl.play();
+  };
+
+  const paintSoundBtn = () => {
+    soundBtn.innerHTML = video.muted
+      ? '<i data-lucide="volume-x" class="w-4 h-4"></i>'
+      : '<i data-lucide="volume-2" class="w-4 h-4"></i>';
+    if (window.lucide) lucide.createIcons();
+  };
+
+  const tryUnmute = () => {
+    if (!video.muted) return;
+    video.muted = false;
+    video.play().catch(() => { video.muted = true; });
+    paintSoundBtn();
+  };
+
+  if (!video || reduceMotionPref) {
+    // Respect reduced-motion preference: skip the video intro entirely
+    if (overlay) overlay.remove();
+    document.body.style.overflow = '';
+  } else {
+    document.body.style.overflow = 'hidden';
+
+    video.addEventListener('timeupdate', () => {
+      if (video.duration) progressFill.style.width = (video.currentTime / video.duration) * 100 + '%';
+    });
+    video.addEventListener('ended', endIntro);
+    video.addEventListener('error', endIntro);
+    skipBtn.addEventListener('click', endIntro);
+    soundBtn.addEventListener('click', tryUnmute);
+
+    // Try playing with sound on right away. Most browsers block this without
+    // a prior user gesture, so if it's rejected we fall back to muted playback
+    // and unmute automatically on the very first click/tap/key anywhere on the
+    // page — the user never has to press the sound button on purpose.
+    video.muted = false;
+    const playPromise = video.play();
+    if (playPromise && playPromise.catch) {
+      playPromise.catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+        paintSoundBtn();
+        ['pointerdown', 'keydown', 'touchstart'].forEach((ev) =>
+          window.addEventListener(ev, tryUnmute, { once: true, passive: true }));
+      });
+    }
+    paintSoundBtn();
+
+    // Safety net in case the video can't play for some reason
+    setTimeout(endIntro, 20000);
+  }
+})();
+</script>
+
+<!-- ============ ANNOUNCEMENTS BAR ============ -->
+<div id="announce-bar" class="relative z-40 bg-[#2b2358] text-[#f5f5f0] overflow-hidden">
+  <div class="max-w-7xl mx-auto px-12 sm:px-14 lg:px-8 py-2 flex items-center justify-center gap-3">
+    <span class="hidden md:inline-flex items-center gap-1.5 font-mono-custom text-[10px] tracking-widest uppercase text-[#d8c9a3] shrink-0">
+      <i data-lucide="megaphone" class="w-3.5 h-3.5"></i> Announcements
+    </span>
+    <p class="text-[11px] sm:text-xs font-medium truncate text-center">
+      TechWiz 6 finals registration closes Sep 30 &nbsp;·&nbsp; Rhythm Nation passes now live &nbsp;·&nbsp; Founders Day volunteer sign-ups open
+    </p>
+    <button id="announce-close" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/10 transition-colors opacity-70 hover:opacity-100" aria-label="Dismiss announcements">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<header id="navbar" class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4 lg:gap-8">
+
+      <!-- Brand -->
+      <a href="#top" class="flex items-center gap-3 group justify-self-start">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 group-hover:rotate-3 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] leading-none">EventSphere</span>
+            <span class="hidden sm:inline text-[10px] font-mono-custom tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#e8e6dc] text-[#433a86] font-semibold">v1.0</span>
+          </div>
+          <p class="hidden sm:block text-[10px] text-[#6b6b5c] tracking-[.18em] uppercase font-medium mt-0.5">Campus Event System</p>
+        </div>
+      </a>
+
+      <!-- Center nav (perfectly centered via grid) -->
+      <nav class="hidden lg:flex items-center justify-center gap-1.5" aria-label="Primary">
+        <a href="#top" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] flex items-center gap-1.5">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i> Overview
+        </a>
+        <a href="events.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Live Events
+        </a>
+        <a href="gallery.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5">
+          <i data-lucide="image" class="w-3.5 h-3.5"></i> Gallery
+        </a>
+        <a href="#reviews" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5">
+          <i data-lucide="star" class="w-3.5 h-3.5"></i> Reviews
+        </a>
+      </nav>
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-2 sm:gap-3 justify-self-end">
+        <div class="relative hidden xl:block w-48 2xl:w-56">
+          <input id="event-search" type="text" placeholder="Search events..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-full bg-[#e8e6dc] border border-transparent focus:border-[#433a86] focus:bg-white focus:outline-none transition-all placeholder:text-[#888d75]" />
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6b6b5c]"></i>
+        </div>
+
+        <div class="relative">
+          <button id="notif-toggle" class="relative p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notif-dropdown">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span id="notif-badge" class="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-[#a65b44] text-white text-[9px] font-bold rounded-full items-center justify-center">0</span>
+          </button>
+          <div id="notif-dropdown" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl p-4 border border-[#2d2d2d]/12 z-50" style="min-width:210px;" role="menu">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display text-xs font-semibold text-[#433a86] uppercase tracking-wider">Notifications</h3>
+              <span id="notif-count-pill" class="font-mono-custom text-[10px] text-[#6b6b5c]">0 new</span>
+            </div>
+            <div id="notif-list" class="space-y-1 max-h-80 overflow-y-auto"><!-- rendered by JS from notifications-data.js --></div>
+            <p id="notif-empty" class="hidden text-xs text-[#888d75] text-center py-6">
+              <i data-lucide="bell-off" class="w-5 h-5 mx-auto mb-2 text-[#a39e8d]"></i>
+              You're all caught up
+            </p>
+            <div class="mt-3 pt-2 border-t border-[#2d2d2d]/10 flex items-center justify-between text-xs">
+              <button id="notif-mark-all" type="button" class="text-[#6b6b5c] hover:text-[#433a86] transition-colors font-semibold">Mark all as read</button>
+              <a href="notifications.html" class="text-[#433a86] font-bold hover:underline">View all →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="login.html" class="btn-outline px-4 py-2 text-xs">Log In</a>
+          <a href="register.html" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+        </div>
+
+        <button id="menu-toggle" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="scroll-progress" aria-hidden="true"></div>
+</header>
+
+<!-- ============ MOBILE MENU ============ -->
+<div id="mobile-menu" class="fixed inset-0 z-50 flex-col bg-[#f6f4ee]/95 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6">
+    <div class="flex items-center justify-between h-20 border-b border-[#2d2d2d]/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold tracking-tight text-[#2d2d2d]">EventSphere</span>
+      </div>
+      <button id="menu-close" class="p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Close menu">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col justify-center gap-1 px-8 sm:px-12 max-w-7xl mx-auto w-full" aria-label="Mobile">
+    <a href="#top" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">01</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Overview</span>
+    </a>
+    <a href="events.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">02</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Live Events</span>
+    </a>
+    <a href="gallery.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">03</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Gallery</span>
+    </a>
+    <a href="#reviews" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10">
+      <span class="font-mono-custom text-xs text-[#a39e8d]">04</span>
+      <span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Reviews</span>
+    </a>
+  </nav>
+  <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 pb-10">
+    <div class="menu-item flex gap-3">
+      <a href="login.html" class="btn-outline flex-1 py-3 text-xs">Log In</a>
+      <a href="register.html" class="btn-primary flex-1 py-3 text-xs">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="relative overflow-hidden section-video-wrap pt-12 pb-16 lg:pb-24">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/kling-hero-v2.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.55) 20%,rgba(246,244,238,.58) 80%,#f6f4ee 100%);"></div>
+
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="flex flex-wrap items-center gap-3 mb-8" data-reveal data-reveal-y="14">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#433a86]/10 border border-[#433a86]/20 text-[#433a86] text-xs font-semibold uppercase tracking-widest">
+          <span class="w-2 h-2 rounded-full bg-[#433a86] animate-pulse"></span>
+          Official TechWiz 6 Application · SRS v1.0
+        </div>
+        <div class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#2d2d2d]/10 text-xs text-[#66665c]">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#433a86]"></i>
+          Real-Time Slot Engine &amp; QR Validation
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+        <!-- Left -->
+        <div class="lg:col-span-7 space-y-6">
+          <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-tight text-[#2d2d2d]" data-reveal data-reveal-y="24">
+            Centralized Campus <br />
+            <span class="font-serif-custom italic text-[#433a86]">Event Experience.</span>
+          </h1>
+
+<p class="text-base sm:text-lg text-[#66665c] leading-relaxed max-w-xl" data-reveal data-reveal-y="18">
+              EventSphere replaces noticeboards and scattered group messages, leading to missed updates and low participation. Additionally, when staff has to manage these events manually, it often leads to miscommunication, resource mismanagement, scheduling conflicts, and poor student engagement. Our platform solves these problems with real-time event discovery, automated waitlists, and role-based access control.
+            </p>
+
+          <div class="flex flex-wrap items-center gap-4 pt-2" data-reveal data-reveal-y="18">
+            <a href="#events" class="flex items-center gap-2 px-7 py-4 rounded-full bg-[#433a86] text-[#f5f5f0] font-semibold text-xs uppercase tracking-widest hover:bg-[#2b2358] shadow-md transition-all">
+              <span>Browse Live Events</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+            <a href="#reviews" class="flex items-center gap-2 px-6 py-4 rounded-full bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] font-semibold text-xs uppercase tracking-widest hover:bg-[#f5f5f0] transition-all">
+              <span>See Reviews</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+
+          <div class="pt-6 border-t border-[#2d2d2d]/10" data-reveal data-reveal-y="14">
+            <p class="text-[11px] uppercase tracking-widest font-bold text-[#66665c] mb-3">Built for every role on campus:</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-[#2d2d2d] text-white border-[#2d2d2d]">1. Visitor</span>
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-white text-[#2d2d2d] border-[#2d2d2d]/15">2. Registered Student</span>
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-white text-[#2d2d2d] border-[#2d2d2d]/15">3. Organizer</span>
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border bg-white text-[#2d2d2d] border-[#2d2d2d]/15">4. Administrator</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="lg:col-span-5 space-y-5" data-reveal data-reveal-y="28" data-reveal-delay=".15">
+          <div class="bg-[#433a86] text-[#f5f5f0] rounded-3xl p-7 shadow-lg relative overflow-hidden">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] uppercase font-bold tracking-widest text-[#d8d4c9] flex items-center gap-1.5">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-[#f5f5f0]"></i> Live Seating Engine
+              </span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#f5f5f0]/15 text-[#f5f5f0] font-mono-custom" id="pct-badge">0% Booked</span>
+            </div>
+
+            <p class="font-serif-custom text-3xl italic mb-2">Dynamic Capacity Control</p>
+            <p class="text-xs text-[#d8d4c9] leading-relaxed mb-6">
+              Automated slot enforcement and intelligent waitlist auto-adjustment. When participants cancel, waitlisted students gain instant confirmed passes.
+            </p>
+
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs font-mono-custom text-[#d8d4c9]">
+                <span><span id="stat-booked">0</span> Confirmed Seats</span>
+                <span><span id="stat-remaining">0</span> Remaining</span>
+              </div>
+              <div class="h-2.5 bg-[#f5f5f0]/20 rounded-full overflow-hidden">
+                <div id="seat-bar" class="h-full bg-[#f5f5f0] rounded-full" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 border border-[#2d2d2d]/10 shadow-sm grid grid-cols-3 gap-4 text-center">
+            <div class="p-3 border-r border-[#2d2d2d]/10">
+              <p class="font-display text-3xl font-bold text-[#433a86]"><span data-count-to="14">0</span></p>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Live Events</p>
+            </div>
+            <div class="p-3 border-r border-[#2d2d2d]/10">
+              <p class="font-display text-3xl font-bold text-[#2d2d2d]"><span data-count-to="1284">0</span></p>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Bookings</p>
+            </div>
+            <div class="p-3">
+              <p class="font-display text-3xl font-bold text-[#7d75b8]"><span data-count-to="612">0</span></p>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Certificates</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Category marquee -->
+  <div class="relative bg-[#e8e6dc] py-3 overflow-hidden section-video-wrap">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/marquee.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.5) 30%,rgba(232,230,220,.5) 70%,#f6f4ee 100%);"></div>
+
+    <div class="marquee-track section-content">
+      <div class="flex items-center gap-8 pr-8 text-xs font-semibold uppercase tracking-widest text-[#433a86]">
+        <span>Technical</span><span class="text-[#a39e8d]">·</span>
+        <span>Cultural</span><span class="text-[#a39e8d]">·</span>
+        <span>Sports</span><span class="text-[#a39e8d]">·</span>
+        <span>Workshops</span><span class="text-[#a39e8d]">·</span>
+        <span>Annual Day</span><span class="text-[#a39e8d]">·</span>
+        <span>Competitions</span><span class="text-[#a39e8d]">·</span>
+      </div>
+      <div class="flex items-center gap-8 pr-8 text-xs font-semibold uppercase tracking-widest text-[#433a86]" aria-hidden="true">
+        <span>Technical</span><span class="text-[#a39e8d]">·</span>
+        <span>Cultural</span><span class="text-[#a39e8d]">·</span>
+        <span>Sports</span><span class="text-[#a39e8d]">·</span>
+        <span>Workshops</span><span class="text-[#a39e8d]">·</span>
+        <span>Annual Day</span><span class="text-[#a39e8d]">·</span>
+        <span>Competitions</span><span class="text-[#a39e8d]">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ EVENTS ============ -->
+  <section id="events" class="relative section-video-wrap">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/events.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.66) 18%,rgba(246,244,238,.6) 82%,#f6f4ee 100%);"></div>
+
+    <div class="section-content py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-8 border-b border-[#2d2d2d12]" data-reveal data-reveal-y="14">
+      <div>
+        <span class="badge-tag mb-3">Happening on campus</span>
+        <h2 class="font-display text-4xl sm:text-5xl text-[#2d2d2d]">Live &amp; Upcoming Events</h2>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2d2d2d] text-white" data-filter="all">All</button>
+        <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Technical">Technical</button>
+        <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Cultural">Cultural</button>
+        <button class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#2d2d2d]/15 text-[#2d2d2d] hover:border-[#433a86]" data-filter="Sports">Sports</button>
+      </div>
+    </div>
+
+    <div id="events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+      <!-- Cards injected by JS -->
+    </div>
+    <div id="events-empty" class="text-center py-16" style="display:none;">
+      <p class="font-display font-semibold text-2xl text-[#2d2d2d] mb-2">No events found</p>
+      <p class="text-sm text-[#66665c]">Try a different category or search term.</p>
+    </div>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY TEASER ============ -->
+  <section id="gallery" class="relative section-video-wrap py-16 md:py-20">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/gallery.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.55) 25%,rgba(232,230,220,.55) 75%,#f6f4ee 100%);"></div>
+
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between mb-8" data-reveal data-reveal-y="14">
+        <div>
+          <span class="badge-tag mb-3">Moments archive</span>
+          <h2 class="font-display text-3xl sm:text-4xl text-[#2d2d2d]">Recent Highlights</h2>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-reveal data-reveal-y="20">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=70" alt="Campus hackathon">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&auto=format&fit=crop&q=70" alt="Cultural gala">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&auto=format&fit=crop&q=70" alt="Sports championship">
+        <img class="gallery-img rounded-2xl h-40 sm:h-52 w-full object-cover" src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=600&auto=format&fit=crop&q=70" alt="Workshop session">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REVIEWS ============ -->
+  <section id="reviews" class="relative section-video-wrap">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/reviews.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.7) 18%,rgba(246,244,238,.64) 82%,#f6f4ee 100%);"></div>
+
+    <div class="section-content py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-10" data-reveal data-reveal-y="14">
+      <span class="badge-tag mb-3">Participant reviews</span>
+      <h2 class="font-display text-4xl sm:text-5xl text-[#2d2d2d]">What Students Say</h2>
+    </div>
+
+    <!-- Event feedback submission (SRS: user type, component ratings, comments) -->
+    <form id="feedback-form" class="mb-12 card-natural border border-[#2d2d2d12] p-6 sm:p-7 max-w-2xl space-y-5" autocomplete="off" novalidate data-reveal data-reveal-y="16">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h3 class="font-display text-xl font-semibold text-[#2d2d2d]">Rate Your Experience</h3>
+        <span class="badge-tag !bg-white"><i data-lucide="lock" class="w-3 h-3"></i> Sign-in required</span>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <label class="block">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">User Type</span>
+          <select id="fb-type" class="mt-2 w-full rounded-xl border border-[#2d2d2d]/15 bg-white px-3 py-2.5 text-sm text-[#2d2d2d] focus:border-[#433a86] focus:outline-none transition-colors">
+            <option value="Participant">Participant</option>
+            <option value="Visitor">Visitor</option>
+            <option value="Organizer">Organizer</option>
+            <option value="Admin">Administrator</option>
+          </select>
+        </label>
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Overall Rating</span>
+          <div id="fb-stars" class="mt-2 flex items-center gap-1.5" data-value="0" role="radiogroup" aria-label="Overall rating">
+            <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="1 star"><i data-lucide="star" class="w-5 h-5"></i></button>
+            <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="2 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+            <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="3 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+            <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="4 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+            <button type="button" class="fb-star p-0.5 text-[#c9c4b4] hover:text-[#433a86] transition-colors" aria-label="5 stars"><i data-lucide="star" class="w-5 h-5"></i></button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Rate Components</span>
+        <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+            <p class="text-[11px] font-bold text-[#555] mb-1.5">Venue</p>
+            <div class="flex items-center gap-0.5">
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Venue 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+          <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+            <p class="text-[11px] font-bold text-[#555] mb-1.5">Coordination</p>
+            <div class="flex items-center gap-0.5">
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Coordination 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+          <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+            <p class="text-[11px] font-bold text-[#555] mb-1.5">Technical</p>
+            <div class="flex items-center gap-0.5">
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Technical 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+          <div class="fb-comp rounded-xl bg-[#f5f5f0] border border-[#2d2d2d0a] p-3" data-value="0">
+            <p class="text-[11px] font-bold text-[#555] mb-1.5">Hospitality</p>
+            <div class="flex items-center gap-0.5">
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 1"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 2"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 3"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 4"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="fb-star-mini p-0.5 text-[#c9c4b4]" aria-label="Hospitality 5"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <textarea id="fb-comment" rows="3" placeholder="Comments or suggestions for the organizers (optional)..." class="w-full rounded-xl border border-[#2d2d2d]/15 bg-white px-3.5 py-3 text-sm placeholder:text-[#888d75] focus:border-[#433a86] focus:outline-none transition-colors resize-none"></textarea>
+      <button type="submit" class="btn-primary px-7 py-3 text-xs w-full sm:w-auto">Submit Feedback</button>
+    </form>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="reviews-grid">
+      <!-- Cards injected by JS -->
+    </div>
+    </div>
+  </section>
+
+  <!-- ============ SITEMAP (SRS mandatory) ============ -->
+  <section id="sitemap" class="relative section-video-wrap py-16 md:py-20">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/sitemap.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.62) 22%,rgba(232,230,220,.58) 78%,#f6f4ee 100%);"></div>
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10" data-reveal data-reveal-y="14">
+        <span class="badge-tag mb-3">Site structure</span>
+        <h2 class="font-display text-3xl sm:text-4xl text-[#2d2d2d]">Sitemap</h2>
+        <p class="text-sm text-[#66665c] mt-2 max-w-xl">Every corner of EventSphere at a glance — how students, organizers, and admins move through the platform.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" data-reveal data-reveal-y="20">
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="globe" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Public Pages</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li><a href="#top" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Home Overview</a></li>
+            <li><a href="events.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Live Events Directory</a></li>
+            <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Moments Gallery</a></li>
+            <li><a href="#reviews" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Participant Reviews</a></li>
+          </ul>
+        </div>
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="info" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Information</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li><a href="faq.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>FAQs</a></li>
+            <li><a href="contact.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Contact Us</a></li>
+            <li><a href="#sitemap" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Sitemap</a></li>
+            <li><a href="about.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>About EventSphere</a></li>
+          </ul>
+        </div>
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Participant Area</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li><a href="login.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Login</a></li>
+            <li><a href="register.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Create Account</a></li>
+            <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Student Dashboard</a></li>
+            <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Organizer Dashboard</a></li>
+            <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Admin Dashboard</a></li>
+          </ul>
+        </div>
+        <div class="card-natural border border-[#2d2d2d12] p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="shield-check" class="w-4 h-4 text-[#433a86]"></i>
+            <h3 class="font-display font-semibold text-lg text-[#2d2d2d]">Staff &amp; Admin</h3>
+          </div>
+          <ul class="space-y-2.5 text-xs text-[#555]">
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Organizer Dashboard</li>
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Event Approval Queue</li>
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Attendance Scanner</li>
+            <li class="flex items-center gap-1.5"><i data-lucide="corner-down-right" class="w-3 h-3 text-[#a39e8d]"></i>Reports &amp; Analytics</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="relative section-video-wrap py-16 md:py-24">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/faq.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.74) 15%,rgba(246,244,238,.7) 85%,#f6f4ee 100%);"></div>
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl" data-reveal data-reveal-y="14">
+        <span class="badge-tag mb-3">Support</span>
+        <h2 class="font-display text-3xl sm:text-4xl text-[#2d2d2d] mb-7">Questions, Answered.</h2>
+        <details class="faq">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer list-none py-4 text-sm font-bold text-[#2d2d2d]">
+            How do I register for an event?
+            <i data-lucide="chevron-down" class="faq-chev w-4 h-4 text-[#a39e8d] shrink-0"></i>
+          </summary>
+          <p class="pb-4 pr-6 text-xs leading-relaxed text-[#66665c]">Create a student account with your name, email, department and enrolment number, then browse Live Events and hit Register Now. Seat counts update in real time — if an event is full you automatically join the priority waitlist.</p>
+        </details>
+        <details class="faq">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer list-none py-4 text-sm font-bold text-[#2d2d2d]">
+            Can I cancel my registration?
+            <i data-lucide="chevron-down" class="faq-chev w-4 h-4 text-[#a39e8d] shrink-0"></i>
+          </summary>
+          <p class="pb-4 pr-6 text-xs leading-relaxed text-[#66665c]">Yes — registrations can be cancelled from your dashboard any time before the event's cutoff date. Your slot is released instantly and the first waitlisted student is auto-promoted.</p>
+        </details>
+        <details class="faq">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer list-none py-4 text-sm font-bold text-[#2d2d2d]">
+            How do I get my e-certificate?
+            <i data-lucide="chevron-down" class="faq-chev w-4 h-4 text-[#a39e8d] shrink-0"></i>
+          </summary>
+          <p class="pb-4 pr-6 text-xs leading-relaxed text-[#66665c]">Attendees are marked present via QR check-in on event day. After the event, pay the certificate fee through your profile to unlock and download your verified e-certificate.</p>
+        </details>
+        <details class="faq">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer list-none py-4 text-sm font-bold text-[#2d2d2d]">
+            Is online payment integrated?
+            <i data-lucide="chevron-down" class="faq-chev w-4 h-4 text-[#a39e8d] shrink-0"></i>
+          </summary>
+          <p class="pb-4 pr-6 text-xs leading-relaxed text-[#66665c]">The system records certificate fee details for participants, but live payment processing is beyond the scope of this project build.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="relative section-video-wrap py-16 md:py-24">
+    <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="videos/contact.mp4" type="video/mp4">
+    </video>
+    <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.74) 15%,rgba(246,244,238,.7) 85%,#f6f4ee 100%);"></div>
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+      <div class="card-natural border border-[#2d2d2d12] p-7 sm:p-9 max-w-lg w-full" data-reveal data-reveal-y="18">
+        <span class="badge-tag !bg-white mb-4"><i data-lucide="mail" class="w-3 h-3"></i> Get in touch</span>
+        <h3 class="font-display text-2xl font-semibold text-[#2d2d2d] mt-4 mb-1.5">Contact Us</h3>
+        <p class="text-xs text-[#66665c] leading-relaxed mb-7">Student Affairs Wing, Ground Floor · Mon–Sat, 9 AM – 5 PM</p>
+        <ul class="space-y-4 text-sm text-[#444]">
+          <li class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-[#f0ede2] border border-[#2d2d2d08] flex items-center justify-center shrink-0"><i data-lucide="mail" class="w-4 h-4 text-[#433a86]"></i></span>
+            events@campus.edu
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-[#f0ede2] border border-[#2d2d2d08] flex items-center justify-center shrink-0"><i data-lucide="phone" class="w-4 h-4 text-[#433a86]"></i></span>
+            +91 98765 43210
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-9 h-9 rounded-full bg-[#f0ede2] border border-[#2d2d2d08] flex items-center justify-center shrink-0"><i data-lucide="map-pin" class="w-4 h-4 text-[#433a86]"></i></span>
+            University Road Campus, Block C
+          </li>
+        </ul>
+        <div class="flex items-center gap-2 mt-8 pt-6 border-t border-[#2d2d2d0c]">
+          <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full border border-[#2d2d2d15] hover:bg-[#433a86] hover:text-white hover:border-[#433a86] transition-all flex items-center justify-center"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full border border-[#2d2d2d15] hover:bg-[#433a86] hover:text-white hover:border-[#433a86] transition-all flex items-center justify-center"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          <a href="#" aria-label="LinkedIn" class="w-9 h-9 rounded-full border border-[#2d2d2d15] hover:bg-[#433a86] hover:text-white hover:border-[#433a86] transition-all flex items-center justify-center"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative section-video-wrap bg-[#e8e6dc] text-[#2d2d2d] pt-16 pb-10">
+  <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="videos/footer.mp4" type="video/mp4">
+  </video>
+  <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(232,230,220,.72) 20%,rgba(232,230,220,.8) 80%,rgba(232,230,220,.92) 100%);"></div>
+
+  <div class="section-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#2d2d2d15]">
+
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <div>
+            <span class="font-display text-2xl font-bold tracking-tight block leading-none">EventSphere</span>
+            <span class="text-[10px] text-[#6b6b5c] uppercase tracking-widest font-mono-custom">Campus Events Portal</span>
+          </div>
+        </div>
+        <p class="text-xs text-[#555] leading-relaxed max-w-sm">
+          Unified Campus Event Management &amp; Ticketing System. Real-time seating capacity, verified e-certificates, and automated waitlists — all in one place.
+        </p>
+        <div class="flex items-center gap-2 pt-2">
+          <span class="badge-tag !bg-white">TechWiz 6 Project</span>
+          <span class="badge-tag !bg-white">ISO 27001 Accredited</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Navigation</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="#top" class="hover:text-[#433a86] transition-colors">Home &amp; Schedule</a></li>
+          <li><a href="events.html" class="hover:text-[#433a86] transition-colors">Live Events Directory</a></li>
+          <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors">Moments Archive</a></li>
+          <li><a href="#reviews" class="hover:text-[#433a86] transition-colors">Participant Reviews</a></li>
+          <li><a href="faq.html" class="hover:text-[#433a86] transition-colors">FAQs &amp; Support</a></li>
+          <li><a href="contact.html" class="hover:text-[#433a86] transition-colors">Contact Us</a></li>
+          <li><a href="#sitemap" class="hover:text-[#433a86] transition-colors">Sitemap</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Event Categories</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li>Technical &amp; Hackathons</li>
+          <li>Cultural &amp; Music Galas</li>
+          <li>Sports Meets &amp; Track</li>
+          <li>Workshops &amp; Seminars</li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Dashboards</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors">Student Dashboard</a></li>
+          <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors">Organizer Dashboard</a></li>
+          <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors">Admin Control Center</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6b6b5c]">
+      <p>© 2026 EventSphere · Centralized Campus Event Information &amp; Registration System.</p>
+      <div class="flex items-center gap-4 text-[11px] font-mono-custom">
+        <span>Natural Tones Theme</span><span>·</span><span>Version 2.4.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast notifications -->
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<!-- Back to top -->
+<button id="to-top" aria-label="Back to top" class="fixed bottom-6 left-6 z-[80] hidden sm:flex w-11 h-11 rounded-full bg-white border border-[#2d2d2d]/15 shadow-lg items-center justify-center text-[#2d2d2d] hover:bg-[#f5f5f0] transition-all opacity-0 pointer-events-none">
+  <i data-lucide="arrow-up" class="w-4 h-4"></i>
+</button>
+
+<script>
+/* ---------- Data ---------- */
+const EVENTS = [
+  {
+    title: "CodeForge 2026: 36-Hour National Hackathon",
+    desc: "Build cutting-edge AI, Web3 and IoT solutions in an exhilarating 36-hour sprint with mentors from top tech firms.",
+    category: "Technical",
+    date: "Sep 15, 2026", time: "9:00 AM – 9:00 PM",
+    venue: "Advanced Computing Center",
+    org: "Dept. of Computer Science",
+    seatsBooked: 114, totalSeats: 120,
+    img: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&auto=format&fit=crop&q=75"
+  },
+  {
+    title: "Rhythm Nation: Inter-College Cultural Gala",
+    desc: "An electrifying festival of music, dance battles, drama and a fashion runway with talent from 40+ colleges.",
+    category: "Cultural",
+    date: "Sep 22, 2026", time: "5:30 PM – 11:00 PM",
+    venue: "Open Air Amphitheatre",
+    org: "Cultural Affairs Committee",
+    seatsBooked: 380, totalSeats: 450,
+    img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900&auto=format&fit=crop&q=75"
+  },
+  {
+    title: "Apex Arena: Basketball & Futsal Championship",
+    desc: "Cheer for your department in high-intensity knockout matches across the indoor courts and turf arena.",
+    category: "Sports",
+    date: "Sep 28, 2026", time: "3:00 PM – 8:30 PM",
+    venue: "University Sports Complex",
+    org: "Sports Board",
+    seatsBooked: 145, totalSeats: 200,
+    img: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&auto=format&fit=crop&q=75"
+  },
+  {
+    title: "Generative AI & Agentic Systems Masterclass",
+    desc: "Hands-on workshop by industry AI architects covering LLM agents, tool calling and production deployment.",
+    category: "Workshops",
+    date: "Oct 5, 2026", time: "10:00 AM – 4:00 PM",
+    venue: "Auditorium 2 & Lab 4",
+    org: "AI & Robotics Society",
+    seatsBooked: 80, totalSeats: 80,
+    img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=900&auto=format&fit=crop&q=75"
+  },
+  {
+    title: "Grand Annual Founders Day & Alumni Gala",
+    desc: "A night of legacy and celebration bringing together alumni, faculty and current students under one roof.",
+    category: "Annual Day",
+    date: "Oct 12, 2026", time: "6:00 PM – 10:00 PM",
+    venue: "Main Convocation Hall",
+    org: "Alumni Relations Office",
+    seatsBooked: 260, totalSeats: 300,
+    img: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=900&auto=format&fit=crop&q=75"
+  },
+  {
+    title: "InnoQuiz: Inter-Departmental Quiz Championship",
+    desc: "Fast-paced buzzer rounds testing tech, business and general awareness across all faculties.",
+    category: "Competitions",
+    date: "Oct 18, 2026", time: "2:00 PM – 6:00 PM",
+    venue: "Lecture Theatre 1",
+    org: "Academic Council",
+    seatsBooked: 58, totalSeats: 96,
+    img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop&q=75"
+  },
+];
+
+const CATEGORY_STYLES = {
+  Technical:      "bg-[#e8e6dc] text-[#433a86] border-[#433a8630]",
+  Cultural:       "bg-[#ede6d6] text-[#8c6a38] border-[#8c6a3830]",
+  Sports:         "bg-[#dcebec] text-[#2f6b6e] border-[#2f6b6e30]",
+  Workshops:      "bg-[#e5e9ec] text-[#3e5668] border-[#3e566830]",
+  "Annual Day":   "bg-[#f0e7e1] text-[#a65b44] border-[#a65b4430]",
+  Competitions:   "bg-[#ebdcd5] text-[#8c462e] border-[#8c462e30]",
+};
+
+const REVIEWS = [
+  { name: "Aisha Patel", role: "Computer Science & AI", quote: "The QR ticket and reminder system meant I never missed a slot — registering for the hackathon took under a minute.", rating: 5 },
+  { name: "Daniyal Khan", role: "Electronics & Robotics", quote: "Loved seeing live seat counts before booking. The waitlist actually worked — I got bumped up two days before the event.", rating: 5 },
+  { name: "Meera Sen", role: "Cultural Affairs Committee", quote: "As an organizer, tracking attendance and issuing certificates became painless compared to our old spreadsheet process.", rating: 4 },
+];
+
+/* ---------- Render events ---------- */
+const grid = document.getElementById('events-grid');
+EVENTS.forEach((ev) => {
+  const seatsLeft = Math.max(0, ev.totalSeats - ev.seatsBooked);
+  const pct = Math.min(100, Math.round((ev.seatsBooked / ev.totalSeats) * 100));
+  const isFull = seatsLeft === 0;
+  const barColor = pct >= 90 ? '#a65b44' : pct >= 60 ? '#8c6a38' : '#433a86';
+  const catClass = CATEGORY_STYLES[ev.category] || 'bg-[#e8e6dc] text-[#2d2d2d]';
+
+  const card = document.createElement('div');
+  card.className = "event-card card-natural flex flex-col overflow-hidden border border-[#2d2d2d12] p-6 relative";
+  card.dataset.category = ev.category;
+  card.dataset.index = String(EVENTS.indexOf(ev));
+  card.dataset.search = `${ev.title} ${ev.desc} ${ev.venue} ${ev.category} ${ev.org}`.toLowerCase();
+  card.setAttribute('data-reveal', '');
+  card.setAttribute('data-reveal-y', '24');
+
+  card.innerHTML = `
+    <div class="relative h-48 -mx-6 -mt-6 mb-5 overflow-hidden rounded-t-[1.75rem] bg-[#e8e6dc]">
+      <img src="${ev.img}" alt="${ev.title}" class="w-full h-full object-cover card-img transition-transform duration-500" loading="lazy" />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
+        <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border backdrop-blur-md shadow-sm ${catClass}">${ev.category}</span>
+        <button class="w-8 h-8 rounded-full bg-white/85 backdrop-blur-md flex items-center justify-center text-[#2d2d2d] hover:bg-white transition-all shadow-sm" title="Bookmark">
+          <i data-lucide="bookmark" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="absolute bottom-3 left-4 flex items-center gap-2 text-white text-xs font-medium">
+        <span class="bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5">
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#e8e6dc]"></i>${ev.date}
+        </span>
+        <span class="bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-[#e8e6dc]"></i>${ev.time}
+        </span>
+      </div>
+    </div>
+
+    <div class="space-y-3 flex-1">
+      <div>
+        <h3 class="font-display text-2xl font-semibold text-[#2d2d2d] card-title transition-colors line-clamp-1">${ev.title}</h3>
+        <p class="text-xs text-[#555] line-clamp-2 mt-1 leading-relaxed">${ev.desc}</p>
+      </div>
+
+      <div class="space-y-1.5 text-xs text-[#6b6b5c]">
+        <div class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#433a86] shrink-0"></i><span class="line-clamp-1">${ev.venue}</span></div>
+      </div>
+
+      <div class="p-3 rounded-2xl bg-[#f5f5f0] border border-[#2d2d2d0a] space-y-1.5">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-semibold flex items-center gap-1.5 ${isFull ? 'text-[#a65b44]' : 'text-[#2f6b6e]'}">
+            <i data-lucide="${isFull ? 'alert-circle' : 'check-circle-2'}" class="w-3.5 h-3.5"></i>
+            ${isFull ? 'Full — Waitlist Active' : seatsLeft + ' Seats Available'}
+          </span>
+          <span class="font-mono-custom text-[11px] text-[#6b6b5c]">${pct}% Full</span>
+        </div>
+        <div class="h-2 w-full rounded-full bg-[#e8e6dc] overflow-hidden">
+          <div class="h-full rounded-full seat-fill" style="width:0%; background:${barColor};" data-target="${pct}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4 mt-2 border-t border-[#2d2d2d0c] flex items-center gap-2">
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button class="p-2.5 rounded-full border border-[#2d2d2d20] hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" title="Add to calendar (.ics)">
+          <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+        </button>
+        <button class="p-2.5 rounded-full border border-[#2d2d2d20] hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" title="Share event">
+          <i data-lucide="share-2" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <button class="flex-1 py-2.5 px-4 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${isFull ? 'bg-[#8c6a38] text-white hover:bg-[#73552b]' : 'btn-primary'}">
+        <span>${isFull ? 'Join Priority Waitlist' : 'Register Now'}</span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+      </button>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+/* ---------- Render reviews ---------- */
+const reviewsGrid = document.getElementById('reviews-grid');
+REVIEWS.forEach((r) => {
+  const stars = Array.from({length:5}, (_,i) => `<i data-lucide="star" class="w-3.5 h-3.5 ${i < r.rating ? 'text-[#433a86] fill-[#433a86]' : 'text-[#d8d4c9]'}"></i>`).join('');
+  const card = document.createElement('div');
+  card.className = "card-natural border border-[#2d2d2d12] p-6";
+  card.setAttribute('data-reveal', '');
+  card.setAttribute('data-reveal-y', '20');
+  card.innerHTML = `
+    <div class="flex items-center gap-1 mb-4">${stars}</div>
+    <p class="text-sm text-[#444] leading-relaxed mb-5">"${r.quote}"</p>
+    <div class="flex items-center gap-3 pt-4 border-t border-[#2d2d2d0c]">
+      <div class="w-9 h-9 rounded-full bg-[#433a86] text-white flex items-center justify-center font-serif-custom font-bold">${r.name.charAt(0)}</div>
+      <div>
+        <p class="text-xs font-bold text-[#2d2d2d]">${r.name}</p>
+        <p class="text-[11px] text-[#888d75]">${r.role}</p>
+      </div>
+    </div>
+  `;
+  reviewsGrid.appendChild(card);
+});
+
+/* ---------- Icons ---------- */
+lucide.createIcons();
+
+/* ---------- GSAP animations ---------- */
+gsap.registerPlugin(ScrollTrigger);
+const EASE_SIG = 'cubic-bezier(.16,1,.3,1)'; // signature "expo-out" ease used across the page
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Pro audio engine — fully synthesized via Web Audio API, zero assets ----------
+   Cues: riser (letters flip) · boom (title impact) · shimmer (glass bells) ·
+   whooshOut (curtain split) · tick (micro UI clicks). Toggle: intro button ya 'M' key. */
+const AudioFX = (() => {
+  let ctx = null;
+  let master = null;
+  let enabled = true; // auto-on by design — 'M' ya SOUND toggle se mute ho sakta hai
+
+  const ensure = () => {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+      master = ctx.createGain();
+      master.gain.value = .8;
+      master.connect(ctx.destination);
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  };
+
+  const noiseSrc = (c) => {
+    const buf = c.createBuffer(1, c.sampleRate * 2, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const s = c.createBufferSource();
+    s.buffer = buf; s.loop = true;
+    return s;
+  };
+
+  /* Rising cinematic riser — filtered noise sweep + saw layer */
+  const riser = (t = 0, dur = 1.5) => {
+    if (!enabled || !ensure()) return;
+    const c = ctx, now = c.currentTime + t;
+    const src = noiseSrc(c);
+    const filt = c.createBiquadFilter();
+    filt.type = 'bandpass'; filt.Q.value = 1.2;
+    filt.frequency.setValueAtTime(280, now);
+    filt.frequency.exponentialRampToValueAtTime(3800, now + dur);
+    const g = c.createGain();
+    g.gain.setValueAtTime(.0001, now);
+    g.gain.exponentialRampToValueAtTime(.15, now + dur * .85);
+    g.gain.exponentialRampToValueAtTime(.0001, now + dur + .12);
+    src.connect(filt).connect(g).connect(master);
+    src.start(now); src.stop(now + dur + .2);
+    const osc = c.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(70, now);
+    osc.frequency.exponentialRampToValueAtTime(300, now + dur);
+    const og = c.createGain();
+    og.gain.setValueAtTime(.0001, now);
+    og.gain.exponentialRampToValueAtTime(.045, now + dur * .9);
+    og.gain.exponentialRampToValueAtTime(.0001, now + dur + .1);
+    osc.connect(og).connect(master); osc.start(now); osc.stop(now + dur + .15);
+  };
+
+  /* Deep sub impact — pitch-dropping sine + noise thud */
+  const boom = (t = 0) => {
+    if (!enabled || !ensure()) return;
+    const c = ctx, now = c.currentTime + t;
+    const o = c.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(150, now);
+    o.frequency.exponentialRampToValueAtTime(38, now + .55);
+    const g = c.createGain();
+    g.gain.setValueAtTime(.45, now);
+    g.gain.exponentialRampToValueAtTime(.0001, now + .9);
+    o.connect(g).connect(master); o.start(now); o.stop(now + 1);
+    const src = noiseSrc(c);
+    const f = c.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 900;
+    const ng = c.createGain();
+    ng.gain.setValueAtTime(.25, now);
+    ng.gain.exponentialRampToValueAtTime(.0001, now + .45);
+    src.connect(f).connect(ng).connect(master); src.start(now); src.stop(now + .5);
+  };
+
+  /* Glassy bell arpeggio for the shimmer sweep */
+  const shimmer = (t = 0) => {
+    if (!enabled || !ensure()) return;
+    const c = ctx, base = c.currentTime + t;
+    [1318.5, 1760, 2093, 2637].forEach((f, i) => {
+      const o = c.createOscillator();
+      o.type = 'sine'; o.frequency.value = f;
+      const g = c.createGain();
+      const st = base + i * .09;
+      g.gain.setValueAtTime(.0001, st);
+      g.gain.exponentialRampToValueAtTime(.06, st + .02);
+      g.gain.exponentialRampToValueAtTime(.0001, st + .9);
+      o.connect(g).connect(master); o.start(st); o.stop(st + 1);
+    });
+  };
+
+  /* Falling whoosh for the curtain exit */
+  const whooshOut = (t = 0) => {
+    if (!enabled || !ensure()) return;
+    const c = ctx, now = c.currentTime + t;
+    const src = noiseSrc(c);
+    const f = c.createBiquadFilter();
+    f.type = 'bandpass'; f.Q.value = .9;
+    f.frequency.setValueAtTime(2800, now);
+    f.frequency.exponentialRampToValueAtTime(220, now + .9);
+    const g = c.createGain();
+    g.gain.setValueAtTime(.0001, now);
+    g.gain.exponentialRampToValueAtTime(.13, now + .18);
+    g.gain.exponentialRampToValueAtTime(.0001, now + .95);
+    src.connect(f).connect(g).connect(master); src.start(now); src.stop(now + 1.05);
+  };
+
+  /* Micro UI click */
+  const tick = () => {
+    if (!enabled || !ensure()) return;
+    const c = ctx, now = c.currentTime;
+    const o = c.createOscillator();
+    o.type = 'triangle'; o.frequency.value = 1800;
+    const g = c.createGain();
+    g.gain.setValueAtTime(.055, now);
+    g.gain.exponentialRampToValueAtTime(.0001, now + .08);
+    o.connect(g).connect(master); o.start(now); o.stop(now + .09);
+  };
+
+  const setEnabled = (v) => {
+    enabled = v;
+    if (v) ensure();
+  };
+
+  return { riser, boom, shimmer, whooshOut, tick, setEnabled, isEnabled: () => enabled, ensure };
+})();
+
+/* ---------- Background video motion: reveal, ken-burns drift, scroll parallax ---------- */
+gsap.utils.toArray('.section-video-wrap').forEach((wrap) => {
+  const vid = wrap.querySelector('.section-video-bg');
+  if (!vid || reduceMotion) return;
+  const isHero = wrap.matches('main > section:first-of-type');
+
+  // Cinematic fade-in — hero plays on load, the rest reveal as soon as they peek in
+  gsap.fromTo(vid, { opacity: 0 }, {
+    opacity: 1, duration: isHero ? 1.6 : .9, ease: EASE_SIG,
+    ...(isHero ? {} : { scrollTrigger: { trigger: wrap, start: 'top bottom', once: true } })
+  });
+
+  // Slow infinite ken-burns zoom so the footage always feels alive
+  // Scale floor stays >= 1.12 so the ±4% parallax never exposes an edge gap
+  gsap.fromTo(vid, { scale: isHero ? 1.16 : 1.14 }, {
+    scale: 1.2, duration: 20, ease: 'none', yoyo: true, repeat: -1
+  });
+
+  // Depth parallax — video drifts slower than the content while scrolling
+  gsap.fromTo(vid, { yPercent: -4 }, {
+    yPercent: 4, ease: 'none',
+    scrollTrigger: { trigger: wrap, start: 'top bottom', end: 'bottom top', scrub: true }
+  });
+});
+
+// Hero entrance timeline — headline splits into words for a staggered reveal
+const heroTl = gsap.timeline({ defaults: { ease: EASE_SIG }, paused: !reduceMotion });
+
+const heroHeadline = document.querySelector('h1[data-reveal]');
+if (heroHeadline && !reduceMotion) {
+  const original = heroHeadline.innerHTML;
+  const wrapped = original
+    .split(/(<br\s*\/?>)/gi)
+    .map(chunk => {
+      if (/^<br/i.test(chunk)) return chunk;
+      return chunk.split(/(<span[^>]*>|<\/span>)/gi).reduce((acc, part) => {
+        if (/^<span/i.test(part) || part === '</span>') { acc.raw += part; return acc; }
+        acc.raw += part.split(' ').map(w => w ? `<span class="word-reveal" style="display:inline-block;overflow:hidden;"><span style="display:inline-block;">${w}</span></span>` : '').join(' ');
+        return acc;
+      }, { raw: '' }).raw;
+    }).join('');
+  heroHeadline.innerHTML = wrapped;
+  heroHeadline.removeAttribute('data-reveal');
+  heroHeadline.style.opacity = 1;
+  heroTl.fromTo('.word-reveal > span', { yPercent: 130, rotate: 4 }, { yPercent: 0, rotate: 0, duration: 1, stagger: 0.035, ease: 'power4.out' });
+}
+
+gsap.utils.toArray('main > section:first-of-type [data-reveal]').forEach((el, i) => {
+  const y = parseFloat(el.getAttribute('data-reveal-y')) || 16;
+  const delay = parseFloat(el.getAttribute('data-reveal-delay')) || 0;
+  heroTl.fromTo(el, { opacity: 0, y }, { opacity: 1, y: 0, duration: 1, delay }, (heroHeadline ? 0.35 : 0) + i * 0.12);
+});
+
+// Seat bar + stat counters (hero) animate once on load
+heroTl.add(() => {
+  const targetPct = 78;
+  gsap.to('#seat-bar', { width: targetPct + '%', duration: 1.4, ease: 'power3.out' });
+  gsap.to('#pct-badge', {
+    duration: 1.4,
+    ease: 'power3.out',
+    onUpdate: function () {
+      document.getElementById('pct-badge').textContent = Math.round(this.progress() * targetPct) + '% Booked';
+    }
+  });
+  gsap.to('#stat-booked', {
+    duration: 1.4, ease: 'power3.out',
+    onUpdate: function(){ document.getElementById('stat-booked').textContent = Math.round(this.progress()*1050); }
+  });
+  gsap.to('#stat-remaining', {
+    duration: 1.4, ease: 'power3.out',
+    onUpdate: function(){ document.getElementById('stat-remaining').textContent = Math.round(this.progress()*296); }
+  });
+  document.querySelectorAll('[data-count-to]').forEach((el) => {
+    const target = parseInt(el.getAttribute('data-count-to'), 10);
+    gsap.to(el, {
+      duration: 1.6, ease: 'power3.out',
+      onUpdate: function(){ el.textContent = Math.round(this.progress()*target).toLocaleString(); }
+    });
+  });
+}, '-=0.5');
+
+/* ---------- Intro handoff ---------- */
+// If reduced motion is preferred, the video-intro script (near the top of the page)
+// already removed the overlay and left heroTl to run on its own timing.
+// Otherwise heroTl.play() is triggered by that same script once the intro video ends/is skipped.
+
+// Gentle parallax float on the hero's right-hand stat panels
+gsap.to('.lg\\:col-span-5', {
+  y: -14, ease: 'none',
+  scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.6 }
+});
+
+// Scroll-triggered reveals for section headers, gallery, event cards, review cards
+gsap.utils.toArray('[data-reveal]').forEach((el) => {
+  if (el.closest('main > section:first-of-type')) return; // already animated in hero timeline
+  const y = parseFloat(el.getAttribute('data-reveal-y')) || 16;
+  gsap.fromTo(el, { opacity: 0, y, filter: 'blur(4px)' }, {
+    opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, ease: EASE_SIG,
+    scrollTrigger: { trigger: el, start: 'top 88%' }
+  });
+});
+
+// Stagger event cards specifically, with a subtle scale-in
+gsap.fromTo('.event-card', { opacity: 0, y: 36, scale: 0.97 }, {
+  opacity: 1, y: 0, scale: 1, duration: 0.8, ease: EASE_SIG, stagger: 0.09,
+  scrollTrigger: { trigger: '#events-grid', start: 'top 85%' },
+  onComplete: () => {
+    document.querySelectorAll('.seat-fill').forEach((bar) => {
+      gsap.to(bar, { width: bar.getAttribute('data-target') + '%', duration: 1.1, ease: 'power3.out' });
+    });
+  }
+});
+ScrollTrigger.create({
+  trigger: '#events-grid',
+  start: 'top 85%',
+  once: true,
+  onEnter: () => {
+    document.querySelectorAll('.seat-fill').forEach((bar) => {
+      gsap.to(bar, { width: bar.getAttribute('data-target') + '%', duration: 1.1, ease: 'power3.out', delay: .3 });
+    });
+  }
+});
+
+// Card hover micro-interaction: image zoom, title color shift, and a subtle 3D tilt following the cursor
+document.querySelectorAll('.event-card, .card-natural').forEach((card) => {
+  const img = card.querySelector('.card-img');
+  const title = card.querySelector('.card-title');
+  const quickX = gsap.quickTo(card, 'rotateY', { duration: 0.6, ease: 'power3.out' });
+  const quickY = gsap.quickTo(card, 'rotateX', { duration: 0.6, ease: 'power3.out' });
+
+  card.style.transformPerspective = 900;
+  card.style.transformStyle = 'preserve-3d';
+
+  card.addEventListener('mousemove', (e) => {
+    if (reduceMotion) return;
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    quickX(px * 6);
+    quickY(-py * 6);
+  });
+  card.addEventListener('mouseleave', () => { quickX(0); quickY(0); });
+
+  if (img) {
+    card.addEventListener('mouseenter', () => gsap.to(img, { scale: 1.08, duration: 0.6, ease: EASE_SIG }));
+    card.addEventListener('mouseleave', () => gsap.to(img, { scale: 1, duration: 0.6, ease: EASE_SIG }));
+  }
+  if (title) {
+    card.addEventListener('mouseenter', () => { title.style.transition = 'color .35s ease'; title.style.color = '#433a86'; });
+    card.addEventListener('mouseleave', () => { title.style.color = '#252230'; });
+  }
+});
+
+// Magnetic pull on primary buttons — a small, premium interaction detail
+document.querySelectorAll('.btn-primary, .btn-outline').forEach((btn) => {
+  if (reduceMotion) return;
+  const magX = gsap.quickTo(btn, 'x', { duration: 0.5, ease: 'power3.out' });
+  const magY = gsap.quickTo(btn, 'y', { duration: 0.5, ease: 'power3.out' });
+  btn.addEventListener('mousemove', (e) => {
+    const r = btn.getBoundingClientRect();
+    magX((e.clientX - r.left - r.width / 2) * 0.25);
+    magY((e.clientY - r.top - r.height / 2) * 0.25);
+  });
+  btn.addEventListener('mouseleave', () => { magX(0); magY(0); });
+});
+
+/* ---------- Navbar: shadow, hide-on-scroll, progress bar, active link ---------- */
+ScrollTrigger.create({
+  start: 'top -80',
+  end: 99999,
+  toggleClass: { className: 'shadow-lg', targets: '#navbar' }
+});
+
+let navHidden = false;
+ScrollTrigger.create({
+  start: 'top -160',
+  end: 99999,
+  onUpdate: (self) => {
+    if (self.direction === 1 && !navHidden && self.scroll() > 200) {
+      navHidden = true;
+      gsap.to('#navbar', { yPercent: -110, duration: .5, ease: EASE_SIG });
+    } else if (self.direction === -1 && navHidden) {
+      navHidden = false;
+      gsap.to('#navbar', { yPercent: 0, duration: .5, ease: EASE_SIG });
+    }
+  }
+});
+
+const progressBar = document.getElementById('scroll-progress');
+if (progressBar) {
+  ScrollTrigger.create({
+    trigger: '#top', start: 'top top', end: 'bottom bottom',
+    onUpdate: (self) => { progressBar.style.transform = `scaleX(${self.progress})`; }
+  });
+}
+
+document.querySelectorAll('.nav-link').forEach((link) => {
+  const target = document.querySelector(link.getAttribute('href'));
+  if (!target) return;
+  ScrollTrigger.create({
+    trigger: target, start: 'top 45%', end: 'bottom 45%',
+    onToggle: (self) => {
+      if (self.isActive) {
+        document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('nav-active'));
+        link.classList.add('nav-active');
+      }
+    }
+  });
+});
+
+/* ---------- Mobile menu (GSAP timeline) ---------- */
+const mobileMenu = document.getElementById('mobile-menu');
+const menuToggle = document.getElementById('menu-toggle');
+let menuOpen = false;
+const menuTl = gsap.timeline({ paused: true })
+  .set(mobileMenu, { display: 'flex' })
+  .fromTo(mobileMenu, { opacity: 0 }, { opacity: 1, duration: .3, ease: 'power2.out' })
+  .fromTo('#mobile-menu .menu-item', { y: 36, opacity: 0 }, { y: 0, opacity: 1, duration: .55, ease: EASE_SIG, stagger: .06 }, '-=.05');
+const setMenu = (open) => {
+  menuOpen = open;
+  menuToggle.setAttribute('aria-expanded', String(open));
+  document.body.style.overflow = open ? 'hidden' : '';
+  open ? menuTl.timeScale(1).play() : menuTl.timeScale(1.75).reverse();
+};
+menuToggle.addEventListener('click', () => setMenu(!menuOpen));
+document.getElementById('menu-close').addEventListener('click', () => setMenu(false));
+mobileMenu.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+/* ---------- Section headings: word-by-word curtain reveal ---------- */
+if (!reduceMotion) {
+  gsap.utils.toArray('#events h2, #gallery h2, #reviews h2, #sitemap h2, #faq h2').forEach((h) => {
+    h.innerHTML = h.textContent.trim().split(/\s+/)
+      .map((w) => `<span class="word-mask"><span>${w}</span></span>`).join(' ');
+    gsap.fromTo(h.querySelectorAll('.word-mask > span'), { yPercent: 120, rotate: 3 }, {
+      yPercent: 0, rotate: 0, duration: .9, ease: EASE_SIG, stagger: .07,
+      scrollTrigger: { trigger: h, start: 'top 86%', once: true }
+    });
+  });
+
+  /* ---------- Gallery images: cinematic clip reveal ---------- */
+  gsap.utils.toArray('.gallery-img').forEach((img, i) => {
+    gsap.fromTo(img, { clipPath: 'inset(100% 0% 0% 0%)', scale: 1.25 }, {
+      clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: 1.1, ease: EASE_SIG, delay: i * .08,
+      scrollTrigger: { trigger: img, start: 'top 88%', once: true }
+    });
+  });
+
+  /* ---------- Marquee skews with scroll velocity ---------- */
+  const marqueeSkew = { v: 0 };
+  ScrollTrigger.create({
+    trigger: '#top', start: 'top top', end: 'bottom bottom',
+    onUpdate: (self) => {
+      const skew = gsap.utils.clamp(-6, 6, self.getVelocity() / -350);
+      if (Math.abs(skew) > Math.abs(marqueeSkew.v)) {
+        marqueeSkew.v = skew;
+        gsap.to(marqueeSkew, {
+          v: 0, duration: .8, ease: 'power3.out', overwrite: true,
+          onUpdate: () => gsap.set('.marquee-track > div', { skewX: marqueeSkew.v })
+        });
+      }
+    }
+  });
+}
+
+// Gallery image hover
+document.querySelectorAll('.gallery-img').forEach((img) => {
+  img.addEventListener('mouseenter', () => gsap.to(img, { scale: 1.05, duration: .5, ease: EASE_SIG }));
+  img.addEventListener('mouseleave', () => gsap.to(img, { scale: 1, duration: .5, ease: EASE_SIG }));
+});
+
+/* ================= NEW FEATURES SUITE ================= */
+
+/* --- Toast notifications --- */
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span class="toast-dot"></span><i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  gsap.fromTo(el, { opacity: 0, x: 60, scale: .95 }, { opacity: 1, x: 0, scale: 1, duration: .5, ease: EASE_SIG });
+  gsap.to(el, { opacity: 0, x: 40, duration: .4, ease: 'power2.in', delay: 3.4, onComplete: () => el.remove() });
+};
+
+/* --- Event filters — pills + live search working together --- */
+let activeFilter = 'all';
+const searchInput = document.getElementById('event-search');
+const emptyState = document.getElementById('events-empty');
+
+const applyEventFilters = () => {
+  const q = (searchInput.value || '').trim().toLowerCase();
+  let anyVisible = false;
+  [...grid.children].forEach((card) => {
+    const okCat = activeFilter === 'all' || card.dataset.category === activeFilter;
+    const okQ = !q || card.dataset.search.includes(q);
+    const show = okCat && okQ;
+    if (show) anyVisible = true;
+    if (show && card.style.display === 'none') {
+      card.style.display = '';
+      gsap.fromTo(card, { opacity: 0, y: 26, scale: .96 }, { opacity: 1, y: 0, scale: 1, duration: .55, ease: EASE_SIG });
+    } else if (!show && card.style.display !== 'none') {
+      gsap.to(card, { opacity: 0, y: -14, scale: .97, duration: .28, ease: 'power2.in',
+        onComplete: () => { card.style.display = 'none'; } });
+    }
+  });
+  emptyState.style.display = anyVisible ? 'none' : 'block';
+};
+
+document.querySelectorAll('.filter-pill').forEach((pill) => {
+  pill.setAttribute('data-active', String(pill.dataset.filter === 'all'));
+  pill.addEventListener('click', () => {
+    activeFilter = pill.dataset.filter;
+    document.querySelectorAll('.filter-pill').forEach((p) =>
+      p.setAttribute('data-active', String(p === pill)));
+    applyEventFilters();
+  });
+});
+
+let searchDebounce;
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(applyEventFilters, 160);
+});
+applyEventFilters();
+
+/* --- Card actions: register / waitlist / bookmark / calendar (.ics) / share ---
+   Visitor gating per SRS: registration-type actions prompt login; public actions stay free. */
+const buildIcs = (ev) => {
+  const dt = new Date(ev.date);
+  const parseT = (s) => {
+    const m = s.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    let h = +m[1];
+    if (/pm/i.test(m[3]) && h !== 12) h += 12;
+    if (/am/i.test(m[3]) && h === 12) h = 0;
+    return [h, +m[2]];
+  };
+  const [sh, sm] = parseT(ev.time.split('–')[0]);
+  const start = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), sh, sm);
+  const end = new Date(start.getTime() + 2 * 3600e3);
+  const fmt = (d) => d.getFullYear() +
+    String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') +
+    'T' + String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0') + '00';
+  return [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//EventSphere//EN',
+    'BEGIN:VEVENT',
+    'UID:' + Date.now() + '@eventsphere.campus.edu',
+    'DTSTAMP:' + fmt(new Date()),
+    'DTSTART:' + fmt(start), 'DTEND:' + fmt(end),
+    'SUMMARY:' + ev.title,
+    'LOCATION:' + ev.venue,
+    'DESCRIPTION:' + ev.desc.replace(/\n/g, ' '),
+    'BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', 'DESCRIPTION:Event reminder', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+};
+
+const shareEvent = async (ev) => {
+  const text = `${ev.title} — ${ev.date}, ${ev.venue}. Register on EventSphere!`;
+  if (navigator.share) {
+    try { await navigator.share({ title: ev.title, text }); showToast('Event shared successfully', 'share-2'); } catch (_) { /* user dismissed */ }
+  } else {
+    try { await navigator.clipboard.writeText(text); showToast('Event details copied to clipboard', 'copy'); }
+    catch (_) { showToast('Sharing is not supported in this browser', 'info'); }
+  }
+};
+
+grid.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn || !grid.contains(btn)) return;
+  const cardEl = btn.closest('.event-card');
+  const ev = EVENTS[parseInt(cardEl?.dataset.index ?? '-1', 10)];
+  const shortTitle = (cardEl?.querySelector('h3')?.textContent || 'Event').split(':')[0];
+  if (btn.textContent.includes('Register')) {
+    showToast(`Sign in required — log in as a participant to register (${shortTitle})`, 'lock');
+  } else if (btn.textContent.includes('Waitlist')) {
+    showToast(`Sign in required — the waitlist needs a student account`, 'lock');
+  } else if (btn.title === 'Bookmark') {
+    btn.classList.toggle('bookmarked');
+    showToast(`${btn.classList.contains('bookmarked') ? 'Saved' : 'Removed'} ${shortTitle}`, 'bookmark');
+  } else if (btn.title === 'Add to calendar (.ics)' && ev) {
+    const blob = new Blob([buildIcs(ev)], { type: 'text/calendar' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: ev.title.split(':')[0].toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.ics'
+    });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    showToast('Calendar invite (.ics) downloaded', 'calendar-plus');
+  } else if (btn.title === 'Share event' && ev) {
+    shareEvent(ev);
+  }
+});
+
+/* --- Auth buttons (demo feedback) --- */
+document.querySelectorAll('#navbar .btn-primary, #navbar .btn-outline, #mobile-menu .btn-primary, #mobile-menu .btn-outline').forEach((b) => {
+  b.addEventListener('click', () => showToast(`${b.textContent.trim()} — demo mode`, 'sparkles'));
+});
+
+/* --- Back to top --- */
+const toTopBtn = document.getElementById('to-top');
+ScrollTrigger.create({
+  start: 'top -600', end: 99999,
+  onToggle: (self) => {
+    toTopBtn.classList.toggle('opacity-0', !self.isActive);
+    toTopBtn.classList.toggle('pointer-events-none', !self.isActive);
+  }
+});
+toTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* --- Custom cursor halo (desktop only) --- */
+if (window.matchMedia('(pointer:fine)').matches && !reduceMotion) {
+  const dot = Object.assign(document.createElement('div'), { id: 'cursor-dot' });
+  const ring = Object.assign(document.createElement('div'), { id: 'cursor-ring' });
+  document.body.append(dot, ring);
+  const dX = gsap.quickTo(dot, 'x', { duration: .07, ease: 'power2.out' });
+  const dY = gsap.quickTo(dot, 'y', { duration: .07, ease: 'power2.out' });
+  const rX = gsap.quickTo(ring, 'x', { duration: .38, ease: 'power3.out' });
+  const rY = gsap.quickTo(ring, 'y', { duration: .38, ease: 'power3.out' });
+  window.addEventListener('mousemove', (e) => { dX(e.clientX); dY(e.clientY); rX(e.clientX); rY(e.clientY); });
+  const HOVER_SEL = 'a, button, input, [role="button"]';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(HOVER_SEL)) gsap.to(ring, { scale: 1.55, borderColor: 'rgba(216,201,163,.9)', duration: .3 });
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(HOVER_SEL)) gsap.to(ring, { scale: 1, borderColor: 'rgba(67,58,134,.5)', duration: .3 });
+  });
+}
+
+/* --- Typography motion: nav-link letters scramble on hover --- */
+const SCRAMBLE_GLYPHS = 'ABCDEFGHKMNPRSTUVXYZ0123456789';
+document.querySelectorAll('.nav-link').forEach((link) => {
+  const labelNode = [...link.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
+  if (!labelNode) return;
+  const original = labelNode.textContent.trim();
+  const span = document.createElement('span');
+  span.className = 'nav-label';
+  span.textContent = original;
+  link.replaceChild(span, labelNode);
+  link.addEventListener('mouseenter', () => {
+    if (link._scr) link._scr.kill();
+    const st = { p: 0 };
+    link._scr = gsap.to(st, {
+      p: 1, duration: .5, ease: 'none',
+      onUpdate: () => {
+        const cut = Math.floor(st.p * original.length);
+        span.textContent = original.split('').map((ch, i) =>
+          ch === ' ' ? ' ' : (i < cut ? ch : SCRAMBLE_GLYPHS[(Math.random() * SCRAMBLE_GLYPHS.length) | 0])).join('');
+      },
+      onComplete: () => { span.textContent = original; }
+    });
+  });
+});
+
+/* --- Hero paragraph: word-by-word blur rise, synced into the hero timeline --- */
+const heroParagraph = document.querySelector('main > section:first-of-type p.max-w-xl');
+if (heroParagraph && !reduceMotion) {
+  heroParagraph.innerHTML = heroParagraph.textContent.trim().split(/\s+/)
+    .map((w) => `<span class="word-mask"><span>${w}</span></span>`).join(' ');
+  heroTl.fromTo(heroParagraph.querySelectorAll('.word-mask > span'),
+    { opacity: 0, y: 12, filter: 'blur(6px)' },
+    { opacity: 1, y: 0, filter: 'blur(0px)', duration: .65, ease: EASE_SIG, stagger: .014 }, 1.05);
+}
+
+/* --- Announcements bar dismiss --- */
+const announceClose = document.getElementById('announce-close');
+if (announceClose) {
+  announceClose.addEventListener('click', () => {
+    const bar = document.getElementById('announce-bar');
+    gsap.to(bar, { height: 0, opacity: 0, duration: .45, ease: EASE_SIG, onComplete: () => bar.remove() });
+  });
+}
+
+/* --- Feedback form: interactive star widgets (overall + components) --- */
+document.querySelectorAll('#fb-stars, .fb-comp').forEach((wrap) => {
+  wrap.addEventListener('click', (e) => {
+    const star = e.target.closest('.fb-star, .fb-star-mini');
+    if (!star) return;
+    const stars = [...wrap.querySelectorAll('.fb-star, .fb-star-mini')];
+    const v = stars.indexOf(star) + 1;
+    wrap.dataset.value = String(v);
+    stars.forEach((s, i) => s.classList.toggle('on', i < v));
+    AudioFX.tick();
+  });
+});
+
+/* SRS access control: only signed-in participants may submit feedback — visitors get a login prompt */
+document.getElementById('feedback-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (document.getElementById('fb-stars').dataset.value === '0') {
+    showToast('Please select an overall rating first', 'alert-circle');
+    return;
+  }
+  showToast('Sign in required — only registered participants can submit feedback', 'lock');
+});
+
+/* --- Micro UI tick sounds on key interactive elements --- */
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.btn-primary, .btn-outline, .nav-link, .filter-pill, #menu-toggle, #menu-close, #to-top')) AudioFX.tick();
+});
+
+/* ---------- Notification bell: real data + persisted read-state ----------
+   SRS ref: 1.6 Functional Requirements > User Dashboard > Notifications.
+   Backed by notifications-data.js so the unread count and read state stay
+   in sync between this navbar dropdown and the full notifications.html page. */
+(() => {
+  const store = window.EventSphereNotifications;
+  const toggleBtn = document.getElementById('notif-toggle');
+  const dropdown = document.getElementById('notif-dropdown');
+  const list = document.getElementById('notif-list');
+  const emptyState = document.getElementById('notif-empty');
+  const badge = document.getElementById('notif-badge');
+  const countPill = document.getElementById('notif-count-pill');
+  const markAllBtn = document.getElementById('notif-mark-all');
+  if (!store || !toggleBtn || !dropdown) return;
+
+  const PREVIEW_COUNT = 5;
+
+  const renderNotifs = () => {
+    const items = store.NOTIFICATIONS.slice(0, PREVIEW_COUNT);
+    list.innerHTML = items.map((n) => {
+      const unread = !store.isRead(n.id);
+      return `
+        <a href="${n.href}" data-id="${n.id}" class="notif-item ${unread ? 'is-unread' : ''} flex items-start gap-3 py-2 px-3 rounded-xl hover:bg-[#f5f5f0] transition-colors">
+          <div class="w-8 h-8 rounded-xl bg-[#e8e6dc] flex items-center justify-center shrink-0">
+            <i data-lucide="${n.icon}" class="w-3.5 h-3.5 text-[#433a86]"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="notif-title text-xs leading-snug">${n.title}</p>
+            <p class="text-[11px] text-[#6b6b5c] leading-snug line-clamp-2">${n.body}</p>
+            <p class="text-[10px] text-[#a39e8d] mt-0.5 font-mono-custom">${n.time}</p>
+          </div>
+          ${unread ? '<span class="w-2 h-2 rounded-full bg-[#a65b44] mt-1.5 shrink-0" aria-hidden="true"></span>' : ''}
+        </a>`;
+    }).join('');
+    if (window.lucide) lucide.createIcons();
+
+    emptyState.classList.toggle('hidden', items.length > 0);
+
+    const unread = store.unreadCount();
+    badge.classList.toggle('show', unread > 0);
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+    countPill.textContent = `${unread} new`;
+  };
+  renderNotifs();
+
+  let isOpen = false;
+  const openDropdown = () => {
+    isOpen = true;
+    dropdown.classList.add('notif-open');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+  };
+  const closeDropdown = () => {
+    isOpen = false;
+    dropdown.classList.remove('notif-open');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  };
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isOpen ? closeDropdown() : openDropdown();
+  });
+  document.addEventListener('click', (e) => {
+    if (isOpen && !dropdown.contains(e.target) && !toggleBtn.contains(e.target)) closeDropdown();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) { closeDropdown(); toggleBtn.focus(); }
+  });
+
+  list.addEventListener('click', (e) => {
+    const item = e.target.closest('.notif-item');
+    if (!item) return;
+    store.markRead(item.dataset.id);
+    renderNotifs();
+    // let the anchor's default navigation proceed (dashboard/events/section link)
+  });
+
+  markAllBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    store.markAllRead();
+    renderNotifs();
+    if (typeof showToast === 'function') showToast('All notifications marked as read', 'check-check');
+  });
+})();
+</script>
+</body>
+</html>

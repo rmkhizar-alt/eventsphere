@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23433a86'/><text x='32' y='45' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='36' fill='%23f6f4ee' text-anchor='middle'>E</text></svg>">
+<title>Admin Dashboard — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tailwind-local.css">
+<script src="lucide-local.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--sand2);border-radius:99px;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);transform:translateY(-2px);}
+  .btn-danger{background:#a65b44;color:#fff;border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-danger:hover{background:#8c4a38;transform:translateY(-2px);}
+  .btn-success{background:#2f6b6e;color:#fff;border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-success:hover{background:#1f5255;transform:translateY(-2px);}
+  .card-natural{background:#fff;border-radius:1.5rem;border:1px solid rgba(37,34,48,.06);box-shadow:0 2px 10px -4px rgba(37,34,48,.06);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .side-link{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-radius:1rem;font-size:.8rem;font-weight:600;color:#555;transition:all .3s ease;}
+  .side-link:hover{background:var(--sand2);color:#2d2d2d;}
+  .side-link.active{background:var(--olive);color:#f5f5f0;}
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:50;width:260px;background:#fff;border-right:1px solid rgba(37,34,48,.06);transform:translateX(-100%);transition:transform .45s cubic-bezier(.16,1,.3,1);}
+  #sidebar.open{transform:none;}
+  @media(min-width:1024px){#sidebar{transform:none;}main{margin-left:260px;}}
+  .field{width:100%;border-radius:.9rem;border:1px solid rgba(37,34,48,.15);background:#fff;padding:.85rem 1rem;font-size:.85rem;outline:none;transition:border-color .3s;}
+  .field:focus{border-color:var(--olive);}
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .row-out{opacity:0;transform:translateX(40px);transition:all .45s cubic-bezier(.16,1,.3,1);}
+  .tab-btn{padding:.5rem 1rem;border-radius:9999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#555;transition:all .3s ease;border:1px solid transparent;}
+  .tab-btn:hover{background:var(--sand2);}
+  .tab-btn.active{background:var(--olive);color:#f5f5f0;}
+  .section-video-wrap{position:relative;overflow:hidden;isolation:isolate;}
+  .section-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .section-video-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .section-video-wrap>.relative{position:relative;z-index:2;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<aside id="sidebar">
+  <div class="h-20 flex items-center gap-3 px-6 border-b border-[#2d2d2d08]">
+    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#a65b44] to-[#8c4a38] text-white flex items-center justify-center font-serif-custom text-xl font-bold italic">E</div>
+    <span class="font-serif-custom text-lg font-bold text-[#2d2d2d]">EventSphere</span>
+    <button id="side-close" class="lg:hidden ml-auto p-1.5 rounded-full hover:bg-[#e8e6dc]" aria-label="Close menu"><i data-lucide="x" class="w-4 h-4"></i></button>
+  </div>
+  <nav class="p-4 space-y-1">
+    <p class="text-[10px] font-mono-custom tracking-widest uppercase text-[#888d75] px-3 pb-2">Admin</p>
+    <a href="#overview" class="side-link active"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview</a>
+    <a href="#approvals" class="side-link"><i data-lucide="check-square" class="w-4 h-4"></i> Event Approvals</a>
+    <a href="#users" class="side-link"><i data-lucide="users" class="w-4 h-4"></i> User Management</a>
+    <a href="#announcements" class="side-link"><i data-lucide="megaphone" class="w-4 h-4"></i> Announcements</a>
+    <a href="#reports" class="side-link"><i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports</a>
+    <hr class="border-[#2d2d2d08] my-3" />
+    <a href="index.html" class="side-link"><i data-lucide="home" class="w-4 h-4"></i> Home Page</a>
+    <a href="login.html" class="side-link !text-[#a65b44]"><i data-lucide="log-out" class="w-4 h-4"></i> Log Out</a>
+  </nav>
+</aside>
+
+<main class="min-h-screen">
+  <header class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8 flex items-center justify-between h-20 gap-4">
+      <div class="flex items-center gap-3">
+        <button id="side-open" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc]" aria-label="Open menu"><i data-lucide="menu" class="w-6 h-6"></i></button>
+        <div>
+          <p class="font-display text-lg font-semibold text-[#2d2d2d] leading-none">Admin Control Center</p>
+          <p class="text-[11px] text-[#888d75] mt-1">admin@campus.edu · Full System Access</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button class="relative p-2 rounded-full hover:bg-[#e8e6dc]" aria-label="Alerts"><i data-lucide="shield-alert" class="w-5 h-5 text-[#a65b44]"></i><span class="absolute top-1 right-1 w-4 h-4 bg-[#a65b44] text-white text-[9px] font-bold rounded-full flex items-center justify-center">2</span></button>
+        <div class="w-9 h-9 rounded-full bg-[#a65b44] text-white flex items-center justify-center font-display font-bold text-sm">A</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-8 py-8 space-y-10">
+
+    <section id="overview" class="relative section-video-wrap grid grid-cols-2 lg:grid-cols-4 gap-4 rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/admin-stats.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.8) 20%,rgba(246,244,238,.8) 80%,#f6f4ee 100%);"></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="users" class="w-5 h-5 text-[#433a86] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">14,216</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Total Users</p></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="calendar" class="w-5 h-5 text-[#8c6a38] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">312</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Active Events</p></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="check-square" class="w-5 h-5 text-[#a65b44] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">4</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Pending Approvals</p></div>
+      <div class="relative card-natural p-5 border border-[#2d2d2d08]"><i data-lucide="trending-up" class="w-5 h-5 text-[#2f6b6e] mb-3"></i><p class="font-display text-3xl font-bold text-[#2d2d2d]">68%</p><p class="text-[11px] font-bold uppercase tracking-wider text-[#66665c] mt-1">Capacity Utilization</p></div>
+    </section>
+
+    <section id="approvals" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/admin-approval.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-5 flex items-center gap-2.5"><i data-lucide="check-square" class="w-5 h-5 text-[#a65b44]"></i> Event Approval Queue</h2>
+        <div class="card-natural border border-[#2d2d2d08] p-6 space-y-4">
+          <div class="approval-row flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl bg-[#fdf6f3] border border-[#a65b44]/15 transition-all" data-row>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap"><span class="badge-tag !bg-[#f0e7e1] !text-[#a65b44]">New</span><span class="badge-tag">Workshop</span></div>
+              <p class="font-display font-semibold text-sm text-[#2d2d2d] mt-2">Data Science Workshop 2026</p>
+              <p class="text-[11px] text-[#888d75]">Organizer: Fatima Khan (DataSci Club) · Oct 30 · Capacity: 60</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button class="approve-btn btn-success px-4 py-2 text-[11px]"><i data-lucide="check" class="w-3.5 h-3.5"></i> Approve</button>
+              <button class="reject-btn btn-danger px-4 py-2 text-[11px]"><i data-lucide="x" class="w-3.5 h-3.5"></i> Reject</button>
+            </div>
+          </div>
+          <div class="approval-row flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl bg-[#fdf6f3] border border-[#a65b44]/15 transition-all" data-row>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap"><span class="badge-tag !bg-[#f0e7e1] !text-[#a65b44]">New</span><span class="badge-tag">Festival</span></div>
+              <p class="font-display font-semibold text-sm text-[#2d2d2d] mt-2">Winter Carnival 2026</p>
+              <p class="text-[11px] text-[#888d75]">Organizer: Student Council · Dec 20 · Capacity: 500</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button class="approve-btn btn-success px-4 py-2 text-[11px]"><i data-lucide="check" class="w-3.5 h-3.5"></i> Approve</button>
+              <button class="reject-btn btn-danger px-4 py-2 text-[11px]"><i data-lucide="x" class="w-3.5 h-3.5"></i> Reject</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="users" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/admin-users.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-5 flex items-center gap-2.5"><i data-lucide="users" class="w-5 h-5 text-[#433a86]"></i> User Management</h2>
+        <div class="card-natural border border-[#2d2d2d08] p-6 overflow-x-auto">
+          <table class="w-full text-left text-sm min-w-[560px]">
+            <thead class="text-[11px] uppercase tracking-wider text-[#66665c] font-bold"><tr><th class="pb-3">User</th><th class="pb-3">Department</th><th class="pb-3">Role</th><th class="pb-3">Status</th><th class="pb-3 text-right">Action</th></tr></thead>
+            <tbody class="divide-y divide-[#2d2d2d0a] text-[#444]">
+              <tr><td class="py-3.5"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-[#433a86] text-white flex items-center justify-center text-[11px] font-bold">A</div><div><p class="font-semibold text-[#2d2d2d]">Aisha Patel</p><p class="text-[11px] text-[#888d75]">aisha@student.edu</p></div></div></td><td class="py-3.5 text-xs">CS &amp; AI</td><td class="py-3.5"><select class="text-xs font-bold rounded-lg border border-[#2d2d2d]/15 bg-white px-2 py-1 focus:outline-none focus:border-[#433a86]"><option selected>Student</option><option>Organizer</option><option>Admin</option></select></td><td class="py-3.5"><span class="badge-tag !bg-[#e2efe9] !text-[#2f6b6e]">Active</span></td><td class="py-3.5 text-right"><button class="toggle-status btn-outline px-3 py-1.5 text-[11px]">Suspend</button></td></tr>
+              <tr><td class="py-3.5"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-[#8c6a38] text-white flex items-center justify-center text-[11px] font-bold">R</div><div><p class="font-semibold text-[#2d2d2d]">Raza Khan</p><p class="text-[11px] text-[#888d75]">roza@campus.edu</p></div></div></td><td class="py-3.5 text-xs">Electronics</td><td class="py-3.5"><select class="text-xs font-bold rounded-lg border border-[#2d2d2d]/15 bg-white px-2 py-1 focus:outline-none focus:border-[#433a86]"><option>Student</option><option selected>Organizer</option><option>Admin</option></select></td><td class="py-3.5"><span class="badge-tag !bg-[#e2efe9] !text-[#2f6b6e]">Active</span></td><td class="py-3.5 text-right"><button class="toggle-status btn-outline px-3 py-1.5 text-[11px]">Suspend</button></td></tr>
+              <tr><td class="py-3.5"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-[#a65b44] text-white flex items-center justify-center text-[11px] font-bold">F</div><div><p class="font-semibold text-[#2d2d2d]">Fatima Khan</p><p class="text-[11px] text-[#888d75]">fatima.k@campus.edu</p></div></div></td><td class="py-3.5 text-xs">Business Admin</td><td class="py-3.5"><select class="text-xs font-bold rounded-lg border border-[#2d2d2d]/15 bg-white px-2 py-1 focus:outline-none focus:border-[#433a86]"><option selected>Student</option><option>Organizer</option><option>Admin</option></select></td><td class="py-3.5"><span class="badge-tag !bg-[#f0e7e1] !text-[#a65b44]">Pending</span></td><td class="py-3.5 text-right"><button class="activate-user btn-success px-3 py-1.5 text-[11px]">Activate</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="announcements" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/admin-announcements.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-5 flex items-center gap-2.5"><i data-lucide="megaphone" class="w-5 h-5 text-[#8c6a38]"></i> Announcement Composer</h2>
+        <form id="announce-form" novalidate class="card-natural border border-[#2d2d2d08] p-6 space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Title *</span><input type="text" class="field mt-1.5" placeholder="e.g. Semester Kickoff Event" required /></label>
+            <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Display On *</span>
+              <select class="field mt-1.5"><option>Homepage Banner</option><option>Dashboard Only</option><option>Email Blast</option><option>All Channels</option></select>
+            </label>
+          </div>
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Message *</span><textarea class="field mt-1.5 min-h-[100px] resize-y" placeholder="Type your announcement…"></textarea></label>
+          <div class="flex items-center gap-3"><button type="submit" class="btn-primary px-7 py-3 text-xs uppercase tracking-widest"><i data-lucide="send" class="w-4 h-4"></i> Publish Announcement</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section id="reports" class="relative section-video-wrap rv">
+      <video class="section-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="videos/admin-reports.mp4" type="video/mp4">
+      </video>
+      <div class="section-video-overlay" style="background:linear-gradient(180deg,#f6f4ee 0%,rgba(246,244,238,.78) 18%,rgba(246,244,238,.76) 82%,#f6f4ee 100%);"></div>
+      <div class="relative">
+        <h2 class="font-display text-2xl font-semibold text-[#2d2d2d] mb-5 flex items-center gap-2.5"><i data-lucide="bar-chart-3" class="w-5 h-5 text-[#2f6b6e]"></i> Reports &amp; Analytics</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <button class="card-natural border border-[#2d2d2d08] p-6 text-left hover:border-[#433a86]/30 transition-colors group"><i data-lucide="users" class="w-8 h-8 text-[#433a86] group-hover:scale-110 transition-transform mb-3"></i><p class="font-display font-semibold text-sm text-[#2d2d2d]">User Growth Report</p><p class="text-[11px] text-[#888d75] mt-1">Signups, departments, role distribution.</p></button>
+          <button class="card-natural border border-[#2d2d2d08] p-6 text-left hover:border-[#433a86]/30 transition-colors group"><i data-lucide="calendar-range" class="w-8 h-8 text-[#8c6a38] group-hover:scale-110 transition-transform mb-3"></i><p class="font-display font-semibold text-sm text-[#2d2d2d]">Event Attendance Report</p><p class="text-[11px] text-[#888d75] mt-1">Attendance vs. capacity, no-show rates.</p></button>
+          <button class="card-natural border border-[#2d2d2d08] p-6 text-left hover:border-[#433a86]/30 transition-colors group"><i data-lucide="message-square" class="w-8 h-8 text-[#a65b44] group-hover:scale-110 transition-transform mb-3"></i><p class="font-display font-semibold text-sm text-[#2d2d2d]">Feedback Analytics</p><p class="text-[11px] text-[#888d75] mt-1">Ratings, comments, department trends.</p></button>
+          <button class="card-natural border border-[#2d2d2d08] p-6 text-left hover:border-[#433a86]/30 transition-colors group"><i data-lucide="trophy" class="w-8 h-8 text-[#2f6b6e] group-hover:scale-110 transition-transform mb-3"></i><p class="font-display font-semibold text-sm text-[#2d2d2d]">Certificate Issuance</p><p class="text-[11px] text-[#888d75] mt-1">Paid vs free, pending payments.</p></button>
+          <button class="card-natural border border-[#2d2d2d08] p-6 text-left hover:border-[#433a86]/30 transition-colors group"><i data-lucide="map-pin" class="w-8 h-8 text-[#7d75b8] group-hover:scale-110 transition-transform mb-3"></i><p class="font-display font-semibold text-sm text-[#2d2d2d]">Venue Utilization</p><p class="text-[11px] text-[#888d75] mt-1">Bookings by department and month.</p></button>
+          <button class="card-natural border border-[#2d2d2d08] p-6 text-left hover:border-[#433a86]/30 transition-colors group"><i data-lucide="download" class="w-8 h-8 text-[#8c6a38] group-hover:scale-110 transition-transform mb-3"></i><p class="font-display font-semibold text-sm text-[#2d2d2d]">Export CSV</p><p class="text-[11px] text-[#888d75] mt-1">Download any report in CSV format.</p></button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+lucide.createIcons();
+const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .1 });
+document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => el.remove(), 3800);
+};
+
+const sb = document.getElementById('sidebar');
+document.getElementById('side-open').addEventListener('click', () => { sb.classList.add('open'); document.body.style.overflow = 'hidden'; });
+const closeSb = () => { sb.classList.remove('open'); document.body.style.overflow = ''; };
+document.getElementById('side-close').addEventListener('click', closeSb);
+sb.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', () => { closeSb(); document.querySelectorAll('.side-link').forEach((l) => l.classList.remove('active')); a.classList.add('active'); }));
+
+document.querySelectorAll('.approve-btn').forEach((btn) => btn.addEventListener('click', (e) => {
+  const row = e.target.closest('[data-row]');
+  row.classList.add('row-out');
+  setTimeout(() => row.remove(), 450);
+  showToast('Event approved — now live on the platform', 'check-circle-2');
+}));
+document.querySelectorAll('.reject-btn').forEach((btn) => btn.addEventListener('click', (e) => {
+  const row = e.target.closest('[data-row]');
+  row.classList.add('row-out');
+  setTimeout(() => row.remove(), 450);
+  showToast('Event rejected — organizer notified', 'x-circle');
+}));
+document.querySelectorAll('.toggle-status').forEach((btn) => btn.addEventListener('click', function () {
+  this.textContent = this.textContent === 'Suspend' ? 'Activate' : 'Suspend';
+  this.classList.toggle('btn-danger');
+  this.classList.toggle('btn-success');
+  showToast(this.textContent === 'Activate' ? 'Account activated' : 'Account suspended', 'shield');
+}));
+document.querySelectorAll('.activate-user').forEach((btn) => btn.addEventListener('click', function () {
+  this.closest('tr').querySelector('.badge-tag').className = 'badge-tag !bg-[#e2efe9] !text-[#2f6b6e]';
+  this.closest('tr').querySelector('.badge-tag').textContent = 'Active';
+  this.remove();
+  showToast('User account activated', 'user-check');
+}));
+document.getElementById('announce-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const inputs = e.target.querySelectorAll('input, textarea');
+  const empty = Array.from(inputs).some((i) => !i.value.trim());
+  if (empty) { showToast('Please fill in all announcement fields', 'alert-circle'); return; }
+  showToast('Announcement published to all channels!', 'megaphone');
+  e.target.reset();
+});
+document.querySelectorAll('#reports .card-natural').forEach((c) => c.addEventListener('click', () => showToast('Report generated — downloading CSV (demo)', 'download')));
+</script>
+</body>
+</html>

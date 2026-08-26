@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23433a86'/><text x='32' y='45' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='36' fill='%23f6f4ee' text-anchor='middle'>E</text></svg>">
+<title>Sign Up — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tailwind-local.css">
+<script src="lucide-local.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--olive:#433a86;--olive-dark:#2b2358;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;}
+  body{background:var(--bg-sand);color:#252230;font-family:'Satoshi',sans-serif;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .btn-primary:hover{background:var(--olive-dark);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{border-color:var(--olive);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .field{width:100%;border-radius:.9rem;border:1px solid rgba(37,34,48,.15);background:#fff;padding:.85rem 1rem;font-size:.85rem;outline:none;transition:border-color .3s;}
+  .field:focus{border-color:var(--olive);}
+  .field.err{border-color:#a65b44;background:#fdf6f3;}
+  select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888d75' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .hint{font-size:10px;color:#888d75;margin-top:.35rem;display:none;}
+  .hint.show{display:block;color:#a65b44;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<div class="min-h-screen grid lg:grid-cols-2">
+
+  <section class="order-first lg:order-none flex flex-col justify-center px-6 sm:px-14 lg:px-20 py-12">
+    <a href="index.html" class="lg:hidden flex items-center gap-3 mb-10 rv">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#433a86] to-[#2b2358] text-[#f5f5f0] flex items-center justify-center font-serif-custom text-2xl font-bold italic">E</div>
+      <span class="font-serif-custom text-xl font-bold text-[#2d2d2d]">EventSphere</span>
+    </a>
+    <div class="max-w-md w-full mx-auto lg:mx-0">
+      <span class="badge-tag mb-4 rv">Free student account</span>
+      <h1 class="font-display text-4xl sm:text-5xl font-semibold text-[#2d2d2d] mb-2 rv">Join <span class="font-serif-custom italic text-[#433a86]">EventSphere.</span></h1>
+      <p class="text-sm text-[#66665c] mb-8 rv">Register once — every fest, workshop and certificate in one dashboard.</p>
+
+      <form id="reg-form" novalidate class="space-y-4 rv">
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Full Name *</span><input id="rg-name" type="text" class="field mt-1.5" placeholder="Aisha Patel" autocomplete="name" /><p class="hint" id="h-name">Please enter your full name (min 3 letters).</p></label>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Campus Email *</span><input id="rg-email" type="email" class="field mt-1.5" placeholder="you@student.edu" autocomplete="email" /><p class="hint" id="h-email">Enter a valid email address.</p></label>
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Contact Number *</span><input id="rg-phone" type="tel" class="field mt-1.5" placeholder="03XX-XXXXXXX" autocomplete="tel" /><p class="hint" id="h-phone">Enter a valid phone number.</p></label>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Department *</span>
+            <select id="rg-dept" class="field mt-1.5"><option value="">Select department…</option><option>Computer Science &amp; AI</option><option>Electronics &amp; Robotics</option><option>Business Administration</option><option>Civil Engineering</option><option>Mechanical Engineering</option><option>Arts &amp; Humanities</option></select>
+            <p class="hint" id="h-dept">Please choose your department.</p>
+          </label>
+          <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Enrolment No. *</span><input id="rg-enroll" type="text" class="field mt-1.5" placeholder="CS-2026-047" /><p class="hint" id="h-enroll">Format looks wrong — e.g. CS-2026-047.</p></label>
+        </div>
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Password *</span><input id="rg-pass" type="password" class="field mt-1.5" placeholder="Min 8 characters" autocomplete="new-password" /><p class="hint" id="h-pass">Use at least 8 characters with a number.</p></label>
+        <label class="block"><span class="text-[11px] font-bold uppercase tracking-wider text-[#66665c]">Confirm Password *</span><input id="rg-pass2" type="password" class="field mt-1.5" placeholder="Repeat password" autocomplete="new-password" /><p class="hint" id="h-pass2">Passwords do not match.</p></label>
+
+        <label class="flex items-start gap-2 text-xs text-[#555] cursor-pointer pt-1"><input type="checkbox" id="rg-terms" class="accent-[#433a86] mt-0.5" /> I agree to the Terms of Use and the campus events code of conduct.</label>
+        <button type="submit" class="btn-primary w-full py-3.5 text-xs uppercase tracking-widest"><i data-lucide="user-plus" class="w-4 h-4"></i> Create Account</button>
+      </form>
+
+      <p class="text-xs text-[#66665c] mt-7 rv">Already registered? <a href="login.html" class="text-[#433a86] font-bold hover:underline">Log in instead →</a></p>
+    </div>
+  </section>
+
+  <section class="relative hidden lg:block overflow-hidden order-none" style="background:linear-gradient(140deg,#16132a,#2b2358 55%,#433a86);">
+    <video class="absolute inset-0 w-full h-full object-cover opacity-40" autoplay muted loop playsinline preload="metadata"><source src="videos/auth.mp4" type="video/mp4"></video>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(22,19,42,.35),rgba(43,35,88,.7));"></div>
+    <div class="relative h-full flex flex-col justify-between p-12">
+      <a href="index.html" class="flex items-center gap-3 group w-max">
+        <div class="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-[#f5f5f0] flex items-center justify-center font-serif-custom text-2xl font-bold italic group-hover:scale-105 transition-transform">E</div>
+        <span class="font-serif-custom text-2xl font-bold text-[#f5f5f0]">EventSphere</span>
+      </a>
+      <div>
+        <p class="font-serif-custom italic text-4xl text-[#f5f5f0] leading-snug mb-6">"14,000 students.<br />320 events a year.<br />Zero missed posters."</p>
+        <ul class="space-y-2.5 text-xs text-[#b9b3d6]">
+          <li class="flex items-center gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#d8c9a3]"></i>Instant QR passes for every registration</li>
+          <li class="flex items-center gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#d8c9a3]"></i>Automatic waitlist promotion</li>
+          <li class="flex items-center gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#d8c9a3]"></i>Verified e-certificates after attendance</li>
+        </ul>
+      </div>
+      <p class="text-[11px] font-mono-custom tracking-widest uppercase text-[#8f89ad]">TechWiz 6 Project · v1.0</p>
+    </div>
+  </section>
+
+</div>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+lucide.createIcons();
+window.addEventListener('load', () => document.querySelectorAll('.rv').forEach((el, i) => setTimeout(() => el.classList.add('in'), 60 + i * 70)));
+
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => el.remove(), 3800);
+};
+
+const mark = (id, hintId, ok) => {
+  document.getElementById(id).classList.toggle('err', !ok);
+  document.getElementById(hintId).classList.toggle('show', !ok);
+  return ok;
+};
+
+document.getElementById('reg-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const v = (id) => document.getElementById(id).value.trim();
+  let ok = true;
+  ok &= mark('rg-name', 'h-name', v('rg-name').length >= 3);
+  ok &= mark('rg-email', 'h-email', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('rg-email')));
+  ok &= mark('rg-phone', 'h-phone', /^[+\d][\d\s\-]{7,14}$/.test(v('rg-phone')));
+  ok &= mark('rg-dept', 'h-dept', v('rg-dept') !== '');
+  ok &= mark('rg-enroll', 'h-enroll', /^[A-Za-z]{2,4}-\d{4}-\d{2,4}$/.test(v('rg-enroll')));
+  ok &= mark('rg-pass', 'h-pass', v('rg-pass').length >= 8 && /\d/.test(v('rg-pass')));
+  ok &= mark('rg-pass2', 'h-pass2', v('rg-pass2') !== '' && v('rg-pass2') === v('rg-pass'));
+  if (!document.getElementById('rg-terms').checked) { showToast('Please accept the terms to continue', 'file-warning'); return; }
+  if (!ok) { showToast('Please fix the highlighted fields', 'alert-circle'); return; }
+  showToast('Account created! Redirecting to login…', 'party-popper');
+  setTimeout(() => location.href = 'login.html', 1400);
+});
+</script>
+</body>
+</html>

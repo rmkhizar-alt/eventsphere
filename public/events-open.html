@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="assets/logo-icon.png">
+<title>Event Details — EventSphere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,450;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="notifications-data.js"></script>
+<script src="events-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{--bg-sand:#f6f4ee;--text-slate:#252230;--olive:#433a86;--olive-dark:#2b2358;--olive-light:#7d75b8;--glow:rgba(67,58,134,.22);--sand2:#e8e6dc;--muted:#a39e8d;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg-sand);color:var(--text-slate);font-family:'Satoshi',sans-serif;letter-spacing:-.005em;}
+  .font-display{font-family:'Clash Display','Satoshi',sans-serif;letter-spacing:-.015em;}
+  .font-serif-custom{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;}
+  .font-mono-custom{font-family:'IBM Plex Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-track{background:var(--bg-sand);}
+  ::-webkit-scrollbar-thumb{background:var(--sand2);border-radius:99px;}::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+  .btn-primary{background:var(--olive);color:var(--bg-sand);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .35s cubic-bezier(.16,1,.3,1);box-shadow:0 1px 2px rgba(37,34,48,.08);}
+  .btn-primary:hover{background:var(--olive-dark);transform:translateY(-2px);box-shadow:0 14px 28px -10px var(--glow);}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+  .btn-outline{background:#fff;border:1px solid rgba(37,34,48,.12);border-radius:9999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:all .3s cubic-bezier(.16,1,.3,1);}
+  .btn-outline:hover{background:var(--bg-sand);border-color:var(--olive);transform:translateY(-2px);}
+  .card-natural{background:#fff;border-radius:1.5rem;border:1px solid rgba(37,34,48,.06);box-shadow:0 2px 10px -4px rgba(37,34,48,.06);}
+  .badge-tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--sand2);color:var(--olive);padding:.3rem .7rem;border-radius:9999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav-link{transition:all .35s cubic-bezier(.16,1,.3,1);}
+  .nav-link:hover{color:#2d2d2d;background:var(--sand2);}
+  .nav-active{background:#2d2d2d!important;color:#f5f5f0!important;}
+  .capacity-track{height:8px;border-radius:9999px;background:var(--sand2);overflow:hidden;}
+  .capacity-fill{height:100%;border-radius:9999px;width:0%;transform-origin:left;}
+  .cat-dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+  .organizer-badge{display:inline-flex;align-items:center;justify-content:center;width:2.6rem;height:2.6rem;border-radius:9999px;background:var(--sand2);color:var(--olive);flex-shrink:0;}
+  #mobile-menu{display:none;}
+  .toast{pointer-events:auto;display:flex;align-items:center;gap:.7rem;background:rgba(20,17,38,.94);color:#f6f4ee;padding:.8rem 1.1rem;border-radius:1rem;border:1px solid rgba(216,201,163,.28);box-shadow:0 24px 50px -14px rgba(43,35,88,.55);font-size:.78rem;font-weight:600;max-width:340px;}
+  .toast svg{color:#d8c9a3;flex-shrink:0;}
+  .bookmark-btn svg{transition:all .25s ease;}
+  .bookmark-btn.is-saved svg{fill:#d8c9a3;color:#a6842f;}
+
+  /* ---------- Notification bell dropdown ---------- */
+  #notif-dropdown{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-6px);transition:opacity .3s cubic-bezier(.16,1,.3,1),transform .3s cubic-bezier(.16,1,.3,1),visibility .3s;}
+  #notif-dropdown.notif-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);}
+  .notif-item{position:relative;}
+  .notif-item.is-unread .notif-title{color:#2d2d2d;}
+  .notif-item:not(.is-unread) .notif-title{color:#6b6b5c;font-weight:600;}
+  #notif-badge{display:none;}
+  #notif-badge.show{display:flex;}
+
+  /* ---------- Detail hero ---------- */
+  .detail-hero{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 15% 0%,#3a3170 0%,#241d47 42%,#16132a 100%);}
+  .detail-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4;}
+  .detail-hero-noise{position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1px);background-size:3px 3px;}
+
+  /* ---------- Sticky register rail ---------- */
+  .rail-sticky{position:sticky;top:6.5rem;}
+
+  /* ---------- Tabs ---------- */
+  .dtab{position:relative;transition:color .25s ease;}
+  .dtab[data-active="true"]{color:var(--olive);}
+  .dtab[data-active="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--olive);border-radius:2px;}
+  .dtab-panel{display:none;}
+  .dtab-panel[data-active="true"]{display:block;}
+
+  /* ---------- Agenda timeline ---------- */
+  .timeline-item{position:relative;padding-left:2.25rem;}
+  .timeline-item::before{content:"";position:absolute;left:.3rem;top:.35rem;width:.6rem;height:.6rem;border-radius:9999px;background:var(--olive);box-shadow:0 0 0 4px var(--sand2);}
+  .timeline-item::after{content:"";position:absolute;left:.58rem;top:1rem;bottom:-1.5rem;width:1px;background:linear-gradient(180deg,rgba(67,58,134,.35),rgba(67,58,134,.05));}
+  .timeline-item:last-child::after{display:none;}
+
+  /* ---------- Gallery ---------- */
+  .gallery-thumb{overflow:hidden;border-radius:1rem;}
+  .gallery-thumb img{transition:transform .6s cubic-bezier(.16,1,.3,1);}
+  .gallery-thumb:hover img{transform:scale(1.08);}
+
+  /* ---------- Not found ---------- */
+  #not-found{display:none;}
+  #detail-root{display:none;}
+</style>
+</head>
+<body class="antialiased selection:bg-[#433a86] selection:text-white">
+
+<header id="navbar" class="sticky top-0 z-40 bg-[#f5f5f0]/85 backdrop-blur-xl border-b border-[#2d2d2d15]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4 lg:gap-8">
+      <a href="index.html" class="flex items-center gap-3 group justify-self-start">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 group-hover:rotate-3 transition-transform"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-serif-custom text-xl sm:text-2xl font-bold tracking-tight text-[#2d2d2d] leading-none">EventSphere</span>
+            <span class="hidden sm:inline text-[10px] font-mono-custom tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#e8e6dc] text-[#433a86] font-semibold">v1.0</span>
+          </div>
+          <p class="hidden sm:block text-[10px] text-[#6b6b5c] tracking-[.18em] uppercase font-medium mt-0.5">Campus Event System</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center justify-center gap-1.5" aria-label="Primary">
+        <a href="index.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] flex items-center gap-1.5"><i data-lucide="home" class="w-3.5 h-3.5"></i> Overview</a>
+        <a href="events.html" class="nav-link nav-active px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Live Events</a>
+        <a href="gallery.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gallery</a>
+        <a href="faq.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i> FAQs</a>
+        <a href="contact.html" class="nav-link px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-[#555] hover:text-[#2d2d2d] hover:bg-[#e8e6dc] transition-colors flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5"></i> Contact</a>
+      </nav>
+      <div class="flex items-center gap-2 sm:gap-3 justify-self-end">
+        <div class="relative">
+          <button id="notif-toggle" class="relative p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notif-dropdown">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span id="notif-badge" class="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-[#a65b44] text-white text-[9px] font-bold rounded-full items-center justify-center">0</span>
+          </button>
+          <div id="notif-dropdown" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl p-4 border border-[#2d2d2d]/12 z-50" style="min-width:210px;" role="menu">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display text-xs font-semibold text-[#433a86] uppercase tracking-wider">Notifications</h3>
+              <span id="notif-count-pill" class="font-mono-custom text-[10px] text-[#6b6b5c]">0 new</span>
+            </div>
+            <div id="notif-list" class="space-y-1 max-h-80 overflow-y-auto"></div>
+            <p id="notif-empty" class="hidden text-xs text-[#888d75] text-center py-6">
+              <i data-lucide="bell-off" class="w-5 h-5 mx-auto mb-2 text-[#a39e8d]"></i>
+              You're all caught up
+            </p>
+            <div class="mt-3 pt-2 border-t border-[#2d2d2d]/10 flex items-center justify-between text-xs">
+              <button id="notif-mark-all" type="button" class="text-[#6b6b5c] hover:text-[#433a86] transition-colors font-semibold">Mark all as read</button>
+              <a href="notifications.html" class="text-[#433a86] font-bold hover:underline">View all →</a>
+            </div>
+          </div>
+        </div>
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="login.html" class="btn-outline px-4 py-2 text-xs">Log In</a>
+          <a href="register.html" class="btn-primary px-4 py-2 text-xs">Sign Up</a>
+        </div>
+        <button id="menu-toggle" class="lg:hidden p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="mobile-menu" class="fixed inset-0 z-50 flex-col bg-[#f6f4ee]/95 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6">
+    <div class="flex items-center justify-between h-20 border-b border-[#2d2d2d]/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+        <span class="font-serif-custom text-2xl font-bold tracking-tight text-[#2d2d2d]">EventSphere</span>
+      </div>
+      <button id="menu-close" class="p-2 rounded-full hover:bg-[#e8e6dc] text-[#2d2d2d] transition-colors" aria-label="Close menu">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </div>
+  <nav class="flex-1 flex flex-col justify-center gap-1 px-8 sm:px-12 max-w-7xl mx-auto w-full" aria-label="Mobile">
+    <a href="index.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10"><span class="font-mono-custom text-xs text-[#a39e8d]">01</span><span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Overview</span></a>
+    <a href="events.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10"><span class="font-mono-custom text-xs text-[#a39e8d]">02</span><span class="font-display font-semibold text-4xl sm:text-5xl text-[#433a86] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Live Events</span></a>
+    <a href="gallery.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10"><span class="font-mono-custom text-xs text-[#a39e8d]">03</span><span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Gallery</span></a>
+    <a href="faq.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10"><span class="font-mono-custom text-xs text-[#a39e8d]">04</span><span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">FAQs</span></a>
+    <a href="contact.html" class="menu-item group flex items-baseline gap-4 py-3 border-b border-[#2d2d2d]/10"><span class="font-mono-custom text-xs text-[#a39e8d]">05</span><span class="font-display font-semibold text-4xl sm:text-5xl text-[#2d2d2d] group-hover:text-[#433a86] group-hover:translate-x-2 transition-all duration-300">Contact</span></a>
+  </nav>
+  <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 pb-10">
+    <div class="menu-item flex gap-3">
+      <a href="login.html" class="btn-outline flex-1 py-3 text-xs">Log In</a>
+      <a href="register.html" class="btn-primary flex-1 py-3 text-xs">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+
+<!-- ================= NOT FOUND STATE ================= -->
+<div id="not-found" class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-28 text-center">
+  <svg class="w-16 h-16 mx-auto mb-6 text-[#c7c2b0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.2" y2="16.2"/></svg>
+  <h1 class="font-display text-3xl font-semibold text-[#2d2d2d] mb-2">Event not found</h1>
+  <p class="text-sm text-[#66665c] mb-8">The event you're looking for doesn't exist or may have been removed.</p>
+  <a href="events.html" class="btn-primary px-6 py-3 text-sm inline-flex"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Live Events</a>
+</div>
+
+<!-- ================= EVENT DETAIL ================= -->
+<div id="detail-root">
+
+  <section class="detail-hero relative">
+    <img id="d-hero-img" class="detail-hero-img" src="" alt="" />
+    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(22,19,42,.55) 0%,rgba(36,29,71,.72) 55%,rgba(246,244,238,1) 100%);"></div>
+    <div class="detail-hero-noise"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-24">
+      <nav class="flex items-center gap-2 text-[11px] font-mono-custom tracking-widest uppercase text-[#b9b3d6] mb-8 flex-wrap">
+        <a href="index.html" class="hover:text-white transition-colors">Home</a><span>/</span>
+        <a href="events.html" class="hover:text-white transition-colors">Live Events</a><span>/</span>
+        <span id="d-crumb-title" class="text-[#d8c9a3] normal-case tracking-normal font-sans font-semibold"></span>
+      </nav>
+
+      <span id="d-category-badge" class="badge-tag !bg-white/10 !text-[#d8c9a3] !border !border-white/15 mb-5"></span>
+      <h1 id="d-title" class="font-display text-[2rem] leading-[1.08] sm:text-5xl lg:text-[3.2rem] font-semibold text-[#f5f5f0] max-w-3xl"></h1>
+      <p id="d-desc" class="text-sm sm:text-base text-[#c9c4de] max-w-2xl mt-5 leading-relaxed"></p>
+
+      <div class="flex flex-wrap gap-3 mt-8">
+        <div class="stat-chip flex items-center gap-2 text-xs text-[#f5f5f0]" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);border-radius:1.1rem;padding:.7rem 1rem;">
+          <i data-lucide="calendar" class="w-4 h-4 text-[#d8c9a3]"></i><span id="d-date"></span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-[#f5f5f0]" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);border-radius:1.1rem;padding:.7rem 1rem;">
+          <i data-lucide="clock" class="w-4 h-4 text-[#d8c9a3]"></i><span id="d-time"></span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-[#f5f5f0]" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);border-radius:1.1rem;padding:.7rem 1rem;">
+          <i data-lucide="map-pin" class="w-4 h-4 text-[#d8c9a3]"></i><span id="d-venue"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative -mt-16 pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-[1.6fr_.9fr] gap-8 items-start">
+
+        <!-- ===== LEFT COLUMN ===== -->
+        <div class="space-y-6">
+
+          <div class="card-natural border border-[#2d2d2d12] overflow-hidden">
+            <div class="flex items-center gap-1 px-4 sm:px-6 pt-4 border-b border-[#2d2d2d0c] overflow-x-auto" id="d-tabs">
+              <button class="dtab px-4 py-3 text-xs font-bold uppercase tracking-wider text-[#66665c] whitespace-nowrap" data-tab="overview" data-active="true">Overview</button>
+              <button class="dtab px-4 py-3 text-xs font-bold uppercase tracking-wider text-[#66665c] whitespace-nowrap" data-tab="agenda">Agenda</button>
+              <button class="dtab px-4 py-3 text-xs font-bold uppercase tracking-wider text-[#66665c] whitespace-nowrap" data-tab="venue">Venue</button>
+              <button class="dtab px-4 py-3 text-xs font-bold uppercase tracking-wider text-[#66665c] whitespace-nowrap" data-tab="gallery">Gallery</button>
+            </div>
+
+            <div class="p-5 sm:p-7">
+              <!-- Overview panel -->
+              <div class="dtab-panel space-y-6" data-tab="overview" data-active="true">
+                <p id="d-longdesc" class="text-sm text-[#444] leading-relaxed"></p>
+
+                <div>
+                  <h3 class="font-display text-sm font-bold text-[#2d2d2d] uppercase tracking-wider mb-3 flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 text-[#433a86]"></i>Highlights</h3>
+                  <ul id="d-highlights" class="grid sm:grid-cols-2 gap-2.5"></ul>
+                </div>
+
+                <div>
+                  <h3 class="font-display text-sm font-bold text-[#2d2d2d] uppercase tracking-wider mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4 text-[#433a86]"></i>Good to Know</h3>
+                  <ul id="d-prereqs" class="space-y-2"></ul>
+                </div>
+
+                <div>
+                  <h3 class="font-display text-sm font-bold text-[#2d2d2d] uppercase tracking-wider mb-3 flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4 text-[#433a86]"></i>Tags</h3>
+                  <div id="d-tags" class="flex flex-wrap gap-2"></div>
+                </div>
+              </div>
+
+              <!-- Agenda panel -->
+              <div class="dtab-panel space-y-5" data-tab="agenda">
+                <h3 class="font-display text-sm font-bold text-[#2d2d2d] uppercase tracking-wider mb-1">Schedule</h3>
+                <div id="d-agenda" class="space-y-6"></div>
+              </div>
+
+              <!-- Venue panel -->
+              <div class="dtab-panel space-y-5" data-tab="venue">
+                <div class="rounded-2xl overflow-hidden border border-[#2d2d2d12] h-56 bg-[#e8e6dc] flex items-center justify-center relative">
+                  <div class="absolute inset-0" style="background-image:linear-gradient(rgba(67,58,134,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(67,58,134,.08) 1px,transparent 1px);background-size:28px 28px;"></div>
+                  <div class="relative text-center">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-[#433a86] mx-auto mb-2"></i>
+                    <p id="d-venue-name" class="font-display font-semibold text-[#2d2d2d]"></p>
+                    <p id="d-venue-address" class="text-xs text-[#6b6b5c] mt-1"></p>
+                  </div>
+                </div>
+                <a id="d-map-link" href="#" target="_blank" rel="noopener" class="btn-outline px-5 py-2.5 text-xs inline-flex"><i data-lucide="navigation" class="w-3.5 h-3.5"></i> Get Directions</a>
+              </div>
+
+              <!-- Gallery panel -->
+              <div class="dtab-panel" data-tab="gallery">
+                <h3 class="font-display text-sm font-bold text-[#2d2d2d] uppercase tracking-wider mb-4">From past editions</h3>
+                <div id="d-gallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Organizer card -->
+          <div class="card-natural border border-[#2d2d2d12] p-6 flex items-center gap-4">
+            <span class="organizer-badge"><i data-lucide="building-2" class="w-5 h-5"></i></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] uppercase tracking-widest text-[#a39e8d] font-mono-custom mb-0.5">Organized by</p>
+              <p id="d-org" class="font-display font-semibold text-[#2d2d2d] truncate"></p>
+              <p id="d-org-contact" class="text-xs text-[#6b6b5c] mt-0.5"></p>
+            </div>
+            <a href="contact.html" class="btn-outline px-4 py-2 text-xs shrink-0 hidden sm:inline-flex">Contact</a>
+          </div>
+        </div>
+
+        <!-- ===== RIGHT COLUMN — sticky register rail ===== -->
+        <div class="rail-sticky space-y-5">
+          <div class="card-natural border border-[#2d2d2d12] p-6 space-y-5">
+            <div class="flex items-center justify-between text-xs">
+              <span id="d-seats-label" class="font-semibold flex items-center gap-1.5"></span>
+              <span id="d-pct-label" class="font-mono-custom text-[11px] text-[#6b6b5c]"></span>
+            </div>
+            <div class="capacity-track"><div id="d-capacity-fill" class="capacity-fill" style="width:0%;"></div></div>
+            <p class="text-[11px] text-[#6b6b5c] font-mono-custom" id="d-seats-count"></p>
+
+            <button id="d-register-btn" class="btn-primary w-full py-3.5 text-sm">Register Now <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <button id="d-cal-btn" class="btn-outline py-2.5 text-xs"><i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> Add to calendar</button>
+              <button id="d-share-btn" class="btn-outline py-2.5 text-xs"><i data-lucide="share-2" class="w-3.5 h-3.5"></i> Share</button>
+            </div>
+            <button id="d-bookmark-btn" class="bookmark-btn w-full flex items-center justify-center gap-2 text-xs font-semibold text-[#6b6b5c] hover:text-[#433a86] py-1 transition-colors">
+              <i data-lucide="bookmark" class="w-4 h-4"></i><span>Save this event</span>
+            </button>
+          </div>
+
+          <div class="card-natural border border-[#2d2d2d12] p-6 space-y-3 text-xs text-[#555]">
+            <p class="font-display text-sm font-bold text-[#2d2d2d] uppercase tracking-wider mb-1">Quick Facts</p>
+            <div class="flex items-center gap-2"><i data-lucide="calendar" class="w-3.5 h-3.5 text-[#433a86]"></i><span id="d-quick-date"></span></div>
+            <div class="flex items-center gap-2"><i data-lucide="clock" class="w-3.5 h-3.5 text-[#433a86]"></i><span id="d-quick-time"></span></div>
+            <div class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#433a86]"></i><span id="d-quick-venue"></span></div>
+            <div class="flex items-center gap-2"><i data-lucide="users" class="w-3.5 h-3.5 text-[#433a86]"></i><span id="d-quick-seats"></span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== RELATED EVENTS ===== -->
+      <div class="mt-16" id="related-wrap">
+        <div class="flex items-end justify-between gap-6 mb-6">
+          <h2 class="font-display text-2xl sm:text-3xl text-[#2d2d2d]">You might also like</h2>
+          <a href="events.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-[#433a86] hover:text-[#2b2358] transition-colors">All events <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+        </div>
+        <div id="related-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<footer class="relative bg-[#e8e6dc] text-[#2d2d2d] pt-16 pb-10">
+  <div class="section-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#2d2d2d15]">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl overflow-hidden shadow-sm"><img src="assets/logo-icon.png" alt="EventSphere logo" class="w-full h-full object-cover" /></div>
+          <div>
+            <span class="font-display text-2xl font-bold tracking-tight block leading-none">EventSphere</span>
+            <span class="text-[10px] text-[#6b6b5c] uppercase tracking-widest font-mono-custom">Campus Events Portal</span>
+          </div>
+        </div>
+        <p class="text-xs text-[#555] leading-relaxed max-w-sm">Unified Campus Event Management &amp; Ticketing System. Real-time seating capacity, verified e-certificates, and automated waitlists — all in one place.</p>
+        <div class="flex items-center gap-2 pt-2">
+          <span class="badge-tag !bg-white">TechWiz 6 Project</span>
+          <span class="badge-tag !bg-white">ISO 27001 Accredited</span>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Navigation</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="index.html" class="hover:text-[#433a86] transition-colors">Home &amp; Schedule</a></li>
+          <li><a href="events.html" class="hover:text-[#433a86] transition-colors">Live Events Directory</a></li>
+          <li><a href="gallery.html" class="hover:text-[#433a86] transition-colors">Moments Archive</a></li>
+          <li><a href="faq.html" class="hover:text-[#433a86] transition-colors">FAQs &amp; Support</a></li>
+          <li><a href="contact.html" class="hover:text-[#433a86] transition-colors">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Event Categories</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li>Technical &amp; Hackathons</li>
+          <li>Cultural &amp; Music Galas</li>
+          <li>Sports Meets &amp; Track</li>
+          <li>Workshops &amp; Seminars</li>
+        </ul>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-[#433a86]">Dashboards</h4>
+        <ul class="space-y-2 text-xs text-[#555]">
+          <li><a href="dashboard-student.html" class="hover:text-[#433a86] transition-colors">Student Dashboard</a></li>
+          <li><a href="dashboard-organizer.html" class="hover:text-[#433a86] transition-colors">Organizer Dashboard</a></li>
+          <li><a href="dashboard-admin.html" class="hover:text-[#433a86] transition-colors">Admin Control Center</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6b6b5c]">
+      <p>© 2026 EventSphere · Centralized Campus Event Information &amp; Registration System.</p>
+      <div class="flex items-center gap-4 text-[11px] font-mono-custom"><span>Natural Tones Theme</span><span>·</span><span>Version 2.4.0</span></div>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-root" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-none"></div>
+
+<script>
+/* ---------- Toast ---------- */
+const toastRoot = document.getElementById('toast-root');
+const showToast = (msg, icon = 'check-circle-2') => {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+  toastRoot.appendChild(el);
+  lucide.createIcons();
+  gsap.fromTo(el, {opacity:0, y:16, scale:.95}, {opacity:1, y:0, scale:1, duration:.45, ease:"back.out(1.6)"});
+  setTimeout(() => { gsap.to(el, {opacity:0, x:24, duration:.35, ease:"power2.in", onComplete:()=>el.remove()}); }, 3600);
+};
+
+/* ---------- Resolve event from ?id= ---------- */
+const params = new URLSearchParams(window.location.search);
+const requestedId = params.get('id');
+const event = (typeof EVENTS !== 'undefined') ? EVENTS.find(e => e.id === requestedId) : null;
+
+if (!event) {
+  document.getElementById('not-found').style.display = 'block';
+} else {
+  document.getElementById('detail-root').style.display = 'block';
+  document.title = `${event.title} — EventSphere`;
+
+  const style = (typeof CATEGORY_STYLES !== 'undefined' && CATEGORY_STYLES[event.category]) || { chip:'bg-[#e8e6dc] text-[#2d2d2d]', dot:'#2d2d2d', icon:'calendar' };
+  const seatsLeft = Math.max(0, event.totalSeats - event.seatsBooked);
+  const pct = Math.min(100, Math.round((event.seatsBooked / event.totalSeats) * 100));
+  const isFull = seatsLeft === 0;
+  const barColor = pct >= 90 ? '#a65b44' : pct >= 60 ? '#8c6a38' : '#433a86';
+
+  document.getElementById('d-hero-img').src = event.img;
+  document.getElementById('d-hero-img').alt = event.title;
+  document.getElementById('d-crumb-title').textContent = event.title.split(':')[0];
+  document.getElementById('d-category-badge').innerHTML = `<i data-lucide="${style.icon}" class="w-3 h-3"></i>${event.category}`;
+  document.getElementById('d-title').textContent = event.title;
+  document.getElementById('d-desc').textContent = event.desc;
+  document.getElementById('d-date').textContent = event.date;
+  document.getElementById('d-time').textContent = event.time;
+  document.getElementById('d-venue').textContent = event.venue;
+  document.getElementById('d-longdesc').textContent = event.longDesc || event.desc;
+
+  document.getElementById('d-highlights').innerHTML = (event.highlights || []).map(h =>
+    `<li class="flex items-start gap-2 text-xs text-[#444]"><i data-lucide="check" class="w-3.5 h-3.5 text-[#433a86] mt-0.5 shrink-0"></i><span>${h}</span></li>`
+  ).join('');
+
+  document.getElementById('d-prereqs').innerHTML = (event.prerequisites || []).map(p =>
+    `<li class="flex items-start gap-2 text-xs text-[#444]"><i data-lucide="dot" class="w-3.5 h-3.5 text-[#433a86] mt-0.5 shrink-0"></i><span>${p}</span></li>`
+  ).join('');
+
+  document.getElementById('d-tags').innerHTML = (event.tags || []).map(t =>
+    `<span class="badge-tag !normal-case !text-[11px]">${t}</span>`
+  ).join('');
+
+  document.getElementById('d-agenda').innerHTML = (event.agenda || []).map(a =>
+    `<div class="timeline-item">
+       <p class="font-mono-custom text-[11px] text-[#433a86] font-bold mb-0.5">${a.time}</p>
+       <p class="font-display font-semibold text-sm text-[#2d2d2d]">${a.title}</p>
+       ${a.desc ? `<p class="text-xs text-[#666] mt-0.5">${a.desc}</p>` : ''}
+     </div>`
+  ).join('');
+
+  document.getElementById('d-venue-name').textContent = event.venue;
+  document.getElementById('d-venue-address').textContent = event.address || event.venue;
+  document.getElementById('d-map-link').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address || event.venue)}`;
+
+  document.getElementById('d-gallery').innerHTML = (event.gallery || []).map(src =>
+    `<div class="gallery-thumb h-28 sm:h-32"><img src="${src}" class="w-full h-full object-cover" loading="lazy" alt="${event.title} gallery photo" /></div>`
+  ).join('');
+
+  document.getElementById('d-org').textContent = event.org;
+  document.getElementById('d-org-contact').textContent = event.orgContact || '';
+
+  const seatsLabelEl = document.getElementById('d-seats-label');
+  seatsLabelEl.className = `font-semibold flex items-center gap-1.5 ${isFull ? 'text-[#a65b44]' : 'text-[#2f6b6e]'}`;
+  seatsLabelEl.innerHTML = `<i data-lucide="${isFull ? 'alert-circle' : 'check-circle-2'}" class="w-3.5 h-3.5"></i>${isFull ? 'Full — Waitlist Active' : seatsLeft + ' Seats Available'}`;
+  document.getElementById('d-pct-label').textContent = `${pct}% Full`;
+  document.getElementById('d-seats-count').textContent = `${event.seatsBooked} / ${event.totalSeats} registered`;
+  const fill = document.getElementById('d-capacity-fill');
+  fill.style.background = barColor;
+
+  const regBtn = document.getElementById('d-register-btn');
+  if (isFull) {
+    regBtn.className = 'w-full py-3.5 text-sm rounded-full font-semibold flex items-center justify-center gap-2 bg-[#8c6a38] text-white hover:bg-[#73552b] transition-colors';
+    regBtn.innerHTML = 'Join Priority Waitlist <i data-lucide="chevron-right" class="w-4 h-4"></i>';
+  }
+
+  document.getElementById('d-quick-date').textContent = event.date;
+  document.getElementById('d-quick-time').textContent = event.time;
+  document.getElementById('d-quick-venue').textContent = event.venue;
+  document.getElementById('d-quick-seats').textContent = `${event.totalSeats} total seats`;
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll('.dtab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.dtab').forEach(t => t.dataset.active = 'false');
+      document.querySelectorAll('.dtab-panel').forEach(p => p.dataset.active = 'false');
+      tab.dataset.active = 'true';
+      document.querySelector(`.dtab-panel[data-tab="${tab.dataset.tab}"]`).dataset.active = 'true';
+    });
+  });
+
+  /* ---------- Register / Waitlist (SRS gating: visitors prompted to log in) ---------- */
+  regBtn.addEventListener('click', () => {
+    showToast(isFull ? 'Sign in required — waitlist needs a student account' : `Sign in required — log in to register (${event.title.split(':')[0]})`, 'lock');
+  });
+
+  /* ---------- Add to calendar (.ics) ---------- */
+  const buildIcs = (ev) => {
+    const dt = new Date(ev.date);
+    const parseT = (s) => { const m = s.match(/(\d+):(\d+)\s*(AM|PM)/i); let h = +m[1]; if (/pm/i.test(m[3]) && h !== 12) h += 12; if (/am/i.test(m[3]) && h === 12) h = 0; return [h, +m[2]]; };
+    const [sh, sm] = parseT(ev.time.split('–')[0]);
+    const start = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), sh, sm);
+    const end = new Date(start.getTime() + 2 * 3600e3);
+    const fmt = (d) => d.getFullYear() + String(d.getMonth() + 1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + 'T' + String(d.getHours()).padStart(2,'0') + String(d.getMinutes()).padStart(2,'0') + '00';
+    return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EventSphere//EN','BEGIN:VEVENT','UID:'+Date.now()+'@eventsphere.campus.edu','DTSTAMP:'+fmt(new Date()),'DTSTART:'+fmt(start),'DTEND:'+fmt(end),'SUMMARY:'+ev.title,'LOCATION:'+ev.venue,'DESCRIPTION:'+ev.desc,'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  };
+  document.getElementById('d-cal-btn').addEventListener('click', () => {
+    const blob = new Blob([buildIcs(event)], { type: 'text/calendar' });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: event.title.split(':')[0].toLowerCase().replace(/[^a-z0-9]+/g,'-') + '.ics' });
+    document.body.appendChild(a); a.click(); a.remove();
+    showToast('Calendar invite (.ics) downloaded', 'calendar-plus');
+  });
+
+  /* ---------- Share ---------- */
+  document.getElementById('d-share-btn').addEventListener('click', async () => {
+    const text = `${event.title} — ${event.date}, ${event.venue}. Register on EventSphere!`;
+    if (navigator.share) { try { await navigator.share({ title: event.title, text, url: window.location.href }); } catch (_) {} }
+    else { try { await navigator.clipboard.writeText(`${text} ${window.location.href}`); showToast('Event link copied', 'copy'); } catch (_) {} }
+  });
+
+  /* ---------- Bookmark ---------- */
+  document.getElementById('d-bookmark-btn').addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    btn.classList.toggle('is-saved');
+    gsap.fromTo(btn.querySelector('svg'), {scale:.7}, {scale:1, duration:.4, ease:"back.out(3)"});
+    showToast(btn.classList.contains('is-saved') ? 'Saved — sign in to keep it in your profile' : 'Removed from saved events', 'bookmark');
+  });
+
+  /* ---------- Related events (same category, excluding this one) ---------- */
+  const relatedGrid = document.getElementById('related-grid');
+  const related = EVENTS.filter(e => e.id !== event.id && e.category === event.category).slice(0, 3);
+  const fallback = EVENTS.filter(e => e.id !== event.id && !related.includes(e)).slice(0, 3 - related.length);
+  [...related, ...fallback].forEach(ev => {
+    const rStyle = CATEGORY_STYLES[ev.category] || { chip:'bg-[#e8e6dc] text-[#2d2d2d]', icon:'calendar' };
+    const card = document.createElement('a');
+    card.href = `events-open.html?id=${ev.id}`;
+    card.className = 'card-natural border border-[#2d2d2d12] overflow-hidden group block';
+    card.innerHTML = `
+      <div class="relative h-36 overflow-hidden">
+        <img src="${ev.img}" alt="${ev.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent"></div>
+        <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border backdrop-blur-md ${rStyle.chip}"><i data-lucide="${rStyle.icon}" class="w-3 h-3"></i>${ev.category}</span>
+      </div>
+      <div class="p-4">
+        <h3 class="font-display text-sm font-semibold text-[#2d2d2d] line-clamp-1 group-hover:text-[#433a86] transition-colors">${ev.title}</h3>
+        <p class="text-[11px] text-[#6b6b5c] mt-1.5 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3 h-3"></i>${ev.date}</p>
+      </div>`;
+    relatedGrid.appendChild(card);
+  });
+  if (relatedGrid.children.length === 0) document.getElementById('related-wrap').style.display = 'none';
+
+  /* ---------- Entrance animations ---------- */
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from("#detail-root section:first-of-type .relative > *", { opacity:0, y:20, stagger:.08, duration:.6, ease:"power2.out", delay:.1 });
+  gsap.to(fill, { width: pct + '%', duration:1.1, ease:"power2.out", delay:.5 });
+  gsap.from(".card-natural", { scrollTrigger:{trigger:".rail-sticky", start:"top 90%"}, opacity:0, y:24, stagger:.08, duration:.6, ease:"power2.out" });
+}
+
+lucide.createIcons();
+
+/* ---------- Mobile menu ---------- */
+const mm = document.getElementById('mobile-menu'), mt = document.getElementById('menu-toggle');
+const setMenu = (o) => { mt.setAttribute('aria-expanded', String(o)); document.body.style.overflow = o ? 'hidden' : ''; mm.style.display = o ? 'flex' : 'none'; };
+mt.addEventListener('click', () => setMenu(mm.style.display !== 'flex'));
+document.getElementById('menu-close').addEventListener('click', () => setMenu(false));
+mm.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+/* ---------- Navbar shadow ---------- */
+window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('shadow-lg', window.scrollY > 60), { passive: true });
+
+/* ---------- Notification bell ---------- */
+(() => {
+  const store = window.EventSphereNotifications;
+  const toggleBtn = document.getElementById('notif-toggle');
+  const dropdown = document.getElementById('notif-dropdown');
+  const list = document.getElementById('notif-list');
+  const emptyState = document.getElementById('notif-empty');
+  const badge = document.getElementById('notif-badge');
+  const countPill = document.getElementById('notif-count-pill');
+  const markAllBtn = document.getElementById('notif-mark-all');
+  if (!store || !toggleBtn || !dropdown) return;
+
+  const PREVIEW_COUNT = 5;
+  const renderNotifs = () => {
+    const items = store.NOTIFICATIONS.slice(0, PREVIEW_COUNT);
+    list.innerHTML = items.map((n) => {
+      const unread = !store.isRead(n.id);
+      return `
+        <a href="${n.href}" data-id="${n.id}" class="notif-item ${unread ? 'is-unread' : ''} flex items-start gap-3 py-2 px-3 rounded-xl hover:bg-[#f5f5f0] transition-colors">
+          <div class="w-8 h-8 rounded-xl bg-[#e8e6dc] flex items-center justify-center shrink-0"><i data-lucide="${n.icon}" class="w-3.5 h-3.5 text-[#433a86]"></i></div>
+          <div class="flex-1 min-w-0">
+            <p class="notif-title text-xs leading-snug">${n.title}</p>
+            <p class="text-[11px] text-[#6b6b5c] leading-snug line-clamp-2">${n.body}</p>
+            <p class="text-[10px] text-[#a39e8d] mt-0.5 font-mono-custom">${n.time}</p>
+          </div>
+          ${unread ? '<span class="w-2 h-2 rounded-full bg-[#a65b44] mt-1.5 shrink-0" aria-hidden="true"></span>' : ''}
+        </a>`;
+    }).join('');
+    if (window.lucide) lucide.createIcons();
+    emptyState.classList.toggle('hidden', items.length > 0);
+    const unread = store.unreadCount();
+    badge.classList.toggle('show', unread > 0);
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+    countPill.textContent = `${unread} new`;
+  };
+  renderNotifs();
+
+  let isOpen = false;
+  const openDropdown = () => { isOpen = true; dropdown.classList.add('notif-open'); toggleBtn.setAttribute('aria-expanded', 'true'); };
+  const closeDropdown = () => { isOpen = false; dropdown.classList.remove('notif-open'); toggleBtn.setAttribute('aria-expanded', 'false'); };
+  toggleBtn.addEventListener('click', (e) => { e.stopPropagation(); isOpen ? closeDropdown() : openDropdown(); });
+  document.addEventListener('click', (e) => { if (isOpen && !dropdown.contains(e.target) && !toggleBtn.contains(e.target)) closeDropdown(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen) { closeDropdown(); toggleBtn.focus(); } });
+  list.addEventListener('click', (e) => { const item = e.target.closest('.notif-item'); if (!item) return; store.markRead(item.dataset.id); renderNotifs(); });
+  markAllBtn.addEventListener('click', (e) => { e.stopPropagation(); store.markAllRead(); renderNotifs(); if (typeof showToast === 'function') showToast('All notifications marked as read', 'check-check'); });
+})();
+</script>
+</body>
+</html>
