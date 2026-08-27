@@ -54,4 +54,51 @@ class NotificationController extends Controller
 
         return response()->json(['message' => 'All marked as read']);
     }
+
+    public function send(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'sometimes|required|exists:users,id',
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+            'type' => 'sometimes|string|max:50',
+            'href' => 'nullable|string',
+        ]);
+
+        $userId = $request->user()->id;
+
+        if ($request->filled('user_id')) {
+            $userId = $request->user_id;
+        }
+
+        $notification = Notification::create([
+            'user_id' => $userId,
+            'title' => $request->title,
+            'body' => $request->body,
+            'type' => $request->type ?? 'general',
+            'href' => $request->href,
+        ]);
+
+        return response()->json(['data' => $notification, 'message' => 'Notification sent']);
+    }
+
+    public function getUnreadCount(Request $request)
+    {
+        $count = Notification::where('user_id', $request->user()->id)
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json(['data' => ['unread_count' => $count]]);
+    }
+
+    public function getTypes(Request $request)
+    {
+        $types = Notification::where('user_id', $request->user()->id)
+            ->whereNotNull('type')
+            ->select('type')
+            ->distinct()
+            ->pluck('type');
+
+        return response()->json(['data' => ['types' => $types]]);
+    }
 }

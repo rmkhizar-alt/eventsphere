@@ -158,13 +158,13 @@ class RegistrationController extends Controller
 
         $registration = Registration::where('qr_token', $request->qr_token)->firstOrFail();
 
-        if ($registration->attendance->first()) {
-            return response()->json(['message' => 'Already checked in'], 422);
-        }
-
         // Check if user is registered for this organizer's event
         if ($registration->event->organizer_id !== $request->user()->id && $request->user()->role !== 'admin') {
             return response()->json(['message' => 'Unauthorized - not your event'], 403);
+        }
+
+        if ($registration->attendance->first()) {
+            return response()->json(['message' => 'Already checked in'], 422);
         }
 
         Attendance::create([
@@ -184,5 +184,55 @@ class RegistrationController extends Controller
         ]);
 
         return response()->json(['data' => $registration, 'message' => 'Check-in successful']);
+    }
+
+    public function myRegistrations(Request $request)
+    {
+        $registrations = Registration::where('user_id', $request->user()->id)
+            ->with(['event' => function ($q) {
+                $q->where('status', 'approved');
+            }])
+            ->latest()
+            ->get(['id', 'event_id', 'status', 'qr_token', 'registered_at', 'check_in_at', 'cancelled_at']);
+
+        return response()->json(['data' => $registrations]);
+    }
+
+    public function getByQr(Request $request)
+    {
+        $request->validate([
+            'qr_token' => 'required|string',
+        ]);
+
+        $registration = Registration::where('qr_token', $request->qr_token)->with(['event', 'attendance'])->firstOrFail();
+
+        return response()->json(['data' => $registration]);
+    }
+
+    public function getEventRegistrations(Request $request, Event $event)
+    {
+        $this->authorize('view', $event);
+
+        $registrations = Registration::where('event_id', $event->id)
+            ->latest()
+            ->with(['user' => function ($q) {
+                $q->select('id', 'name', 'username', 'profile_photo_path');
+            }])
+            ->get(['id', 'user_id', 'status', 'qr_token', 'registered_at', 'check_in_at', 'cancelled_at']);
+
+        return response()->json(['data' => $registrations]);
+    }
+
+    public function getAttendanceReport(Request $request, Event $event)
+    {
+        $this->authorize('view', $event);
+
+        $attendance = Attendance::whereHas('registration', function ($q) use ($event) {
+            $q->where('event_id', $event->id);
+        })
+            ->with('registration.user')
+            ->get(['id', 'registration_id', 'attended', 'check_in_at', 'check_out_at', 'marked_by', 'qr_scanned_at']);
+
+        return response()->json(['data' => $attendance]);
     }
 }
