@@ -286,4 +286,59 @@ class EventController extends Controller
 
         return response()->json(['message' => 'Saved']);
     }
+
+    public function recommendations(Request $request)
+    {
+        $user = $request->user();
+        $query = Event::query()->approved();
+
+        // Get user's registered event categories
+        $registeredCategories = Registration::where('user_id', $user->id)
+            ->whereHas('event', function ($q) {
+                $q->where('status', 'approved');
+            })
+            ->with('event')
+            ->get()
+            ->pluck('event.category')
+            ->unique()
+            ->toArray();
+
+        // Get user's bookmarked event categories
+        $bookmarkedCategories = Bookmark::where('user_id', $user->id)
+            ->with('event')
+            ->get()
+            ->pluck('event.category')
+            ->unique()
+            ->toArray();
+
+        $preferredCategories = array_unique(array_merge($registeredCategories, $bookmarkedCategories));
+
+        if (!empty($preferredCategories)) {
+            $query->whereIn('category', $preferredCategories);
+        }
+
+        // Exclude events user already registered for
+        $registeredEventIds = Registration::where('user_id', $user->id)
+            ->pluck('event_id')
+            ->toArray();
+
+        if (!empty($registeredEventIds)) {
+            $query->whereNotIn('id', $registeredEventIds);
+        }
+
+        // Exclude bookmarked events
+        $bookmarkedEventIds = Bookmark::where('user_id', $user->id)
+            ->pluck('event_id')
+            ->toArray();
+
+        if (!empty($bookmarkedEventIds)) {
+            $query->whereNotIn('id', $bookmarkedEventIds);
+        }
+
+        $recommendations = $query->withCount(['registrations' => function ($q) {
+            $q->where('status', 'confirmed');
+        }])->latest()->paginate(12);
+
+        return response()->json(['data' => $recommendations]);
+    }
 }

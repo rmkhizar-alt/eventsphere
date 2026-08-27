@@ -51,6 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/saved-media/{media}', [\App\Http\Controllers\Api\MediaGalleryController::class, 'save']);
     Route::get('/me/profile', [\App\Http\Controllers\Api\EventController::class, 'index']); // placeholder
     Route::get('/me/notifications', [\App\Http\Controllers\Api\NotificationController::class, 'meNotifications']);
+    Route::get('/events/{event}/calendar.ics', [\App\Http\Controllers\Api\CalendarController::class, 'exportIcs']);
+    Route::get('/me/dashboard', [\App\Http\Controllers\Api\DashboardController::class, 'student']);
+    Route::get('/recommendations', [\App\Http\Controllers\Api\EventController::class, 'recommendations']);
 });
 
 // Organizer routes (authenticated with role: organizer)
