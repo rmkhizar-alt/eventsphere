@@ -8,19 +8,21 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'username', 'contact_number', 'role'])]
+#[Fillable(['name', 'email', 'password', 'username', 'contact_number', 'role', 'department', 'enrolment_no', 'profile_photo_path'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password', 'username', 'contact_number', 'role'];
+    protected $fillable = ['name', 'email', 'password', 'username', 'contact_number', 'role', 'department', 'enrolment_no', 'profile_photo_path'];
 
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 
@@ -62,5 +64,25 @@ class User extends Authenticatable
     public function organizedEvents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Event::class, 'organizer_id');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOrganizer(): bool
+    {
+        return $this->role === 'organizer';
+    }
+
+    public function isParticipant(): bool
+    {
+        return $this->role === 'participant';
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return $this->name . ' (' . $this->username . ')';
     }
 }

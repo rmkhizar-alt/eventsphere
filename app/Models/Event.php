@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['title', 'slug', 'description', 'category', 'venue', 'event_date', 'start_time', 'end_time', 'total_seats', 'certificate_fee', 'status', 'cancellation_reason', 'registration_cutoff'])]
+#[Fillable(['title', 'slug', 'description', 'category', 'venue', 'event_date', 'start_time', 'end_time', 'total_seats', 'certificate_fee', 'status', 'cancellation_reason', 'registration_cutoff', 'featured_image', 'contact_email', 'contact_phone', 'address', 'longitude', 'latitude', 'meta_title', 'meta_description', 'highlight', ' featured_color'])]
 class Event extends Model
 {
     /** @use HasFactory<EventFactory> */
@@ -74,8 +74,37 @@ class Event extends Model
         return $query->where('status', 'pending');
     }
 
+    public function scopeFeatured($query): Builder
+    {
+        return $query->where('highlight', true);
+    }
+
+    public function scopeByCategory($query, $category): Builder
+    {
+        return $query->where('category', $category);
+    }
+
+    public function scopeSearch($query, $search): Builder
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', '%' . $search . '%')
+              ->orWhere('description', 'like', '%' . $search . '%')
+              ->orWhere('venue', 'like', '%' . $search . '%');
+        });
+    }
+
     public function getSeatsAvailableAttribute(): int
     {
         return $this->total_seats - $this->seats_booked;
+    }
+
+    public function isFull(): bool
+    {
+        return $this->seats_booked >= $this->total_seats;
+    }
+
+    public function hasAvailableSeats(): bool
+    {
+        return $this->total_seats > $this->seats_booked;
     }
 }
