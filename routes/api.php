@@ -22,6 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Public routes (no authentication required)
 Route::middleware('throttle:60,1')->group(function () {
     Route::get('/events', [\App\Http\Controllers\Api\EventController::class, 'index']);
+    Route::get('/events/filter', [\App\Http\Controllers\Api\EventController::class, 'filter']);
+    Route::get('/events/search', [\App\Http\Controllers\Api\EventController::class, 'search']);
     Route::get('/events/{event}', [\App\Http\Controllers\Api\EventController::class, 'show']);
     Route::get('/events/{event}/feedback', [\App\Http\Controllers\Api\EventController::class, 'feedback']);
     Route::get('/gallery', [\App\Http\Controllers\Api\MediaGalleryController::class, 'index']);
@@ -48,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/bookmarks/{event}', [\App\Http\Controllers\Api\EventController::class, 'bookmark']);
     Route::post('/saved-media/{media}', [\App\Http\Controllers\Api\MediaGalleryController::class, 'save']);
     Route::get('/me/profile', [\App\Http\Controllers\Api\EventController::class, 'index']); // placeholder
+    Route::get('/me/notifications', [\App\Http\Controllers\Api\NotificationController::class, 'meNotifications']);
 });
 
 // Organizer routes (authenticated with role: organizer)
@@ -61,6 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/events/{event}/media', [\App\Http\Controllers\Api\MediaGalleryController::class, 'index']);
     Route::post('/certificates/{event}/issue', [\App\Http\Controllers\Api\CertificateController::class, 'issue']);
     Route::post('/events/{event}/announce', [\App\Http\Controllers\Api\NotificationController::class, 'store']);
+    Route::get('/events/{event}/attendance', [\App\Http\Controllers\Api\RegistrationController::class, 'attendanceReport']);
+    Route::post('/events/{event}/send-notification', [\App\Http\Controllers\Api\NotificationController::class, 'sendToParticipants']);
 });
 
 // Admin routes (authenticated with role: admin)
@@ -80,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/analytics', [\App\Http\Controllers\Api\EventController::class, 'analytics']);
     Route::delete('/admin/media/{media}', [\App\Http\Controllers\Api\MediaGalleryController::class, 'delete']);
     Route::delete('/admin/feedback/{feedback}', [\App\Http\Controllers\Api\EventController::class, 'deleteFeedback']);
+    Route::get('/admin/events/{event}/details', [\App\Http\Controllers\Api\EventController::class, 'eventDetails']);
 });
 
 // Notifications routes (all roles)
@@ -88,4 +94,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/notifications/{notification}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markRead']);
     Route::patch('/notifications/{notification}/unread', [\App\Http\Controllers\Api\NotificationController::class, 'markUnread']);
     Route::patch('/notifications/read-all', [\App\Http\Controllers\Api\NotificationController::class, 'markAllRead']);
+    Route::get('/notifications/count', [\App\Http\Controllers\Api\NotificationController::class, 'count']);
 });

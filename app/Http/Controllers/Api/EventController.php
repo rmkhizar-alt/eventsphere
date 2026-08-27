@@ -28,6 +28,11 @@ class EventController extends Controller
             $query->where('category', $request->category);
         }
 
+        // Filter by status
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
         // Search
         if ($request->has('q')) {
             $query->where(function ($q) use ($request) {
@@ -45,7 +50,41 @@ class EventController extends Controller
             $query->where('event_date', '<=', $request->date_to);
         }
 
+        // Featured events first
+        $query->orderBy('highlight', 'desc');
+
         // Paginate
+        $events = $query->withCount(['registrations' => function ($q) {
+            $q->where('status', 'confirmed');
+        }])->paginate(12);
+
+        return response()->json(['data' => $events]);
+    }
+
+    public function filter(Request $request)
+    {
+        $query = Event::query()->approved();
+
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('featured')) {
+            $query->where('highlight', true);
+        }
+
+        if ($request->has('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhere('venue', 'like', '%' . $request->search . '%');
+            });
+        }
+
         $events = $query->withCount(['registrations' => function ($q) {
             $q->where('status', 'confirmed');
         }])->paginate(12);
@@ -246,26 +285,5 @@ class EventController extends Controller
         ]);
 
         return response()->json(['message' => 'Saved']);
-    }
-
-    public function search(Request $request)
-    {
-        $query = Event::query()->approved();
-
-        if ($request->has('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->has('q')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->q . '%')
-                    ->orWhere('description', 'like', '%' . $request->q . '%')
-                    ->orWhere('venue', 'like', '%' . $request->q . '%');
-            });
-        }
-
-        $events = $query->paginate(12);
-
-        return response()->json(['data' => $events]);
     }
 }
