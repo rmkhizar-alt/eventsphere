@@ -50,13 +50,8 @@ class AuthController extends Controller
             'expires_at' => now()->addMinutes(15),
         ]);
 
-        try {
-            Mail::to($request->email)->send(new \App\Mail\VerifyEmail($user, $otp));
-            $emailSent = true;
-        } catch (\Exception $e) {
-            \Log::error('Verification email failed: ' . $e->getMessage());
-            $emailSent = false;
-        }
+        Mail::to($request->email)->queue(new \App\Mail\VerifyEmail($user, $otp));
+        $emailSent = true;
 
         $token = $user->createToken('eventosphere-token')->plainTextToken;
 
@@ -173,11 +168,7 @@ class AuthController extends Controller
             'expires_at' => now()->addMinutes(15),
         ]);
 
-        try {
-            Mail::to($user->email)->send(new \App\Mail\VerifyEmail($user, $otp));
-        } catch (\Exception $e) {
-            \Log::error('Resend OTP email failed: ' . $e->getMessage());
-        }
+        Mail::to($user->email)->queue(new \App\Mail\VerifyEmail($user, $otp));
 
         return response()->json([
             'otp' => $otp,

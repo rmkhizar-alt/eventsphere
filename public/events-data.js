@@ -24,10 +24,10 @@
 
   const EVENTS = [
     {
-      id: 'techwiz-6',
-      title: 'TechWiz 6: National Hackathon Finals',
+      id: 'techwiz-7',
+      title: 'TechWiz 7: National Hackathon Finals',
       desc: 'A 24-hour build sprint where finalist teams ship a working product in front of industry judges.',
-      longDesc: 'TechWiz 6 brings together the top 40 teams from the regional qualifiers for a 24-hour, in-person build sprint. Teams will have access to mentor office hours, cloud credits, and a live judging panel drawn from partner companies. Categories include FinTech, HealthTech, and Sustainability. Top three teams win cash prizes, internship interviews, and incubation support.',
+      longDesc: 'TechWiz 7 brings together the top 40 teams from the regional qualifiers for a 24-hour, in-person build sprint. Teams will have access to mentor office hours, cloud credits, and a live judging panel drawn from partner companies. Categories include FinTech, HealthTech, and Sustainability. Top three teams win cash prizes, internship interviews, and incubation support.',
       category: 'Technical',
       org: 'Dept. of Computer Science',
       orgContact: 'cs.techwiz@campus.edu',
